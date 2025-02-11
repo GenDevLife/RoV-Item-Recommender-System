@@ -1,0 +1,20 @@
+﻿Abyss Dive,level,Base Damage,Cooldown,Mana,
+,1,300,10,40,
+,2,350,9.6,40,
+,3,400,9.2,40,
+,4,450,8.8,40,
+,5,500,8.4,40,
+,6,550,8,40,
+,,,,,
+Continuous Blade,level,Base Damage,Attack Damage,Health Regen,Mana
+,1,225,50,100,40
+,2,270,60,120,40
+,3,315,70,140,40
+,4,360,80,160,40
+,5,405,90,180,40
+,6,450,100,200,40
+,,,,,
+Oceanic Fury,level,Base Damage,Cooldown,Mana,
+,1,550,40,100,
+,2,800,35,100,
+,3,1050,30,100,

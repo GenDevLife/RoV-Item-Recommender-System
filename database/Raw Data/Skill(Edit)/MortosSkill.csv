@@ -1,0 +1,23 @@
+﻿Paragon(Passive),Skill Type,Effect,Recommend Item Type,,,,,
+,,Heal,Defense,,,,,
+,,,,,,,,
+Righteous Fervor,Skill Type,Effect,level,Base Damage,Cooldown,Cooldown,Mana,Recommend Item Type
+,Physical,Blind,1,180,8,8,0,Attack
+,,,2,205,7.4,8,0,
+,,,3,230,6.8,8,0,
+,,,4,255,6.2,8,0,
+,,,5,280,5.6,8,0,
+,,,6,305,5,8,0,
+,,,,,,,,
+Holy Guard,Skill Type,Effect,level,Base Damage,Shield,Mana,Recommend Item Type,
+,Physical,Defense,1,50,5%,0,Defense,
+,,,2,65,6%,0,,
+,,,3,80,7%,0,,
+,,,4,95,8%,0,,
+,,,5,110,9%,0,,
+,,,6,125,10%,0,,
+,,,,,,,,
+Deep Impact,Skill Type,Effect,level,Base Damage,Cooldown,Sustained Damage,Mana,Recommend Item Type
+,Magic,Knock Up,1,14%,42,100,0,Attack
+,,,2,17%,35,125,0,
+,,,3,20%,28,150,0,

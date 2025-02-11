@@ -1,0 +1,23 @@
+﻿Fighting Spirit(Passive),Skill Type,Effect,Recommend Item Type,,,,
+,Increase Damage,Heal,Defense,,,,
+,,,,,,,
+Colossal Smash,Skill Type,Effect,level,Base Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Movement,1,200,13,0,Defense
+,,,2,250,12.4,0,
+,,,3,300,11.8,0,
+,,,4,350,11.2,0,
+,,,5,400,10.6,0,
+,,,6,450,10,0,
+,,,,,,,
+Whrirl - Potential,Skill Type,Effect,level,Base Damage,Cooldown,Mana,Recommend Item Type
+,Physical,AoE,1,250,6,0,Defense
+,,,2,300,5.6,0,
+,,,3,350,5.2,0,
+,,,4,400,4.8,0,
+,,,5,450,4.4,0,
+,,,6,500,4,0,
+,,,,,,,
+Steeled Focus,Skill Type,Effect,level,Duration,Mana,Recommend Item Type,
+,Heal,Movement Speed,1,5,0,"Defense, Movement",
+,,,2,6,0,,
+,,,3,7,0,,

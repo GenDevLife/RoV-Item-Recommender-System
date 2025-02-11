@@ -1,0 +1,23 @@
+﻿Royal Power (Passive),Skill Type,Effect,Recommend Item Type,,,,
+,Heal,Damage Reduction,"Defense, Support",,,,
+,,,,,,,
+Forward Charge,Skill Type,Effect,Level,Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Knockback,1,80,10,60,"Attack, Defense"
+,,,2,105,9.6,60,
+,,,3,130,9.2,60,
+,,,4,155,8.8,60,
+,,,5,180,8.4,60,
+,,,6,205,8,60,
+,,,,,,,
+Avalon’s Fury,Skill Type,Effect,Level,Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Knock Up,1,200,8.5,50,"Attack, Defense"
+,,,2,260,8,50,
+,,,3,320,7.5,50,
+,,,4,380,7,50,
+,,,5,440,6.5,50,
+,,,6,500,6,50,
+,,,,,,,
+King’s Glory,Skill Type,Effect,Level,Damage,Cooldown,Mana,Recommend Item Type
+,True Damage,AoE True Damage,1,400,40,100,"Attack, Defense"
+,,,2,550,35,100,
+,,,3,700,30,100,

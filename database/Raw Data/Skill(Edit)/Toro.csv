@@ -1,0 +1,23 @@
+﻿Tough Hide (Passive),Skill Type,Effect,Recommend Item Type,,,,
+,Defensive,Immune to CC,"Defense, Support",,,,
+,,,,,,,
+Bull Rush,Skill Type,Effect,Level,Shield,Cooldown,Mana,Recommend Item Type
+,Physical,Knock Up,1,250,8,60,"Defense, Support"
+,,,2,360,8,60,
+,,,3,470,8,60,
+,,,4,580,8,60,
+,,,5,690,8,60,
+,,,6,800,8,60,
+,,,,,,,
+Brazen Bellow,Skill Type,Effect,Level,Reduce Damage,Cooldown,Mana,Recommend Item Type
+,Magic,Damage Reduction,1,60%,6,50,"Defense, Support"
+,,,2,64%,6,50,
+,,,3,68%,6,50,
+,,,4,72%,6,50,
+,,,5,76%,6,50,
+,,,6,80%,6,50,
+,,,,,,,
+Earth Shatter,Skill Type,Effect,Level,HP,Cooldown,Mana,Recommend Item Type
+,Physical,Knock Up,1,2%,45,110,"Defense, Support"
+,,,2,3%,45,110,
+,,,3,4%,45,110,

@@ -1,0 +1,23 @@
+﻿Doom Lord(Passive),Skill Type,Effect,Recommend Item Type,,,,,
+,Physical,Defense,Defense,,,,,
+,,,,,,,,
+Death Sweep,Skill Type,Effect,level,Base Damage,True Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Control,1,200,125,8,40,Attack
+,,,2,240,150,8,40,
+,,,3,280,175,8,40,
+,,,4,320,200,8,40,
+,,,5,360,225,8,40,
+,,,6,400,250,8,40,
+,,,,,,,,
+Execution,Skill Type,Effect,level,Base Damage,Additional Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Decrease Movement,1,150,300,6,60,Attack
+,,,2,180,360,6,60,
+,,,3,210,420,6,60,
+,,,4,240,480,6,60,
+,,,5,270,540,6,60,
+,,,6,300,600,6,60,
+,,,,,,,,
+Ultima,Skill Type,Effect,level,Base Damage,Additional Damage,Cooldown,Mana,Recommend Item Type
+,Transform,Death Immunity,1,100,100,50,100,Defense
+,,,2,200,200,45,100,
+,,,3,300,300,40,100,

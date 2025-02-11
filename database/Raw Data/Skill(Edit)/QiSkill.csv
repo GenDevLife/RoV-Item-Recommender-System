@@ -1,0 +1,23 @@
+﻿Protection Aura(Passive),Skill Type,Effect,Recommend Item Type,,,,,
+,Physical,Reduce Damage,Defense,,,,,
+,,,,,,,,
+Starchaser,Skill Type,Effect,level,Base Damage,Cooldown,Mana,Recommend Item Type,
+,Physical,Knock Up,1,300,7,45,Attack,
+,,,2,375,7,45,,
+,,,3,450,7,45,,
+,,,4,525,7,45,,
+,,,5,600,7,45,,
+,,,6,675,7,45,,
+,,,,,,,,
+Mountain Shaker,Skill Type,Effect,level,Base Damage,Cooldown,Defense Down,Mana,Recommend Item Type
+,Physical,Increase Damage,1,120,10,15,60,Attack
+,,,2,150,9.6,20,60,
+,,,3,180,9.2,25,60,
+,,,4,210,8.8,30,60,
+,,,5,240,8.4,35,60,
+,,,6,270,8,40,60,
+,,,,,,,,
+The Brawler,Skill Type,Effect,level,Base Damage,Additional Damage,Cooldown,Mana,Recommend Item Type
+,Physical,Knock Back,1,330,100,35,100,Attack
+,,,2,495,150,30,100,
+,,,3,660,200,25,100,

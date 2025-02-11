@@ -1,0 +1,110 @@
+﻿ItemID,ItemName,Base_Items,Class,Price,Phys_ATK,HP,Phys_Defense,Attack_Speed,Critical_Rate,HP_5_sec,Armor_Pierce,Life_Steal,Magic_Power,Max_Mana,Magic_Defense,Cooldown_Reduction,Movement_Speed,Mana_5_sec,Magic_Pierce,Magic_Life_Steal,Resistance
+I001,Short Sword,,Attack,250,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I002,Dagger,,Attack,290,0,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0
+I003,Gloves,,Attack,300,0,0,0,0,0.08,0,0,0,0,0,0,0,0,0,0,0,0
+I004,Bloodied Club,,Attack,410,10,0,0,0,0,0,0,0.08,0,0,0,0,0,0,0,0,0
+I005,Chain Hammer,,Attack,450,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I006,Cleaving Claymore, Short Sword,Attack,910,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I007,Arcane Hammer,Short Sword;Dagger,Attack,740,25,0,0,0.15,0,0,0,0,0,0,0,0,0,0,0,0,0
+I008,Tempest Blades,Dagger,Attack,780,0,0,0,0.25,0,0,0,0,0,0,0,0,0.05,0,0,0,0
+I009,Astral Spear,Short Sword;Short Sword,Attack,830,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I010,Shuriken,Dagger;Dagger,Attack,750,0,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0
+I011,Chaos Bow,Dagger;Chain Hammer,Attack,110,40,0,0,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0
+I012,Uriel's Brand,Arcane Hammer;Short Sword;Gladiator's Gauntlets,Attack,2020,60,0,0,0.25,0,0,0,0,0,0,180,0,0,0,0,0,0
+I013,Curse of Death,Cleaving Claymore;Magic Ring;Necklace of Vitality,Attack,1900,80,800,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I014,Death Sickle,Chain Hammer;Short Sword,Attack,2000,60,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0,0
+I015,Bow of Slaughter,Cleaving Claymore;Gloves;Bloodied Club,Attack,2250,90,0,0,0,0.1,0,0,0.1,0,0,0,0,0,0,0,0,0
+I016,The Diminisher,Cleaving Claymore;Magic Ring;Ring of Vitality,Attack,2120,100,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I017,The Morning Star,Chaos Bow;Shuriken;Gloves,Attack,2980,50,0,0,0.3,0.1,0,0,0,0,0,0,0,0,0,0,0,0
+I018,Spear of Longinus,Astral;Magic Ring;Ring of Vitality,Attack,2030,80,500,0,0,0,0,0,0,0,0,0,0.15,0,0,0,0,0
+I019,Fafnir's Talon,Shuriken;Bloodied Club;Chain Hammer,Attack,2040,60,0,0,0.3,0,0,0,0,0,0,0,0,0,0,0,0,0
+I020,Claves Sancti,Cleaving Claymore;Gloves;Gloves,Attack,2120,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I021,Muramasa,Astral Spear;Short Sword;Magic Ring,Attack,2020,75,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I022,The Beast,Cleaving Claymore;Bloodied Club,Attack,1740,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I023,Omni Arms,Arcane Hammer;Chain Hammer;Ring of Vitality,Attack,2150,70,600,0,0.15,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I024,Slikk's String,Tempest Blades;Gloves;Gloves,Attack,1920,0,0,0,0.35,0.25,0,0,0,0,0,0,0,0.07,0,0,0,0
+I025,Fenrir's Tooth,Cleaving Claymore;Cleaving Claymore,Attack,2950,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I026,Blitz Blade,Shuriken;Dagger;Gloves,Attack,1900,0,0,0,0.35,0.15,0,0,0,0,0,0,0,0.05,0,0,0,0
+I027,Ifrit's Claw,Tempest Blades;Gloves,Attack,1960,0,0,0,0.3,0.2,0,0,0,0,0,0,0,0.05,0,0,0,0
+I028,Broken Spears,Astral Spear;Short Sword;Chain Hammer,Attack,1900,110,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I029,Eclipsing Bow,Shuriken;Gloves;Dagger,Attack,2000,0,0,0,0.3,0.1,0,0,0,0,0,0,0,0.05,0,0,0,0
+I030,Ring of Vitality,,Defense,300,0,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I031,Light Armor,,Defense,220,0,0,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I032,Gladitor Gauntlets,,Defense,220,0,0,0,0,0,0,0,0,0,0,90,0,0,0,0,0,0
+I033,Tailsman of Strenght,,Defense,140,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0
+I034,Necklace of Vitality,,Defense,540,0,600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I035,Greaves of Protection,Ring of Vitality;Ring of Vitality,Defense,900,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I036,Heart of Incubus,Light Armor,Defense,720,0,0,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I037,Belt of Clarity,Gladiator's Gauntlets;Ring of Vitality,Defense,1000,0,700,0,0,0,0,0,0,0,0,110,0,0,0,0,0,0
+I038,Platinum Gauntlets,Light Armor;Magic Ring,Defense,660,0,0,110,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I039,Knight's Plate,Light Armor;Light Armor,Defense,730,0,0,210,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I040,Mail of Pain,Greaves of Protection;Light Armor;Light Armor,Defense,1940,0,1200,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I041,Hercules' Madness,Light Armor;Light Armor;Chain Hammer,Defense,2080,80,0,180,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I042,Odin's Will,Greaves of Protection;Light Armor;Light Armor,Defense,1900,0,1200,225,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0
+I043,Mantle of Ra,Heart of Incubus;Talisman of Strength;Necklace of Vitality,Defense,1900,0,1000,225,0,0,60,0,0,0,0,0,0,0,0,0,0,0
+I044,Shield of the Lost,Knight's Plate;Greaves of Protection,Defense,2100,0,1200,275,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I045,The Aegis,Knight's Plate;Platinum Gauntlets;Lapis Ring,Defense,2180,0,0,360,0,0,0,0,0,0,400,0,0.2,0,0,0,0,0
+I046,Gaia's Standard,Belt of Clarity;Ring of Vitality;Talisman of Strength,Defense,1960,0,1200,0,0,0,0,0,0,0,0,200,0,0.05,0,0,0,0
+I047,Medallion of Troy,Belt of Clarity;Gladiator's Gauntlets;Ring of Vitality,Defense,2320,0,1000,0,0,0,0,0,0,0,0,200,0.1,0,0,0,0,0
+I048,Hyoga's Edge,Greaves of Protection;Light Armor;Gladiator's Gauntlets,Defense,1920,0,1200,100,0,0,0,0,0,0,0,100,0,0,0,0,0,0
+I049,Blade of Eternity,Cleaving Claymore;Light Armor,Defense,2400,0,0,120,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I050,Frost Cape,Platinum Gauntlets;Ring of Vitality;Ring of Vitality,Defense,1970,0,800,200,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I051,Amulet of Longevity,Greaves of Protection;Necklace of Vitality;Magic Ring,Defense,1980,0,2000,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I052,Rock Shield,Necklace of Vitality;Light Armor;Light Armor,Defense,1980,0,1000,240,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I053,Spell Tome,,Magic,300,0,0,0,0,0,0,0,0,40,0,0,0,0,0,0,0,0
+I054,Lapis Ring,,Magic,220,0,0,0,0,0,0,0,0,0,300,0,0,0,0,0,0,0
+I055,Pendant of Faith,,Magic,120,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0
+I056,Ancient Scriptures,,Magic,540,0,0,0,0,0,0,0,0,80,0,0,0,0,0,0,0,0
+I057,Magic Ring,,Magic,300,0,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0,0
+I058,Enchanted Scroll,Spell Tome;Spell Tome,Magic,820,0,0,0,0,0,0,0,0,120,0,0,0,0,0,0,0,0
+I059,Trick Blade,Spell Tome;Magic Ring,Magic,820,0,0,0,0,0,0,0,0,40,0,0,0.1,0,0,0,0,0
+I060,Spoonky Mask,Spell Tome;Spell Tome,Magic,960,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0
+I061,Phoenix Tear,Spell Tome;Pendant of Faith,Magic,500,0,0,0,0,0,0,0,0,50,0,0,0,0,0,0,0,0
+I062,Virtue's Bracelet,Spell Tome;Pendant of Faith,Magic,720,0,0,0,0,0,0,0,0,60,0,0,0.05,0,20,0,0,0
+I063,Vlad's Impaler,Spell Tome;Magic Ring,Magic,900,0,0,0,0,0,0,0,0,60,0,0,0.05,0,0,0,0,0
+I064,Staff of Nuul,Spooky Mask;Magic Ring;Spell Tome,Magic,2050,0,0,0,0,0,0,0,0,180,0,0,0.1,0,0,0,0,0
+I065,Evil Secrets,Spooky Mask;Spell Tome;Spell Tome,Magic,1980,0,0,0,0,0,0,0,0,180,0,0,0,0,0,0,0,0
+I066,Soul Scroll,Enchanted Scroll;Magic Ring;Necklace of Vitality,Magic,1900,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I067,Virtue's Necklace,Virtue's Bracelet;Ancient Scriptures;Magic Ring,Magic,1800,0,0,0,0,0,0,0,0,160,0,0,0.15,0,25,0,0,0
+I068,Orrery,Spell Tome;Spell Tome,Magic,800,0,0,0,0,0,0,0,0,80,0,0,0,0,0,0,0,0
+I069,Boomstick,Orrery;Spell Tome;Spell Tome,Magic,1800,0,0,0,0,0,0,0,0,200,0,0,0,0.05,0,0,0,0
+I070,Hecate's Diadem,Enchanted Scroll;Enchanted Scroll,Magic,2400,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,0,0
+I071,Orb of the Magi,Phoenix Tear;Magic Ring;Spell Tome,Magic,1900,0,0,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I072,Rhea's Blessing,Vlad's Impaler;Magic Ring;Ring of Vitality,Magic,2050,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I073,Zewihander,Shuriken;Enchanted Scroll,Magic,1900,0,0,0,0.2,0,0,0,0,180,0,0,0,0.05,0,0,0,0
+I074,Frosty Revenge,Enchanted Scroll;Necklace of Vitality,Magic,2020,0,850,0,0,0,0,0,0,140,0,0,0,0.05,0,0,0,0
+I075,Berith's Agony,Orrery;Magic Ring;Necklace of Vitality,Magic,1800,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I076,Apocalypse,Trick Blade;Ancient Scriptures;Spell Tome,Magic,1900,0,0,0,0,0,0,0,0,180,0,0,0.1,0.05,0,0,0,0
+I077,Soring Aura,Spooky Mask;Magic Ring;Ring of Vitality,Magic,2100,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I078,Holy of Holies,Enchanted Scroll;Enchanted Scroll,Magic,2990,0,0,0,0,0,0,0,0,400,0,0,0,0,0,0,0,0
+I079,Arctic Orbs,Enchanted Scroll;Spell Tome;Spell Tome,Magic,2200,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,0,0
+I080,Frostguard,Enchanted Scroll;Magic Ring;Necklace of Vitality,Magic,2100,0,600,0,0,0,0,0,0,140,0,0,0.05,0,0,0,0,0
+I081,Boots of Speed,,Movement,250,0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,0,0
+I082,Sonic Boots,Boots of Speed;Light Armor,Movement,700,0,0,110,0,0,0,0,0,0,0,0,0,60,0,0,0,0
+I083,Gilded Greaves,Boots of Speed;Gladiator's Gauntlets,Movement,700,0,0,0,0,0,0,0,0,0,0,90,60,0,0,0,0,0.35
+I084,Flashy Boots,Boots of Speed;Magic Ring,Movement,700,0,0,0,0,0,0,0,0,0,0,0,0.15,60,0,0,0,0
+I085,Enchanted Kicks,Boots of Speed,Movement,700,0,0,0,0,0,0,0,0,0,0,0,0,60,0,0,0,0
+I086,War Boots,Boots of Speed;Dagger,Movement,700,0,0,0,0.25,0,0,0,0,0,0,0,0,60,0,75,0,0
+I087,Hermes's Select,Boots of Speed,Movement,700,0,0,0,0,0,0,0,0,0,0,0,0,60,0,0,0,0
+I088,Elemental Stone,,Support,300,0,0,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0
+I089,Earth Gem,Elemental Stone;Ring of Vitality,Support,900,0,400,0,0,0,0,0,0,0,0,0,0.05,0.05,0,0,0,0
+I090,Fire Gem,Elemental Stone;Ring of Vitality,Support,1600,20,0,0,0,0,0,0,0,0,0,0,0.05,0.05,0,0,0,0
+I091,Mother Earth: Barrier,Earth Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0
+I092,Mother Earth: Magic Eye,Earth Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0
+I093,Mother Earth: Accelerate,Earth Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0
+I094,Mother Earth: Cleansing,Earth Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0
+I095,Mother Earth: Rejuvenate,Earth Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0
+I096,Wildfire: Barrier,Fire Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0
+I097,Wildfire: Magic Eye,Fire Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0
+I098,Wildfire: Accelerate,Fire Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0
+I099,Wildfire: Cleansing,Fire Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0
+I100,Wildfire: Rejuvenate,Fire Gem;Ring of Vitality;Ring of Vitality,Support,1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0
+I101,Hunter's Knife,,Jungle,250,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I102,Monster's Bane,Hunter's Knife,Jungle,750,0,0,0,0,0,0,0,0,40,0,0,0,0,0,0,0,0
+I103,Gnoll Cleaver,Hunter's Knife,Jungle,750,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I104,Mr. Stabby,Hunter's Knife,Jungle,750,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I105,Stormy Bow,Hunter's Knife,Jungle,750,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I106,Loki's Curse,Monsters' Bane;Trick Blade,Jungle,1750,0,0,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0
+I107,Leviathan,Gnoll Cleaver;Light Armor;Ring of Vitality,Jungle,1750,0,600,120,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+I108,Soulreaver,Mr.Stabby;Chain Hammer;Magic Ring,Jungle,1750,80,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0
+I109,FireStorm Bow,Stormy Boow;Dagger;Bloodied Club,Jungle,1750,30,0,0,0.2,0,0,0,0.1,0,0,0,0,0,0,0,0,0

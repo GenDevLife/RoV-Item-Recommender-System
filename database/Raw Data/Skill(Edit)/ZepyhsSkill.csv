@@ -1,0 +1,24 @@
+﻿Deathless,Skill Type,Effect ,Recommend Item Type,,,,,
+,,Reduce Damage,Defense,,,,,
+,,,,,,,,
+,,,,,,,,
+Death Rift,Skill Type,Effect ,level,Base Damage,Cooldown,Damage Bonus,Mana,Recommend Item Type
+,Physical,Movement,1,175,7,175,30,Attack
+,,,2,200,6.4,200,30,Movement
+,,,3,225,5.8,225,30,
+,,,4,250,5.2,250,30,
+,,,5,275,4.6,275,30,
+,,,6,300,4,300,30,
+,,,,,,,,
+Death's Flurry,Skill Type,Effect ,level,Base Damage,HP Regen,Cooldown,Mana,Recommend Item Type
+,Physical,Heal,1,95,35,5,55,Attack
+,,,2,105,39,5,55,
+,,,3,115,43,5,55,
+,,,4,125,47,5,55,
+,,,5,135,51,5,55,
+,,,6,145,55,5,55,
+,,,,,,,,
+Death From Above,Skill Type,Effect ,level,Base Damage,Cooldown,Additional Magic,Mana,Recommend Item Type
+,Physical,Knock Up,1,370,18,40,100,Attack
+,,,2,460,15,60,100,
+,,,3,550,12,80,100,

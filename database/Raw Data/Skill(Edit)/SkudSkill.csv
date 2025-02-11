@@ -1,0 +1,23 @@
+﻿Blood Armor(Passive),Skill Type,Effect,Recommend Item Type,,,,
+,Magic,Bonus Magic Damage,Magic,,,,
+,,,,,,,
+Furious Charge,Skill Type,Effect,level,Base Damage,Attack Speed,Cooldown,Recommend Item Type
+,Physical,Movement,1,200,20%,8,"Attack, Movement"
+,,,2,240,24%,8,
+,,,3,280,28%,8,
+,,,4,320,32%,8,
+,,,5,360,36%,8,
+,,,6,400,40%,8,
+,,,,,,,
+Power Glove,Skill Type,Effect,level,Base Damage,Slow,Cooldown,Recommend Item Type
+,Magic,Movement Speed,1,275,40%,10,Magic
+,,,2,350,44%,10,
+,,,3,425,48%,10,
+,,,4,500,52%,10,
+,,,5,575,56%,10,
+,,,6,650,60%,10,
+,,,,,,,
+Wind Beast Fury,Skill Type,Effect,level,Base Damage,Max HP Regen,Cooldown,Recommend Item Type
+,Physical,Knock Back,1,400,4%,40,Defense
+,,,2,600,6%,35,
+,,,3,800,8%,30,

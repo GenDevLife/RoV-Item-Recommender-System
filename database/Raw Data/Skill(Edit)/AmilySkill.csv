@@ -1,0 +1,23 @@
+﻿Duel,Skill Type,Effect ,Recommend Item Type,,,,,,,
+,Attack Damage,,Attack,,,,,,,
+,,,,,,,,,,
+Kickblade,Skill Type,Effect ,level,Base Damage,Cooldown,Movement Speed,Attack Speed,Cooldown,Mana,Recommend Item Type
+,Physical,Slow,1,120,9,20%,15%,9,60,Attack
+,,,2,138,8.6,22%,18%,9,60,Movement
+,,,3,156,8.2,24%,21%,9,60,
+,,,4,174,7.8,26%,24%,9,60,
+,,,5,192,7.4,28%,27%,9,60,
+,,,6,210,7,30%,30%,9,60,
+,,,,,,,,,,
+Combo,Skill Type,Effect ,level,Base Damage,Bonus Damage,Movement Speed,Cooldown,Recommend Item Type,,
+,Physical,Knockup,1,60,72,10%,6,Attack,,
+,,,2,70,88,12%,6,,,
+,,,3,80,104,14%,6,,,
+,,,4,90,120,16%,6,,,
+,,,5,100,136,18%,6,,,
+,,,6,110,152,20%,6,,,
+,,,,,,,,,,
+Enrage,Skill Type,Effect ,level,Base Damage,Burning,Absorb,Cooldown,Attack Up,Recommend Item Type,
+,Magic,Reduce Damage,1,150,30,60,45,100,Magic,
+,,,2,225,45,100,40,150,Defense,
+,,,3,300,60,140,35,200,,

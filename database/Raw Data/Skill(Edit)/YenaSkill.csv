@@ -1,0 +1,42 @@
+﻿Cresent Strike,level,Base Damage,Cooldown,Mana,
+,1,70,8,0,
+,2,80,7.6,0,
+,3,90,7.2,0,
+,4,100,6.8,0,
+,5,110,6.4,0,
+,6,120,6,0,
+,,,,,
+Spinning Strike,level,Base Damage,Burn,Cooldown,Mana
+,1,180,72,12,0
+,2,200,80,12,0
+,3,220,88,12,0
+,4,240,96,12,0
+,5,260,104,12,0
+,6,280,112,12,0
+,,300,120,12,0
+,,,,,
+Full Moon,level,Base Damage,Attack Up,,
+,1,200,60,,
+,2,280,180,,
+,3,360,300,,
+,,,,,
+Lunar Strike,level,Base Damage,Max Damage,Cooldown,Mana
+,1,120,480,8,0
+,2,138,552,7.6,0
+,3,156,624,7.2,0
+,4,174,696,6.8,0
+,5,192,768,6.4,0
+,6,210,840,6,0
+,,,,,
+Advancing Moon,level,Base Damage,Cooldown,Slow,Mana
+,1,130,12,25%,0
+,2,150,11.6,30%,0
+,3,170,11.2,35%,0
+,4,190,10.8,40%,0
+,5,210,10.4,45%,0
+,6,230,10,50%,0
+,,,,,
+Half Moon,level,Base Damage,Attack Speedup,,
+,1,200,60%,,
+,2,280,80%,,
+,3,360,100%,,

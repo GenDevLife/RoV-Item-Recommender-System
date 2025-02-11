@@ -1,0 +1,23 @@
+﻿Fire Spirit,Skill Type,Effect,Recommend Item Type,,,,,
+,Magic,Increase Damage,Magic,,,,,
+,,,,,,,,
+Wild Fire,Skill Type,Effect,level,Base Damage,Cooldown,Mana,Recommend Item Type,
+,Magic,Heal,1,35,2,20,Defense,
+,,,2,42,2,20,,
+,,,3,49,2,20,,
+,,,4,56,2,20,,
+,,,5,63,2,20,,
+,,,6,70,2,20,,
+,,,,,,,,
+Blazing Shield,Skill Type,Effect,level,Shield,Cooldown,Base Damage,Mana,Recommend Item Type
+,Magic,Defense,1,100,10,100,60,Defense
+,,,2,160,9.6,130,60,
+,,,3,220,9.2,160,60,
+,,,4,280,8.8,190,60,
+,,,5,340,8.4,220,60,
+,,,6,400,8,250,60,
+,,,,,,,,
+Agnie's Grasp,Skill Type,Effect,level,Base Damage,Burn Damage,Cooldown,Mana,Recommend Item Type
+,Magic,Lock on Target,1,40,4%,40,125,Magic
+,,,2,60,6%,35,125,
+,,,3,80,8%,30,125,

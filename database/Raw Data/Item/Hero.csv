@@ -1,0 +1,120 @@
+﻿Hero ID,Hero_Name,First_Class,Second_Class,First_Lane,Second_Lane,Attack Range
+H001,Yue,Mage,,Mid Lane,,Ranged
+H002,Aya,Roaming,,Roaming,,Ranged
+H003,Tachi,Fighter,,Off Lane,Jungle,Melee
+H004,Bright,Fighter,,Jungle,Off Lane,Ranged
+H005,Lorion,Mage,,Mid Lane,,Ranged
+H006,Iggy,Mage,,Mid Lane,,Ranged
+H007,Allain,Fighter,,Off Lane,Jungle,Melee
+H008,Aoi,Assassin,,Jungle,Off Lane,Melee
+H009,Sinestrea,Assassin,,Jungle,Off Lane,Melee
+H010,Dextra,Fighter,Tank,Off Lane,,Melee
+H011,Thorne,Carry,,Carry,Jungle,Ranged
+H012,Keera,Assassin,,Jungle,,Melee
+H013,Dirak,Mage,,Mid Lane,,Ranged
+H014,Ata,Tank,,Off Lane,Roaming,Melee
+H015,Rouie,Roaming,,Roaming,,Ranged
+H016,Krizzix,Roaming,,Roaming,,Ranged
+H017,Arduin,Fighter ,Tank,Off Lane,Roaming,Melee
+H018,Wonder Woman,Fighter,,Off Lane,,Melee
+H019,Stuart,Carry,,Carry,,Ranged
+H020,Xeniel,Tank,Roaming,Off Lane,Roaming,Melee
+H021,Ignis,Mage,,Mid Lane,,Ranged
+H022,Kahlii,Mage,,Mid Lane,,Ranged
+H023,Taara,Fighter,Tank,Off Lane,,Melee
+H024,Mganga,Mage,,Mid Lane,,Ranged
+H025,Alice,Roaming,,Roaming,,Ranged
+H026,Ormarr,Tank,,Roaming,,Melee
+H027,Chaugnar,Tank,Roaming,Roaming,,Melee
+H028,Krixi,Mage,,Mid Lane,,Ranged
+H029,Ryoma,Fighter,Assassin,Off Lane,Jungle,Melee
+H030,Superman,Fighter,,Off Lane,,Melee
+H031,Murad,Assassin,,Jungle,,Melee
+H032,Kill'Groth,Fighter,,Off Lane,,Melee
+H033,Zill,Assassin,,Jungle,,Melee
+H034,Moren,Carry,,Carry,,Ranged
+H035,Lindis,Carry,,Jungle,Carry,Ranged
+H036,TeeMee,Tank,Roaming,Roaming,,Melee
+H037,Volkath,Fighter,Assassin,Off Lane,Jungle,Melee
+H038,Ishar,Mage,Roaming,Mid Lane,Roaming,Ranged
+H039,Eland'orr,Carry,,Jungle,Carry,Ranged
+H040,Hayate,Carry,,Carry,,Ranged
+H041,Astrid,Fighter,Assassin,Off Lane,Jungle,Melee
+H042,Tel'Annas,Carry,,Carry,,Ranged
+H043,Valhein,Carry,,Carry,,Ranged
+H044,Thane,Tank,,Roaming,Off Lane,Melee
+H045,Veera,Mage,,Mid Lane,,Ranged
+H046,Azzen'Ka,Mage,,Mid Lane,,Ranged
+H047,Gildur,Tank,Roaming,Roaming,Off Lane,Melee
+H048,Toro,Tank,Roaming,Roaming,Off Lane,Melee
+H049,Violet,Carry,,Carry,,Ranged
+H050,Diao Chan,Mage,,Mid Lane,,Ranged
+H051,Zephys,Fighter,Assassin,Jungle,Off Lane,Melee
+H052,Nakroth,Assassin,,Jungle,,Melee
+H053,Grakk,Tank,Roaming,Roaming,,Melee
+H054,Mina,Tank,Roaming,Off Lane,Roaming,Melee
+H055,Fennik,Carry,,Jungle,Carry,Ranged
+H056,Zanis,Fighter,,Jungle,Off Lane,Melee
+H057,Aleister,Mage,,Mid Lane,,Ranged
+H058,Butterfly,Fighter,Assassin,Jungle,,Melee
+H059,Lumburr,Tank,Roaming,Roaming,,Melee
+H060,Helen,Roaming,,Roaming,,Ranged
+H061,Yorn,Carry,,Carry,,Ranged
+H062,Natalya,Mage,,Mid Lane,,Ranged
+H063,Lu Bu,Fighter,,Off Lane,,Melee
+H064,Cresht,Tank,Roaming,Roaming,,Melee
+H065,Jinna,Mage,,Mid Lane,,Ranged
+H066,Omega, Tank,Roaming,Roaming,Off Lane,Melee
+H067,Maloch, Fighter,Tank,Off Lane,,Melee
+H068,Paine,Assassin,,Jungle,,Ranged
+H069,Ilumia,Mage,,Mid Lane,,Ranged
+H070,WuKong,Assassin,,Jungle,,Melee
+H071,Kriknak,Assassin,,Jungle,,Melee
+H072,Mortos,Fighter,,Off Lane,,Melee
+H073,Kaine,Assassin,,Jungle,,Melee
+H074,Slimz,Carry,,Carry,,Ranged
+H075,Preyta,Mage,,Mid Lane,,Ranged
+H076,Airi, Fighter,Assassin,Off Lane ,Jungle,Melee
+H077,Skud, Fighter,Tank,Off Lane ,Jungle,Melee
+H078,Raz, Assassin,Mage,Mid Lane,,Melee
+H079,Lauriel,Mage,,Mid Lane,,Ranged
+H080,Zuka, Fighter,Assassin,Off Lane,Jungle,Melee
+H081,Tulen,Mage,,Mid Lane,,Ranged
+H082,Omen,Fighter,,Off Lane,,Melee
+H083,Baldum, Tank,Roaming,Roaming,,Melee
+H084,Max,Tank,,Off Lane,,Melee
+H085,Liliana, Mage,Assassin,Mid Lane,,Ranged
+H086,Y'bneth,Tank,,Roaming,Off Lane,Melee
+H087,Wisp,Carry,,Carry,,Ranged
+H088,Marja,Mage,,Off Lane,,Ranged
+H089,The Flash,Assassin,,Jungle,Mid Lane,Melee
+H090,Arum, Tank,Roaming,Roaming,,Ranged
+H091,Rourke,Fighter,,Jungle,,Melee
+H092,Riktor,Fighter,,Off Lane,Roaming,Melee
+H093,Roxie, Fighter,Tank,Off Lane,,Melee
+H094,Annette, Mage,Roaming,Roaming,Mid Lane,Ranged
+H095,Quillen,Assassin,,Jungle,,Melee
+H096,Sephera, Mage,Roaming,Roaming,Mid Lane,Ranged
+H097,Zip,Roaming,,Roaming,,Melee
+H098,D'Arcy,Mage,,Mid Lane,,Ranged
+H099,Errol,Fighter,,Off Lane,,Melee
+H100,Florentino,Fighter,,Off Lane,,Melee
+H101,Veres,Fighter,,Off Lane,,Melee
+H102,Amily,Fighter,,Off Lane,,Melee
+H103,Elsu,Carry,,Carry,,Ranged
+H104,Wiro, Fighter,Tank,Roaming,Off Lane,Melee
+H105,Capheny,Carry,,Carry,,Ranged
+H106,Qi, Fighter,Assassin,Off Lane,Jungle,Melee
+H107,Yena,Fighter,,Off Lane,,Melee
+H108,Enzo,Assassin,,Jungle,,Melee
+H109,Laville,Carry,,Carry,,Ranged
+H110,Celica,Carry,,Carry,,Ranged
+H111,Yan, Fighter,Assassin,Jungle,Off Lane,Melee
+H112,Zata, Mage,Assassin,Mid Lane,,Ranged
+H113,Teeri,Carry,,Carry,,Jarak
+H114,Ming,Roaming,,Roaming,,Ranged
+H115,Erin,Carry,,Carry,Jungle,Ranged
+H116,Bijan,Fighter,,Off Lane,Jungle,Ranged
+H117,Bonnie,Mage,,Mid Lane,,Melee
+H118,Charlotte,Fighter,,Off Lane,Jungle,Melee
+H119,Dolia,Roaming,,Roaming,,Ranged

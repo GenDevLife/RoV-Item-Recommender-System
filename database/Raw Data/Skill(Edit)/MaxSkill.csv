@@ -1,0 +1,23 @@
+﻿Static Shock (Passive),,Skill Type,Effect,Recommend Item Type,,,
+,,True Damage,"Deals true damage, Reduces enemy healing",Attack,,,
+,,,,,,,
+Bionic Blender,Skill Type,Effect,Level,Damage,Cooldown,Mana,Recommend Item Type
+,Physical,AoE Physical Damage,1,300,5,55,"Attack, Movement"
+,,,2,360,5,55,
+,,,3,420,5,55,
+,,,4,480,5,55,
+,,,5,540,5,55,
+,,,6,600,5,55,
+,,,,,,,
+Smooth Moves,Skill Type,Effect,Level,Defense Up,Cooldown,Mana,Recommend Item Type
+,Mobility,Dash and Gain Damage Reduction,1,12,15%,65,Defense
+,,,2,11.6,16%,65,
+,,,3,11.2,17%,65,
+,,,4,10.8,18%,65,
+,,,5,10.4,19%,65,
+,,,6,10,20%,65,
+,,,,,,,
+Liftoff (Ultimate),Skill Type,Effect,Level,Damage,Cooldown,Mana,Recommend Item Type
+,Physical,,1,700,70,140,Attack
+,,,2,950,65,140,
+,,,3,1200,60,140,
