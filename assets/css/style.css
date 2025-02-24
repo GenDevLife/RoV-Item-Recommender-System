@@ -1,19 +1,134 @@
+@font-face {
+    font-family: Sukhumvit;
+    src: url(../fonts/sukhumvit-set/SukhumvitSet-Light.ttf);
+}
+
 body {
     padding: 0;
     margin: 0;
+    background-color: black;
 }
 
 header {
+    display: flex;
     padding: 0;
     margin: 5px;
-    gap: 1vw;
-    height: 5vw;
+    height: 6vw;
     align-items: center;
+    justify-content: flex-end;
 }
 
-header button {
-    width: 6vw;
+.Mode-Toggle {
+    display: flex;
+    margin-right: 2vw;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+#modeLabel {
+    margin-left: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: "Sukhumvit";
+    color: white;
+}
+
+.Input-Container {
+    display: flex;
+}
+
+#Hero-Image {
+    width: 10vw;
+    height: 10vw;
+    padding: 0.5vw;
+    border-radius: 1vw;
+    background-color: rgba(83, 83, 83, 0.692);
+    object-fit: cover;
+}
+
+.Filter-Class-Container {
+    display: flex;
+    height: 5vw;
+    padding: 1vw;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5vw;
+}
+
+.Filter-Class-Container button {
+    width: 8vw;
     height: 3vw;
-    border-radius: 20px;
-    border: 0;
+    border-radius: 10px;
+    border-color: white;
+    background-color: unset;
+    color: white;
+    cursor: pointer;
+    transition-duration: 0.4s;
+    font-weight: bolder;
+}
+
+.Filter-Class-Container button:hover {
+    color: black;
+    background-color: white;
+}
+
+.Dropdown-Button-Container {
+    display: flex;
+    gap: 0.5vw;
+    padding: 1vw;
+}
+
+.Dropdown-Button-Container label {
+    font-family: "Sukhumvit";
+    font-weight: 900;
+    color: white;
+}
+
+.Dropdown-Button-Container select {
+    width: 10vw;
+    font-family: "Sukhumvit";
+    border: 10px unset #767676;
 }

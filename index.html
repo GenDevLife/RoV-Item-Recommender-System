@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recommender System</title>
-    <link rel="stylesheet" href="./assets/css/style.css">
-</head>
-<body>
-    <header>
-        <div class="Menu-Button">
-            <button value="Basic">Basic</button>
-            <button value="Advance">Advance</button>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="icon" href="./assets/image/hero/logo_rov.png" />
+  </head>
+  <body>
+    <div class="Input-Container">
+      <div class="Image-Container">
+        <img
+          id="Hero-Image"
+          src="./assets/image/hero/logo_rov.png"
+          alt="Image-Space"
+        />
+      </div>
+      <div class="Input-Area">
+        <div class="Filter-Class-Container">
+          <button value="Tank">Tank</button>
+          <button value="Assassin">Assassin</button>
+          <button value="Fighter">Fighter</button>
+          <button value="Carry">Carry</button>
+          <button value="Mage">Mage</button>
+          <button value="Support">Support</button>
         </div>
-    </header>
-</body>
+        <div class="Dropdown-Button-Container">
+          <div class="Hero-Dropdown-Container">
+            <label for="Hero-Dropdown">Choose Hero :</label>
+            <select id="Hero-Dropdown"></select>
+            <option value=""></option>
+          </div>
+          <div class="Class-Dropdown-Container">
+            <label for="Class-Dropdown">Choose Class :</label>
+            <select id="Class-Dropdown"></select>
+            <option value=""></option>
+          </div>
+          <div class="Lane-Dropdown-Container">
+            <label for="Lane-Dropdown">Choose Lane :</label>
+            <select id="Lane-Dropdown"></select>
+            <option value=""></option>
+          </div>
+          <div class="Calculate-Button-Container">
+            <button id="Calculate-Button">Calculate</button>
+          </div>
+        </div>
+        <div class="Result-Container"></div>
+      </div>
+    </div>
+  </body>
 </html>
