@@ -1,134 +1,450 @@
-@font-face {
-    font-family: Sukhumvit;
-    src: url(../fonts/sukhumvit-set/SukhumvitSet-Light.ttf);
-}
-
 body {
     padding: 0;
     margin: 0;
     background-color: black;
 }
 
-header {
-    display: flex;
-    padding: 0;
-    margin: 5px;
-    height: 6vw;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.Mode-Toggle {
-    display: flex;
-    margin-right: 2vw;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 26px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: 0.4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: 0.4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-    transform: translateX(24px);
-}
-
-#modeLabel {
-    margin-left: 10px;
-    font-size: 18px;
-    font-weight: bold;
-    font-family: "Sukhumvit";
-    color: white;
-}
-
 .Input-Container {
     display: flex;
+    border-radius: 1vw;
+    border: 0.35vw solid white;
+    flex-direction: column;
+    gap: 0.5vw;
+    margin: 1vw;
+    padding: 1vw;
 }
 
-#Hero-Image {
-    width: 10vw;
-    height: 10vw;
+.Hero-Header {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5vw;
+    justify-content: center;
+}
+
+.Hero-Header p {
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+}
+
+.Filter-Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Filter-Container h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin-bottom: 0.1vw;
+}
+
+.Filter-Button {
+    display: flex;
+    gap: 2vw;
+}
+
+.Filter-Button button {
+    color: black;
+    background-color: white;
+    border-radius: 0.5vw;
+    font-weight: 900;
+    width: 6vw;
+    height: 3vw;
+}
+
+.Hero-Container h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin-bottom: 0.1vw;
+}
+
+.Hero-Dropdown {
+    position: relative;
+    width: 20vw;
+}
+
+.Hero-Dropdown-Toggle {
+    background-color: white;
+    border-radius: 0.5vw;
+    padding: 0.8vw 1vw;
+    font-size: 1vw;
+    font-weight: 900;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #4b5563;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#hero-dropdown-icon {
+    font-size: 2vw;
+    color: #000000;
+}
+
+#Hero-Dropdown-Menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 0.5vw;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    padding: 1vw;
+    z-index: 100;
+}
+
+#hero-search-box {
+    width: 16.5vw;
     padding: 0.5vw;
-    border-radius: 1vw;
-    background-color: rgba(83, 83, 83, 0.692);
+    margin-bottom: 0.5vw;
+    border: 2px solid #b7b7b7;
+    border-radius: 0.5vw;
+    font-size: 1vw;
+}
+
+.option {
+    padding: 0.6vw;
+    border-radius: 0.5vw;
+    display: flex;
+    align-items: center;
+    gap: 0.5vw;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.option:hover {
+    background-color: #ede9fe;
+}
+
+.option img {
+    width: 2vw;
+    height: 2vw;
+    border-radius: 50%;
     object-fit: cover;
 }
 
-.Filter-Class-Container {
-    display: flex;
-    height: 5vw;
-    padding: 1vw;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.5vw;
+.hidden {
+    display: none;
 }
 
-.Filter-Class-Container button {
-    width: 8vw;
-    height: 3vw;
-    border-radius: 10px;
-    border-color: white;
-    background-color: unset;
+
+.ClassAndLane-Container {
+    display: flex;
+    gap: 15vw;
+}
+
+.ClassAndLane-Container h1 {
     color: white;
-    cursor: pointer;
-    transition-duration: 0.4s;
-    font-weight: bolder;
-}
-
-.Filter-Class-Container button:hover {
-    color: black;
-    background-color: white;
-}
-
-.Dropdown-Button-Container {
-    display: flex;
-    gap: 0.5vw;
-    padding: 1vw;
-}
-
-.Dropdown-Button-Container label {
-    font-family: "Sukhumvit";
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 900;
-    color: white;
+    font-size: 1.5vw;
+    margin-bottom: 0.1vw;
 }
 
-.Dropdown-Button-Container select {
+.Item-Header {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5vw;
+    justify-content: center;
+}
+
+.Item-Header p {
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+}
+
+.Force-Container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1vw;
+}
+
+.Force-Text {
+    display: flex;
+    align-items: baseline;
+}
+
+.Force-Button {
+    display: flex;
+    gap: 1vw;
+    margin-top: 0.2vw;
+}
+
+.Force-Button button {
+    border-radius: 1vw;
+    width: 5vw;
+    height: 5vw;
+}
+
+.Force-Text h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin: 0;
+}
+
+.Force-Text h2 {
+    color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin: 0;
+}
+
+.BAN-Text {
+    display: flex;
+    align-items: baseline;
+}
+
+.BAN-Text h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin: 0;
+}
+
+.BAN-Text h2 {
+    color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 1.5vw;
+    margin: 0;
+}
+
+.BAN-Button {
+    display: flex;
+    gap: 1vw;
+}
+
+.BAN-Button button {
+    border-radius: 1vw;
+    width: 5vw;
+    height: 5vw;
+}
+
+.Calculate-Container {
+    display: flex;
+    gap: 5vw;
+    margin-top: 5vw;
+    justify-content: center;
+    align-items: center;
+}
+
+.Calculate-Container p {
+    color: white;
+    font-size: 2vw;
+    font-weight: bold;
+    margin: 0;
+}
+
+.Calculate-Container button {
+    color: black;
+    border-radius: 5vw;
+    width: 40vw;
+    height: 5vw;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+}
+
+.Result-Container {
+    display: flex;
+    border-radius: 1vw;
+    border: 0.35vw solid white;
+    flex-direction: column;
+    gap: 0.5vw;
+    margin: 1vw;
+    padding: 1vw;
+}
+
+.Result-Header {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5vw;
+    justify-content: center;
+}
+
+.Result-Header p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+}
+
+.Early-Text {
+    display: flex;
+    align-items: center;
+}
+
+.Early-Text h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Early-Text h2 {
+    color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Early-Image-Container {
+    display: flex;
+    gap: 2vw;
+}
+
+.Early-Image-Container img {
+    background-color: white;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 0.5vw;
+}
+
+.Mid-Text {
+    display: flex;
+    align-items: center;
+}
+
+.Mid-Text h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Mid-Text h2 {
+    color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Mid-Image-Container {
+    display: flex;
+    gap: 2vw;
+}
+
+.Mid-Image-Container img {
+    background-color: white;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 0.5vw;
+}
+
+.Late-Text {
+    display: flex;
+    align-items: center;
+}
+
+.Late-Text h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Late-Text h2 {
+    color: gray;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Late-Image-Container {
+    display: flex;
+    gap: 2vw;
+    margin-bottom: 2vw;
+}
+
+.Late-Image-Container img {
+    background-color: white;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 0.5vw;
+}
+
+.Compare-Container {
+    display: flex;
+    border-radius: 1vw;
+    border: 0.35vw solid white;
+    flex-direction: column;
+    gap: 0.5vw;
+    margin: 1vw;
+    padding: 1vw;
+}
+
+.Compare-Header {
+    display: flex;
+    background-color: white;
+    border-radius: 0.5vw;
+    justify-content: center;
+}
+
+.Compare-Header p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+}
+
+.Compare-Media {
+    display: flex;
+}
+
+.Select-Game-Phase-Container h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Result-Game-Phase-Container {
+    display: flex;
+    gap: 2vw;
+}
+
+.Result-Game-Phase-Container img {
+    background-color: white;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 0.5vw;
+}
+
+.VS-Container {
+    display: flex;
+    background-color: white;
     width: 10vw;
-    font-family: "Sukhumvit";
-    border: 10px unset #767676;
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    border-radius: 0.5vw;
+    justify-content: center;
+}
+
+.VS-Container p {
+    color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 900;
+    font-size: 5vw;
+    margin: 0;
+}
+
+.Select-Meta-Item-Container {
+    display: flex;
+    flex-direction: column;
+}
+
+.Select-Meta-Item-Container h1 {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.5vw;
+}
+
+.Select-Meta-Item-Button {
+    display: flex;
+    gap: 2vw;
+}
+
+.Select-Meta-Item-Button button {
+    background-color: white;
+    border-radius: 1vw;
+    width: 5vw;
+    height: 5vw;
 }
