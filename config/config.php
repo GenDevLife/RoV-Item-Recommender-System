@@ -1,12 +1,17 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "rov";
+$host = 'localhost';
+$username = 'root';
+$password = '';
+$database = 'rov';
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+// PDO
+$pdo = new PDO( "mysql:host={$host}; dbname={$database}", $username, $password, [ PDO::ATTR_EMULATE_PREPARES => false ] );
+// OOP mysqli
+$mysqli = new mysqli($host, $username, $password, $database );
+// Procedural mysqli
+$mysqli_p = mysqli_connect($host, $username, $password, $database );
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if(!$mysqli_p){
+    die("Connection failed".mysqli_connect_error());
 }
 ?>
