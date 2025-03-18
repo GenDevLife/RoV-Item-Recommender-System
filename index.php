@@ -85,6 +85,7 @@ $farmItemImages = glob($farmItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
 
 $supportItemDir = "image/item/Support Item/";
 $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,73 +93,72 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Recommender System</title>
-  <!-- ลิงก์ CSS ของคุณ -->
   <link rel="stylesheet" href="./assets/css/style.css">
-  <!-- Chart.js -->
   <script src="./assets/js/node_modules/chart.js/dist/chart.umd.js"></script>
 </head>
 <body>
   <!-- Input, Hero, Filter, และ Hero Dropdown -->
   <div class="Input-Container">
-    <div class="Hero-Header">
-      <p>-- Hero --</p>
-    </div>
-    <div class="Filter-Container">
-      <h1>Select Filter</h1>
-      <div class="Filter-Button">
-        <button value="Fighter" onclick="filterByClass('Fighter')">Fighter</button>
-        <button value="Tank" onclick="filterByClass('Tank')">Tank</button>
-        <button value="Mage" onclick="filterByClass('Mage')">Mage</button>
-        <button value="Carry" onclick="filterByClass('Carry')">Carry</button>
-        <button value="Support" onclick="filterByClass('Support')">Support</button>
-      </div>
-    </div>
-    <div class="Hero-Container">
-      <h1>Select Hero</h1>
-      <div class="Hero-Dropdown">
-        <div class="Hero-Dropdown-Toggle" onclick="toggleDropdown()">
-          <span id="selected-text">Select</span>
-          <span class="icon" id="hero-dropdown-icon">▾</span>
-        </div>
-        <div class="hidden" id="Hero-Dropdown-Menu">
-          <input type="text" id="hero-search-box" placeholder="Select" oninput="HerofilterOption()">
-          <?php foreach ($heroes as $hero): ?>
-            <?php
-              $heroName = $hero['Hero_Name'];
-              $imageFolder = 'image/heroes/';
-              $extensions = ['jpg', 'jpeg', 'png', 'webp'];
-              $heroImage = 'image/placeholder.jpg'; // fallback
-
-              foreach ($extensions as $ext) {
-                $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
-                if (file_exists($tryPath)) {
-                  $heroImage = $tryPath;
-                  break;
-                }
-              }
-            ?>
-            <div class="Hero-Option"
-              data-hero-name="<?= htmlspecialchars($heroName) ?>"
-              data-hero-class="<?= htmlspecialchars($hero['First_Class']) ?>"
-              data-hero-second-class="<?= htmlspecialchars($hero['Second_Class']) ?>"
-              onclick="selectHero(this)">
-              <img src="<?= $heroImage ?>" class="hero-thumbnail" alt="<?= htmlspecialchars($heroName) ?>">
-              <span><?= htmlspecialchars($heroName) ?></span>
-            </div>
-          <?php endforeach; ?>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Class และ Lane Dropdown -->
-  <div class="ClassAndLane-Container">
+     <div class="Hero-Header">
+       <p>-- Hero --</p>
+     </div>
+     <div class="Filter-Container">
+       <h1>Select Filter</h1>
+       <div class="Filter-Button">
+         <button value="Fighter" onclick="filterByClass('Fighter')">Fighter</button>
+         <button value="Tank" onclick="filterByClass('Tank')">Tank</button>
+         <button value="Mage" onclick="filterByClass('Mage')">Mage</button>
+         <button value="Carry" onclick="filterByClass('Carry')">Carry</button>
+         <button value="Support" onclick="filterByClass('Support')">Support</button>
+       </div>
+     </div>
+     <div class="Hero-Container">
+       <h1>Select Hero</h1>
+       <div class="Hero-Dropdown">
+         <div class="Hero-Dropdown-Toggle" onclick="toggleDropdown()">
+           <span id="selected-text">Select</span>
+           <span class="icon" id="hero-dropdown-icon">▾</span>
+         </div>
+         <div class="hidden" id="Hero-Dropdown-Menu">
+           <input type="text" id="hero-search-box" placeholder="Select" oninput="HerofilterOption()">
+           <?php foreach ($heroes as $hero): ?>
+             <?php
+             $heroName = $hero['Hero_Name'];
+             $baseFileName = preg_replace('/[^a-zA-Z0-9]/', '', $heroName); // ลบอักขระพิเศษออกจากชื่อ
+ 
+             $imageFolder = 'image/heroes/';
+             $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+             $heroImage = 'image/placeholder.jpg'; // fallback
+ 
+             foreach ($extensions as $ext) {
+               $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
+               if (file_exists($tryPath)) {
+                 $heroImage = $tryPath;
+                 break;
+               }
+             }
+             ?>
+             <div class="Hero-Option"
+               data-hero-name="<?= htmlspecialchars($heroName) ?>"
+               data-hero-class="<?= htmlspecialchars($hero['First_Class']) ?>"
+               data-hero-second-class="<?= htmlspecialchars($hero['Second_Class']) ?>"
+               onclick="selectHero(this)">
+               <img src="<?= $heroImage ?>" class="hero-thumbnail" alt="<?= htmlspecialchars($heroName) ?>">
+               <span><?= htmlspecialchars($heroName) ?></span>
+             </div>
+           <?php endforeach; ?>
+ 
+         </div>
+       </div>
+     </div>
+   </div>
+   <div class="ClassAndLane-Container">
     <div class="Class-Container">
       <h1>Select Class</h1>
       <div class="Class-Dropdown">
         <div class="Class-Dropdown-Toggle" onclick="toggleClassDropdown()">
           <span id="selected-class-text">Select Class</span>
-          <span class="icon">▾</span>
+          <span class="icon">?</span>
         </div>
         <div class="hidden" id="Class-Dropdown-Menu">
           <div class="Dropdown-Option" onclick="selectClass('Fighter')">Fighter</div>
@@ -175,20 +175,20 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
       <div class="Lane-Dropdown">
         <div class="Lane-Dropdown-Toggle" onclick="toggleLaneDropdown()">
           <span id="selected-lane-text">Select Lane</span>
-          <span class="icon">▾</span>
+          <span class="icon">?</span>
         </div>
         <div id="FarmItemSection" class="hidden">
           <h1>Select Farm Item <span>(Only 1 item)</span></h1>
           <div id="selected-farm-item" class="dropdown-btn" onclick="toggleFarmDropdown()">-- Select Farm Item --</div>
           <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-              foreach ($farmItemImages as $itemPath) {
-                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
+            foreach ($farmItemImages as $itemPath) {
+              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+              echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
                         <img src='$itemPath' class='dropdown-img' alt='$itemName'>
                         <span class='dropdown-text'>$itemName</span>
                       </div>";
-              }
+            }
             ?>
           </div>
         </div>
@@ -198,13 +198,13 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
           <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">-- Select Support Item --</div>
           <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-              foreach ($supportItemImages as $itemPath) {
-                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
+            foreach ($supportItemImages as $itemPath) {
+              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+              echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
                         <img src='$itemPath' class='dropdown-img' alt='$itemName'>
                         <span class='dropdown-text'>$itemName</span>
                       </div>";
-              }
+            }
             ?>
           </div>
         </div>
