@@ -48,19 +48,57 @@ $heroes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Get unique hero classes for filter buttons
 $classesQuery = $conn->query("SELECT DISTINCT First_Class FROM heroes UNION SELECT DISTINCT Second_Class FROM heroes WHERE Second_Class IS NOT NULL");
 $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
+
+/* ---------------------------------------------------------
+   ฟังก์ชันสำหรับดึงไฟล์รูปทั้งหมดจากโฟลเดอร์ item 
+   (รวมโฟลเดอร์ย่อย) โดยใช้ RecursiveDirectoryIterator
+   --------------------------------------------------------- */
+function getAllItemImages($directory) {
+  $extensions = ['jpg','jpeg','png','webp'];
+  $images = [];
+  if (is_dir($directory)) {
+    // ใช้ \RecursiveDirectoryIterator และ \RecursiveIteratorIterator จาก global namespace
+    $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+    foreach ($iterator as $file) {
+      if (!$file->isDir()) {
+        $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+        if (in_array($ext, $extensions)) {
+          // แปลง path จากระบบไฟล์ (absolute) เป็น relative URL
+          $fullPath = str_replace('\\', '/', $file->getPathname());
+          $relativePath = str_replace($_SERVER['DOCUMENT_ROOT'], '', $fullPath);
+          $images[] = $relativePath;
+        }
+      }
+    }
+  }
+  return $images;
+}
+
+// เรียกไฟล์รูปทั้งหมดจากโฟลเดอร์ item (รวมโฟลเดอร์ย่อย)
+$allItemImages = getAllItemImages("image/item");
+
+/* ---------------------------------------------------------
+   ส่วนสำหรับ Farm Item และ Support Item (ใช้ glob)
+   --------------------------------------------------------- */
+$farmItemDir = "image/item/Farm Item";
+$farmItemImages = glob($farmItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
+
+$supportItemDir = "image/item/Support Item/";
+$supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Recommender System</title>
+  <!-- ลิงก์ CSS ของคุณ -->
   <link rel="stylesheet" href="./assets/css/style.css">
+  <!-- Chart.js -->
   <script src="./assets/js/node_modules/chart.js/dist/chart.umd.js"></script>
 </head>
-
 <body>
+  <!-- Input, Hero, Filter, และ Hero Dropdown -->
   <div class="Input-Container">
     <div class="Hero-Header">
       <p>-- Hero --</p>
@@ -86,20 +124,18 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
           <input type="text" id="hero-search-box" placeholder="Select" oninput="HerofilterOption()">
           <?php foreach ($heroes as $hero): ?>
             <?php
-            $heroName = $hero['Hero_Name'];
-            $baseFileName = preg_replace('/[^a-zA-Z0-9]/', '', $heroName); // ลบอักขระพิเศษออกจากชื่อ
+              $heroName = $hero['Hero_Name'];
+              $imageFolder = 'image/heroes/';
+              $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+              $heroImage = 'image/placeholder.jpg'; // fallback
 
-            $imageFolder = 'image/heroes/';
-            $extensions = ['jpg', 'jpeg', 'png', 'webp'];
-            $heroImage = 'image/placeholder.jpg'; // fallback
-
-            foreach ($extensions as $ext) {
-              $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
-              if (file_exists($tryPath)) {
-                $heroImage = $tryPath;
-                break;
+              foreach ($extensions as $ext) {
+                $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
+                if (file_exists($tryPath)) {
+                  $heroImage = $tryPath;
+                  break;
+                }
               }
-            }
             ?>
             <div class="Hero-Option"
               data-hero-name="<?= htmlspecialchars($heroName) ?>"
@@ -110,12 +146,12 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
               <span><?= htmlspecialchars($heroName) ?></span>
             </div>
           <?php endforeach; ?>
-
         </div>
-
       </div>
     </div>
   </div>
+
+  <!-- Class และ Lane Dropdown -->
   <div class="ClassAndLane-Container">
     <div class="Class-Container">
       <h1>Select Class</h1>
@@ -146,16 +182,13 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
           <div id="selected-farm-item" class="dropdown-btn" onclick="toggleFarmDropdown()">-- Select Farm Item --</div>
           <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-            $farmItemDir = "image/item/Farm Item";
-            $farmItemImages = glob($farmItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
-
-            foreach ($farmItemImages as $itemPath) {
-              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-              echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
-        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
-        <span class='dropdown-text'>$itemName</span>
-      </div>";
-            }
+              foreach ($farmItemImages as $itemPath) {
+                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+                echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
+                        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
+                        <span class='dropdown-text'>$itemName</span>
+                      </div>";
+              }
             ?>
           </div>
         </div>
@@ -165,20 +198,16 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
           <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">-- Select Support Item --</div>
           <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-            $supportItemDir = "image/item/Support Item/";
-            $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
-
-            foreach ($supportItemImages as $itemPath) {
-              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-              echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
-              <img src='$itemPath' class='dropdown-img' alt='$itemName'>
-              <span class='dropdown-text'>$itemName</span>
-            </div>";
-            }
+              foreach ($supportItemImages as $itemPath) {
+                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+                echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
+                        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
+                        <span class='dropdown-text'>$itemName</span>
+                      </div>";
+              }
             ?>
           </div>
         </div>
-        <!-- hidden field เก็บชื่อไอเทม -->
         <input type="hidden" id="selectedSupportItem" name="support_item">
         <div class="hidden" id="Lane-Dropdown-Menu">
           <div class="Dropdown-Option" onclick="selectLane('Dark Slayer Lane')">Dark Slayer Lane</div>
@@ -191,19 +220,27 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
     </div>
   </div>
 
-  </div>
   <div class="Item-Header">
     <p>-- Item --</p>
   </div>
+
   <!-- Item Selection Popup with Search -->
   <div id="item-popup" class="popup-overlay hidden">
     <div class="popup-content">
       <input id="item-search" type="text" placeholder="Search Items" oninput="filterItemList()">
-      <div id="popup-item-list" class="popup-item-grid"></div>
-      <button class="popup-close" onclick="closePopup()">Close</button>
+      <div id="popup-item-list" class="popup-item-grid">
+        <?php foreach ($allItemImages as $itemPath): ?>
+          <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
+          <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
+            <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
+          </div>
+        <?php endforeach; ?>
+      </div>
+      <button class="popup-close" onclick="closeItemPopup()">Close</button>
     </div>
   </div>
-  </div>
+
+  <!-- Force Container -->
   <div class="Force-Container">
     <div class="Force-Text">
       <h1>Select Force Item</h1>
@@ -211,12 +248,13 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
     </div>
     <div class="Force-Button">
       <?php for ($i = 0; $i < 3; $i++): ?>
-        <button id="force-btn-<?= $i ?>" onclick="openPopup('force', <?= $i ?>)">Click Here</button>
+        <!-- ใช้ forceBanButtonClick() เพื่อเปิด popup หรือเคลียร์ไอเทม -->
+        <button id="force-btn-<?= $i ?>" onclick="forceBanButtonClick(event, 'force', <?= $i ?>)">Click Here</button>
       <?php endfor; ?>
-
     </div>
-
   </div>
+
+  <!-- BAN Container -->
   <div class="BAN-Container">
     <div class="BAN-Text">
       <h1>Select BAN Item</h1>
@@ -224,9 +262,8 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
     </div>
     <div class="BAN-Button">
       <?php for ($i = 0; $i < 3; $i++): ?>
-        <button id="ban-btn-<?= $i ?>" onclick="openPopup('ban', <?= $i ?>)">Click Here</button>
+        <button id="ban-btn-<?= $i ?>" onclick="forceBanButtonClick(event, 'ban', <?= $i ?>)">Click Here</button>
       <?php endfor; ?>
-
     </div>
   </div>
 
@@ -234,8 +271,6 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
     <p>//////////////////</p>
     <button>Calculate</button>
     <p>//////////////////</p>
-  </div>
-  </div>
   </div>
 
   <div class="Result-Container">
@@ -294,9 +329,7 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
       <div class="Input-Space">
         <div class="Select-Game-Phase-Container">
           <h1>Select Game Phase</h1>
-          <div class="Select-Game-Phase-Dropdown">
-
-          </div>
+          <div class="Select-Game-Phase-Dropdown"></div>
           <div class="Result-Game-Phase-Container">
             <img>
             <img>
@@ -321,14 +354,58 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
           </div>
         </div>
       </div>
-      <div class="Chart-Space">
+      <div class="Chart-Compare">
         <canvas id="Chart-Compare"></canvas>
       </div>
     </div>
   </div>
 
+  <!-- Inline Script สำหรับ Item Popup -->
+  <script>
+    let currentSlot = null;
+    let currentType = null;
+
+    // เมื่อคลิกปุ่ม Force/BAN
+    function forceBanButtonClick(event, type, slotIndex) {
+      const btn = event.currentTarget;
+      // ถ้ามีไอเทมอยู่แล้วในปุ่ม => เคลียร์ให้กลับเป็น "Click Here"
+      if (btn.querySelector('img')) {
+        btn.innerHTML = "Click Here";
+      } else {
+        currentSlot = slotIndex;
+        currentType = type;
+        document.getElementById('item-search').value = "";
+        document.getElementById('item-popup').classList.remove('hidden');
+      }
+    }
+
+    // ปุ่ม Close ใน Popup
+    function closeItemPopup() {
+      document.getElementById('item-popup').classList.add('hidden');
+    }
+
+    // เมื่อเลือกไอเทมใน Popup ให้แสดงไอเทมนั้นในปุ่มที่คลิก (และไม่ปิด Popup)
+    function selectPopupItem(itemName, itemPath) {
+      const buttonId = (currentType === 'force')
+        ? `force-btn-${currentSlot}`
+        : `ban-btn-${currentSlot}`;
+      const button = document.getElementById(buttonId);
+      button.innerHTML = `<img src="${itemPath}" alt="${itemName}" style="width:100%; height:100%; object-fit:contain;">`;
+      // ไม่ปิด Popup เพื่อให้ไอเทมยังคงแสดงอยู่
+    }
+
+    // ฟังก์ชันค้นหาไอเทมใน Popup
+    function filterItemList() {
+      const searchValue = document.getElementById('item-search').value.toLowerCase();
+      const items = document.querySelectorAll('#popup-item-list .item-container');
+      items.forEach(item => {
+        let name = item.querySelector('img').getAttribute('alt').toLowerCase();
+        item.style.display = name.includes(searchValue) ? 'inline-block' : 'none';
+      });
+    }
+  </script>
+
+  <!-- Script สำหรับ dropdown.js (Hero/Class/Lane) -->
   <script src="./assets/js/dropdown.js"></script>
-
 </body>
-
 </html>

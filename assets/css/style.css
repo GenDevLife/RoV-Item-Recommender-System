@@ -760,3 +760,26 @@ body {
     font-size: 0.9rem;
     color: #444;
 }
+.Compare-Container {
+    padding: 20px;
+    border: 2px solid white;
+    margin: 20px;
+  }
+  .Compare-Item-Slots {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  .compare-slot, .meta-img {
+    width: 60px;
+    height: 60px;
+    background-color: #fff;
+    border: 2px solid gray;
+  }
+  .VS-Text {
+    font-size: 40px;
+    text-align: center;
+    margin: 10px;
+    font-weight: bold;
+  }
+  
