@@ -218,6 +218,7 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
         </div>
       </div>
     </div>
+    
   </div>
 
   <div class="Item-Header">

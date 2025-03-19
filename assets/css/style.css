@@ -10,13 +10,13 @@ body {
     border: 0.35vw solid white;
     flex-direction: column;
     gap: 0.5vw;
-    margin: 1vw;
+    margin: 5vw;
     padding: 1vw;
 }
 
 .Hero-Header {
     display: flex;
-    background-color: white;
+    background-color: rgb(245, 243, 243);
     border-radius: 0.5vw;
     justify-content: center;
 }
@@ -29,22 +29,30 @@ body {
 
 .Filter-Container {
     display: flex;
-    flex-direction: column;
+    align-items: center; /* จัดให้ h1 และปุ่มอยู่ตรงกลางแนวตั้ง */
+    gap: 2vw; /* ระยะห่างระหว่าง h1 กับปุ่ม */
+    justify-content: center;
+    
 }
 
 .Filter-Container h1 {
-    color: white;
+    color: rgb(255, 253, 253);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 900;
     font-size: 1.5vw;
     margin-bottom: 0.1vw;
+
+    
 }
 
 .Filter-Button {
     display: flex;
-    gap: 2vw;
+    gap: 1vw; /* ระยะห่างระหว่างปุ่ม */
+    
+    
 }
 
+/* Default button styling */
 .Filter-Button button {
     color: black;
     background-color: white;
@@ -52,33 +60,66 @@ body {
     font-weight: 900;
     width: 6vw;
     height: 3vw;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect */
+.Filter-Button button:hover {
+    background-color: rgb(14, 116, 241);
+    color: rgb(249, 246, 246);
+}
+
+/* Active effect when clicked */
+.Filter-Button button:active {
+    background-color: rgb(28, 164, 249);
+    color: white;
+}
+
+/* Selected button styling */
+.Filter-Button button.selected {
+    background-color: #ffe30d; /* Change to any color you want */
+    color: rgb(16, 1, 1);
+    
+}
+
+
+.Hero-Container {
+    display: flex;
+    align-items: center; /* Aligns them vertically in the center */
+    justify-content: center;
+    gap: 2vw; /* Adds space between elements inside the container */
 }
 
 .Hero-Container h1 {
-    color: white;
+    color: rgb(242, 238, 238);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 900;
     font-size: 1.5vw;
-    margin-bottom: 0.1vw;
+    margin-bottom: 0.2vw;
 }
 
 .Hero-Dropdown {
     position: relative;
     width: 20vw;
+    margin-left: 1vw; /* Optional: Add some space on the left side of the dropdown */
+    margin-right: 2vw; /* Optional: space between the dropdown and the header */
 }
+
 
 .Hero-Dropdown-Toggle {
     background-color: white;
     border-radius: 0.5vw;
     padding: 0.8vw 1vw;
-    font-size: 1vw;
+    font-size: 1.2vw;
     font-weight: 900;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #4b5563;
+    color: #1972ef;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-left: 1vw;
+    
 }
 
 #hero-dropdown-icon {
@@ -91,18 +132,19 @@ body {
     top: 100%;
     left: 0;
     right: 0;
-    background-color: white;
+    background-color: rgb(242, 238, 238);
     border-radius: 0.5vw;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 1vw;
     z-index: 100;
+    
 }
 
 #hero-search-box {
     width: 16.5vw;
     padding: 0.5vw;
     margin-bottom: 0.5vw;
-    border: 2px solid #b7b7b7;
+    border: 2px solid #efebeb;
     border-radius: 0.5vw;
     font-size: 1vw;
 }

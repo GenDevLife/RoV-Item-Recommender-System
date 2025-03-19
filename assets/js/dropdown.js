@@ -227,3 +227,18 @@ function selectHero(heroElement) {
     banMaxText.innerText = "(Max 3 item)";
   }
 }
+
+
+// Select all buttons in the button container
+const buttons = document.querySelectorAll('.Filter-Button button');
+
+// Add event listener to each button
+buttons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Remove 'selected' class from all buttons
+        buttons.forEach(b => b.classList.remove('selected'));
+
+        // Add 'selected' class to the clicked button
+        this.classList.add('selected');
+    });
+});
