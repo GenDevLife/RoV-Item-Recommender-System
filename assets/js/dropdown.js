@@ -1,5 +1,3 @@
-// dropdown.js
-
 const dropdownMenu = document.getElementById("Hero-Dropdown-Menu");
 const selectedText = document.getElementById("selected-text");
 
@@ -22,17 +20,42 @@ function selectHero(heroElement) {
   const heroName = heroElement.dataset.heroName;
   const firstClass = heroElement.dataset.heroClass;
   const secondClass = heroElement.dataset.heroSecondClass || "";
+  const firstLane = heroElement.dataset.heroFirstLane;
+  const secondLane = heroElement.dataset.heroSecondLane;
+
   document.getElementById("selected-text").innerText = heroName;
   document.getElementById("Hero-Dropdown-Menu").classList.add("hidden");
 
+  // Determine if the hero is Support, Jungle, or Farm
   const isSupport = firstClass === "Support" || secondClass === "Support";
+  const isJungle = firstLane === "Jungle" || secondLane === "Jungle";
+  const isFarm = firstLane === "Farm" || secondLane === "Farm"; // Farm lane condition
+
+  // Get the sections
   const supportSection = document.getElementById("SupportItemSection");
+  const jungleSection = document.getElementById("JungleItemSection");
+  const farmSection = document.getElementById("FarmItemSection"); // Farm section
+
+  // Show the corresponding sections based on the hero's class and lane
   if (isSupport) {
     supportSection.classList.remove("hidden");
+    jungleSection.classList.add("hidden");
+    farmSection.classList.add("hidden");
+  } else if (isJungle) {
+    jungleSection.classList.remove("hidden");
+    supportSection.classList.add("hidden");
+    farmSection.classList.add("hidden");
+  } else if (isFarm) {
+    farmSection.classList.remove("hidden"); // Show Farm section when hero is in Farm lane
+    supportSection.classList.add("hidden");
+    jungleSection.classList.add("hidden");
   } else {
     supportSection.classList.add("hidden");
+    jungleSection.classList.add("hidden");
+    farmSection.classList.add("hidden");
   }
 
+  // Adjust Force/Ban items
   const forceBtn2 = document.getElementById("force-btn-2");
   const banBtn2 = document.getElementById("ban-btn-2");
   const forceMaxText = document.getElementById("Force-MaxItem");
@@ -60,6 +83,20 @@ function filterByClass(className) {
     option.style.display = (heroClass === className || secondClass === className) ? 'flex' : 'none';
   });
   document.getElementById('Hero-Dropdown-Menu').classList.remove('hidden');
+
+  if (className === "Jungle") {
+    document.getElementById("JungleItemSection").classList.remove("hidden");
+    document.getElementById("FarmItemSection").classList.add("hidden");
+    document.getElementById("SupportItemSection").classList.add("hidden");
+  } else if (className === "Farm") {
+    document.getElementById("FarmItemSection").classList.remove("hidden");
+    document.getElementById("JungleItemSection").classList.add("hidden");
+    document.getElementById("SupportItemSection").classList.add("hidden");
+  } else {
+    document.getElementById("FarmItemSection").classList.add("hidden");
+    document.getElementById("JungleItemSection").classList.add("hidden");
+    document.getElementById("SupportItemSection").classList.add("hidden");
+  }
 }
 
 function toggleClassDropdown() {
@@ -98,10 +135,49 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Selected Support Item:", selectedItemName);
     });
   });
+
+  const farmItems = document.querySelectorAll(".farm-item");
+  farmItems.forEach((item) => {
+    item.addEventListener("click", function () {
+      farmItems.forEach((i) => i.classList.remove("selected"));
+      item.classList.add("selected");
+      const selectedItemName = item.dataset.itemName;
+      console.log("Selected Farm Item:", selectedItemName);
+    });
+  });
 });
 
 document.addEventListener('click', function (e) {
   if (!e.target.closest('.Hero-Dropdown')) {
     dropdownMenu.classList.add('hidden');
   }
+});
+
+// Function to update the Game Phase
+function updateGamePhase() {
+  const selectedPhase = document.getElementById('game-phase').value;
+  console.log('Selected Game Phase:', selectedPhase);
+
+  // Example: When Early Game is selected, show items for early game
+  if (selectedPhase === 'early') {
+    displayMetaItems();
+  } else if (selectedPhase === 'mid') {
+    displayMetaItems();
+  } else if (selectedPhase === 'late') {
+    displayMetaItems();
+  }
+}
+
+// Function to display meta items when a game phase is selected
+function displayMetaItems() {
+  const metaItemsContainer = document.getElementById('meta-items');
+  // Example: Add more logic here to dynamically populate meta items based on game phase
+  metaItemsContainer.style.display = 'flex';
+}
+
+// Example of handling Meta Item button click
+document.querySelectorAll('.Meta-Item-Container button').forEach(button => {
+  button.addEventListener('click', function () {
+    alert('You selected ' + button.innerText);
+  });
 });

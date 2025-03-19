@@ -53,8 +53,9 @@ $heroClasses = $classesQuery->fetchAll(PDO::FETCH_COLUMN);
    ฟังก์ชันสำหรับดึงไฟล์รูปทั้งหมดจากโฟลเดอร์ item 
    (รวมโฟลเดอร์ย่อย) โดยใช้ RecursiveDirectoryIterator
    --------------------------------------------------------- */
-function getAllItemImages($directory) {
-  $extensions = ['jpg','jpeg','png','webp'];
+function getAllItemImages($directory)
+{
+  $extensions = ['jpg', 'jpeg', 'png', 'webp'];
   $images = [];
   if (is_dir($directory)) {
     // ใช้ \RecursiveDirectoryIterator และ \RecursiveIteratorIterator จาก global namespace
@@ -88,6 +89,7 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -97,6 +99,7 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
   <!-- Chart.js -->
   <script src="./assets/js/node_modules/chart.js/dist/chart.umd.js"></script>
 </head>
+
 <body>
   <!-- Input, Hero, Filter, และ Hero Dropdown -->
   <div class="Input-Container">
@@ -124,18 +127,18 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
           <input type="text" id="hero-search-box" placeholder="Select" oninput="HerofilterOption()">
           <?php foreach ($heroes as $hero): ?>
             <?php
-              $heroName = $hero['Hero_Name'];
-              $imageFolder = 'image/heroes/';
-              $extensions = ['jpg', 'jpeg', 'png', 'webp'];
-              $heroImage = 'image/placeholder.jpg'; // fallback
+            $heroName = $hero['Hero_Name'];
+            $imageFolder = 'image/heroes/';
+            $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+            $heroImage = 'image/placeholder.jpg'; // fallback
 
-              foreach ($extensions as $ext) {
-                $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
-                if (file_exists($tryPath)) {
-                  $heroImage = $tryPath;
-                  break;
-                }
+            foreach ($extensions as $ext) {
+              $tryPath = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
+              if (file_exists($tryPath)) {
+                $heroImage = $tryPath;
+                break;
               }
+            }
             ?>
             <div class="Hero-Option"
               data-hero-name="<?= htmlspecialchars($heroName) ?>"
@@ -177,38 +180,43 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
           <span id="selected-lane-text">Select Lane</span>
           <span class="icon">▾</span>
         </div>
+        <!-- Farm Item Section -->
         <div id="FarmItemSection" class="hidden">
           <h1>Select Farm Item <span>(Only 1 item)</span></h1>
           <div id="selected-farm-item" class="dropdown-btn" onclick="toggleFarmDropdown()">-- Select Farm Item --</div>
           <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-              foreach ($farmItemImages as $itemPath) {
-                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
-                        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
-                        <span class='dropdown-text'>$itemName</span>
-                      </div>";
-              }
+            foreach ($farmItemImages as $itemPath) {
+              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+              echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
+                <img src='$itemPath' class='dropdown-img' alt='$itemName'>
+                <span class='dropdown-text'>$itemName</span>
+              </div>";
+            }
             ?>
           </div>
         </div>
         <input type="hidden" id="selectedFarmItem" name="farm_item">
+
+
+        <!-- Support Item Section -->
         <div id="SupportItemSection" class="hidden">
           <h1>Select Support Item <span>(Only 1 item)</span></h1>
           <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">-- Select Support Item --</div>
           <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
             <?php
-              foreach ($supportItemImages as $itemPath) {
-                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
+            foreach ($supportItemImages as $itemPath) {
+              $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
+              echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
                         <img src='$itemPath' class='dropdown-img' alt='$itemName'>
                         <span class='dropdown-text'>$itemName</span>
                       </div>";
-              }
+            }
             ?>
           </div>
         </div>
         <input type="hidden" id="selectedSupportItem" name="support_item">
+
         <div class="hidden" id="Lane-Dropdown-Menu">
           <div class="Dropdown-Option" onclick="selectLane('Dark Slayer Lane')">Dark Slayer Lane</div>
           <div class="Dropdown-Option" onclick="selectLane('Abyssal Dragon Lane')">Abyssal Dragon Lane</div>
@@ -320,84 +328,130 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
       </div>
     </div>
   </div>
-
   <div class="Compare-Container">
     <div class="Compare-Header">
-      <p>-- Result vs Meta item --</p>
+      <p>-- Result vs Meta Item --</p>
     </div>
-    <div class="Compare-Media">
-      <div class="Input-Space">
-        <div class="Select-Game-Phase-Container">
-          <h1>Select Game Phase</h1>
-          <div class="Select-Game-Phase-Dropdown"></div>
-          <div class="Result-Game-Phase-Container">
-            <img>
-            <img>
-            <img>
-            <img>
-            <img>
-            <img>
-          </div>
-        </div>
-        <div class="VS-Container">
-          <p>VS</p>
-        </div>
-        <div class="Select-Meta-Item-Container">
-          <h1>Select Meta Item</h1>
-          <div class="Select-Meta-Item-Button">
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-          </div>
+
+    <div class="Select-Game-Phase-Container">
+      <h1>Select Game Phase</h1>
+      <div class="game-phase-box">
+        <select id="game-phase">
+          <option value="select">Select</option>
+          <option value="early">Early Game</option>
+          <option value="mid">Mid Game</option>
+          <option value="late">Late Game</option>
+        </select>
+        <!-- ช่อง 6 ช่องที่คุณต้องการ -->
+        <div class="input-box">
+          <div class="input-item"></div>
+          <div class="input-item"></div>
+          <div class="input-item"></div>
+          <div class="input-item"></div>
+          <div class="input-item"></div>
+          <div class="input-item"></div>
         </div>
       </div>
-      <div class="Chart-Compare">
-        <canvas id="Chart-Compare"></canvas>
+    </div>
+
+    <!-- VS Section -->
+    <div class="VS-Container">
+      <p>VS</p>
+    </div>
+
+    <!-- Select Meta Item Section -->
+    <div class="Select-Meta-Item-Container">
+      <h1>Select Meta Item</h1>
+      <div class="Select-Meta-Item-Button">
+        <button id="meta-btn-0" onclick="forceBanButtonClick(event, 'meta', 0)">Click Here</button>
+        <button id="meta-btn-1" onclick="forceBanButtonClick(event, 'meta', 1)">Click Here</button>
+        <button id="meta-btn-2" onclick="forceBanButtonClick(event, 'meta', 2)">Click Here</button>
+        <button id="meta-btn-3" onclick="forceBanButtonClick(event, 'meta', 3)">Click Here</button>
+        <button id="meta-btn-4" onclick="forceBanButtonClick(event, 'meta', 4)">Click Here</button>
+        <button id="meta-btn-5" onclick="forceBanButtonClick(event, 'meta', 5)">Click Here</button>
       </div>
+    </div>
+
+    <!-- Meta Item Popup -->
+    <div id="meta-item-popup" class="popup-overlay hidden">
+      <div class="popup-content">
+        <input id="meta-search" type="text" placeholder="Search Items" oninput="filterItemList('meta')">
+        <div id="meta-popup-item-list" class="popup-item-grid">
+          <?php foreach ($allItemImages as $itemPath): ?>
+            <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
+            <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
+              <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
+            </div>
+          <?php endforeach; ?>
+        </div>
+        <button class="popup-close" onclick="closeItemPopup('meta')">Close</button>
+      </div>
+    </div>
+
+    <!-- Radar Chart (empty placeholder for now) -->
+    <div class="Chart-Compare">
+      <canvas id="CompareChartCanvas" width="600" height="400"></canvas>
     </div>
   </div>
+
 
   <!-- Inline Script สำหรับ Item Popup -->
   <script>
     let currentSlot = null;
     let currentType = null;
 
-    // เมื่อคลิกปุ่ม Force/BAN
+    // ฟังก์ชันที่ใช้ในการคลิกปุ่ม Force/Ban/Meta
     function forceBanButtonClick(event, type, slotIndex) {
       const btn = event.currentTarget;
-      // ถ้ามีไอเทมอยู่แล้วในปุ่ม => เคลียร์ให้กลับเป็น "Click Here"
+
+      // ตรวจสอบว่า type ที่ส่งมาคืออะไร
+      console.log("Button clicked:", type, slotIndex); // เพิ่มการ debug
+
+      // ถ้ามีไอเทมในปุ่มแล้ว ให้เคลียร์
       if (btn.querySelector('img')) {
         btn.innerHTML = "Click Here";
       } else {
         currentSlot = slotIndex;
         currentType = type;
-        document.getElementById('item-search').value = "";
-        document.getElementById('item-popup').classList.remove('hidden');
+        document.getElementById('meta-search').value = ""; // เคลียร์ช่องค้นหา
+        // ตรวจสอบว่าปุ่มเป็น Meta, Force หรือ Ban
+        if (type === 'meta') {
+          document.getElementById('meta-item-popup').classList.remove('hidden'); // เปิด Meta Item Popup
+        } else {
+          document.getElementById('item-popup').classList.remove('hidden'); // เปิด Item Popup
+        }
       }
     }
 
-    // ปุ่ม Close ใน Popup
-    function closeItemPopup() {
-      document.getElementById('item-popup').classList.add('hidden');
+    // ปิด popup
+    function closeItemPopup(type) {
+      if (type === 'meta') {
+        document.getElementById('meta-item-popup').classList.add('hidden');
+      } else {
+        document.getElementById('item-popup').classList.add('hidden');
+      }
     }
 
-    // เมื่อเลือกไอเทมใน Popup ให้แสดงไอเทมนั้นในปุ่มที่คลิก (และไม่ปิด Popup)
+    // เมื่อเลือกไอเทมจาก popup
     function selectPopupItem(itemName, itemPath) {
-      const buttonId = (currentType === 'force')
-        ? `force-btn-${currentSlot}`
-        : `ban-btn-${currentSlot}`;
+      const buttonId = `${currentType}-btn-${currentSlot}`; // คำนวณปุ่มที่ถูกเลือก
       const button = document.getElementById(buttonId);
+
+      // เพิ่มไอเทมที่เลือกเข้าไปในปุ่ม
       button.innerHTML = `<img src="${itemPath}" alt="${itemName}" style="width:100%; height:100%; object-fit:contain;">`;
-      // ไม่ปิด Popup เพื่อให้ไอเทมยังคงแสดงอยู่
+
+      // // ปิด popup หลังจากเลือกไอเทม
+      // if (currentType === 'meta') {
+      //   document.getElementById('meta-item-popup').classList.add('hidden');
+      // } else {
+      //   document.getElementById('item-popup').classList.add('hidden');
+      // }
     }
 
-    // ฟังก์ชันค้นหาไอเทมใน Popup
-    function filterItemList() {
-      const searchValue = document.getElementById('item-search').value.toLowerCase();
-      const items = document.querySelectorAll('#popup-item-list .item-container');
+    // ฟังก์ชันค้นหาไอเทมใน popup
+    function filterItemList(type) {
+      const searchValue = document.getElementById('meta-search').value.toLowerCase();
+      const items = document.querySelectorAll(`#${type}-popup-item-list .item-container`);
       items.forEach(item => {
         let name = item.querySelector('img').getAttribute('alt').toLowerCase();
         item.style.display = name.includes(searchValue) ? 'inline-block' : 'none';
@@ -408,4 +462,5 @@ $supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE)
   <!-- Script สำหรับ dropdown.js (Hero/Class/Lane) -->
   <script src="./assets/js/dropdown.js"></script>
 </body>
+
 </html>
