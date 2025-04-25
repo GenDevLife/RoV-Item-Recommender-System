@@ -868,7 +868,7 @@ body {
     border: 1px solid white;
     cursor: pointer;
     color: white;
-    width: 240px;
+    width: 240px; /* <<< เล็กกว่าปุ่ม Select Hero มาก */
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -895,6 +895,26 @@ body {
     color: white;
     cursor: pointer;
     width: fit-content;
+}
+
+#selected-farm-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    /* ระยะห่างระหว่างรูปกับชื่อ */
+    padding: 8px 12px;
+    border: 1px solid white;
+    background-color: #111;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    width: fit-content;
+}
+
+#selected-farm-item img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
 }
 
 #selected-support-item img {
