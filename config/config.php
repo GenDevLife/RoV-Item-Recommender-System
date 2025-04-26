@@ -5,11 +5,11 @@
 $env = parse_ini_file(__DIR__ . '/.env', false, INI_SCANNER_RAW);
 
 // กำหนด default ถ้าไม่มีค่าใน .env
-$host     = $env['DB_HOST']         ?? 'localhost';
-$port     = $env['DB_PRIMARY_PORT'] ?? '3306';
-$dbname   = $env['DB_NAME']         ?? 'rov';
-$user     = $env['DB_USER']         ?? 'root';
-$password = $env['DB_PASSWORD']     ?? '';
+$host     = $env['DB_HOST'];
+$port     = $env['DB_PRIMARY_PORT'];
+$dbname   = $env['DB_NAME'];
+$user     = $env['DB_USER'];
+$password = $env['DB_PASSWORD'];
 
 // สร้าง DSN
 $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset=utf8mb4";

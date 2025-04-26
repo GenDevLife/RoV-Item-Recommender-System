@@ -1,12 +1,13 @@
 <?php
 /* ---------- เชื่อมต่อฐานข้อมูลผ่านไฟล์ config ---------- */
-$pdo = require __DIR__ . '/../../config/config.php';   // ← คืนค่า PDO มาในตัวแปร $pdo
+$pdo = require __DIR__ . '/../../config/config.php';
 
-/* ---------- การเตรียม Query ---------- */
+/* ---------- รับพารามิเตอร์จาก URL ---------- */
 $sort       = $_GET['sort']   ?? 'name';
 $filterType = $_GET['filter'] ?? '';
 $search     = $_GET['search'] ?? '';
 
+/* ---------- ฟิลด์ที่อนุญาตให้เรียงได้ ---------- */
 $validSorts = [
     'name'         => 'Hero_Name',
     'first_class'  => 'First_Class',
@@ -14,100 +15,124 @@ $validSorts = [
 ];
 $sortField  = $validSorts[$sort] ?? 'Hero_Name';
 
-/* ---------- สร้าง SQL ตามเงื่อนไข ---------- */
+/* ---------- Query ดึงฮีโร่ ตามเงื่อนไข filter / search / sort ---------- */
 $sql    = "SELECT * FROM heroes WHERE 1=1";
 $params = [];
-
 if ($filterType !== '') {
-    $sql .= " AND (First_Class = :type OR Second_Class = :type)";
+    $sql             .= " AND (First_Class = :type OR Second_Class = :type)";
     $params[':type'] = $filterType;
 }
-
 if ($search !== '') {
-    $sql .= " AND Hero_Name LIKE :search";
+    $sql               .= " AND Hero_Name LIKE :search";
     $params[':search'] = "%$search%";
 }
-
 $sql .= " ORDER BY $sortField ASC";
 
-/* ---------- ดึงข้อมูล ---------- */
 $stmt   = $pdo->prepare($sql);
 $stmt->execute($params);
 $heroes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* ---------- ดึงคลาสทั้งหมด ---------- */
-$classesStmt = $pdo->query(
-    "SELECT DISTINCT First_Class FROM heroes
-     UNION
-     SELECT DISTINCT Second_Class FROM heroes WHERE Second_Class IS NOT NULL"
-);
-$heroClasses = $classesStmt->fetchAll(PDO::FETCH_COLUMN);
+/* ---------- Query ดึงคลาสทั้งหมด ไม่ซ้ำ + เรียงลำดับ ---------- */
+// ดึงข้อมูล First_Class และ Second_Class แล้วรวมเป็นรายการเดียว
+$rawHeroClasses = $pdo
+    ->query("
+        SELECT First_Class FROM heroes
+        UNION ALL
+        SELECT Second_Class FROM heroes
+    ")
+    ->fetchAll(PDO::FETCH_COLUMN);
 
-/* --------------------------------------------------------- 
-   ฟังก์ชันสำหรับดึงไฟล์รูปทั้งหมดจากโฟลเดอร์ item 
-   (รวมโฟลเดอร์ย่อย) โดยใช้ RecursiveDirectoryIterator 
-   --------------------------------------------------------- */
-function getAllItemImages($directory) {
-    $extensions = ['jpg', 'jpeg', 'png', 'webp'];
+// ปรับรูปแบบตัวพิมพ์ให้อยู่ในรูปแบบเดียว (ขึ้นต้นด้วยตัวใหญ่)
+$normalizedHeroClasses = array_filter(array_map(function ($class) {
+    $class = trim($class);
+    return $class === '' ? null : ucfirst(strtolower($class));
+}, $rawHeroClasses));
+
+
+// กรองค่าซ้ำ แล้วเรียงตามตัวอักษร
+$heroClasses = array_unique($normalizedHeroClasses);
+sort($heroClasses);
+
+/* ---------- Query ดึงเลนทั้งหมด ไม่ซ้ำ + เรียงลำดับ ---------- */
+$lanes = $pdo
+    ->query("
+        SELECT DISTINCT lane
+        FROM (
+            SELECT First_Lane  AS lane FROM heroes
+             UNION
+            SELECT Second_Lane AS lane FROM heroes
+        ) AS tmp
+        WHERE lane IS NOT NULL AND lane <> ''
+        ORDER BY lane
+    ")
+    ->fetchAll(PDO::FETCH_COLUMN);
+
+/* ---------- กรองเลนซ้ำ + เรียงอีกครั้ง ---------- */
+$lanes = array_unique($lanes);
+sort($lanes);
+
+/* ---------- ฟังก์ชันดึงรูปภาพไอเท็มทั้งหมด ---------- */
+function getAllItemImages($directory)
+{
+    $exts   = ['jpg', 'jpeg', 'png', 'webp'];
     $images = [];
     if (is_dir($directory)) {
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
-        foreach ($iterator as $file) {
+        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+        foreach ($it as $file) {
             if (!$file->isDir()) {
                 $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-                if (in_array($ext, $extensions)) {
-                    $fullPath = str_replace('\\', '/', $file->getPathname());
-                    $relativePath = str_replace(__DIR__ . '/', '', $fullPath);
-                    $images[] = $relativePath;
+                if (in_array($ext, $exts)) {
+                    $path    = str_replace(__DIR__ . '/', '', str_replace('\\', '/', $file->getPathname()));
+                    $images[] = $path;
                 }
             }
         }
     }
     return $images;
 }
-
-// เรียกไฟล์รูปทั้งหมดจากโฟลเดอร์ item (รวมโฟลเดอร์ย่อย)
 $allItemImages = getAllItemImages(__DIR__ . '/src/assets/images/item/');
 
-/* --------------------------------------------------------- 
-   ส่วนสำหรับ Farm Item และ Support Item (ใช้ glob) 
-   --------------------------------------------------------- */
-$farmItemDir = __DIR__ . '/src/assets/images/item/farm-item/';
-$farmItemImages = glob($farmItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
-$farmItemImages = array_map(function($path) {
-    return str_replace(__DIR__ . '/', '', $path);
-}, $farmItemImages);
-
-$supportItemDir = __DIR__ . '/src/assets/images/item/support-item/';
-$supportItemImages = glob($supportItemDir . "*.{jpg,jpeg,png,webp}", GLOB_BRACE);
-$supportItemImages = array_map(function($path) {
-    return str_replace(__DIR__ . '/', '', $path);
-}, $supportItemImages);
+/* ---------- ฟังก์ชันดึง Farm/Support Item ---------- */
+$farmItemImages = array_map(
+    fn($p) => str_replace(__DIR__ . '/', '', $p),
+    glob(__DIR__ . '/src/assets/images/item/farm-item/*.{jpg,jpeg,png,webp}', GLOB_BRACE)
+);
+$supportItemImages = array_map(
+    fn($p) => str_replace(__DIR__ . '/', '', $p),
+    glob(__DIR__ . '/src/assets/images/item/support-item/*.{jpg,jpeg,png,webp}', GLOB_BRACE)
+);
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recommender System</title>
     <link rel="stylesheet" href="src/styles/base/style.css">
 </head>
+
 <body>
-    <!-- Input, Hero, Filter, และ Hero Dropdown -->
     <div class="Input-Container">
         <div class="Hero-Header">
             <p>-- Hero --</p>
         </div>
+
+        <!-- Filter by Class (dynamic จาก Database, ไม่มีค่าซ้ำ) -->
         <div class="Filter-Container">
             <h1>Select Filter</h1>
             <div class="Filter-Button">
-                <button value="Fighter" onclick="filterByClass('Fighter')">Fighter</button>
-                <button value="Tank" onclick="filterByClass('Tank')">Tank</button>
-                <button value="Mage" onclick="filterByClass('Mage')">Mage</button>
-                <button value="Carry" onclick="filterByClass('Carry')">Carry</button>
-                <button value="Support" onclick="filterByClass('Support')">Support</button>
+                <?php foreach ($heroClasses as $class): ?>
+                    <button
+                        value="<?= htmlspecialchars($class) ?>"
+                        onclick="filterByClass('<?= rawurlencode($class) ?>')">
+                        <?= htmlspecialchars($class) ?>
+                    </button>
+                <?php endforeach; ?>
             </div>
         </div>
+
+        <!-- Hero Dropdown -->
         <div class="Hero-Container">
             <h1>Select Hero</h1>
             <div class="Hero-Dropdown">
@@ -115,116 +140,126 @@ $supportItemImages = array_map(function($path) {
                     <span id="selected-text">Select</span>
                     <span class="icon" id="hero-dropdown-icon">▾</span>
                 </div>
-                <div class="hidden" id="Hero-Dropdown-Menu">
+                <div id="Hero-Dropdown-Menu" class="hidden">
                     <input type="text" id="hero-search-box" placeholder="Select" oninput="HerofilterOption()">
                     <?php foreach ($heroes as $hero): ?>
                         <?php
-                        $heroName = $hero['Hero_Name'];
-                        $baseFileName = preg_replace('/[^a-zA-Z0-9]/', '', $heroName);
-                        
-                        $imageFolder = 'src/assets/images/heroes/'; // Path สำหรับ HTML
-                        $serverImageFolder = __DIR__ . '/src/assets/images/heroes/'; // Path สำหรับระบบไฟล์
-                        $heroImage = 'src/assets/images/placeholder.jpg'; // Default
-                        $extensions = ['jpg', 'jpeg', 'png', 'webp'];
-                        
-                        foreach ($extensions as $ext) {
-                            $tryPath = $serverImageFolder . $hero['Hero_Name'] . '.' . $ext;
-                            if (file_exists($tryPath)) {
-                                $heroImage = $imageFolder . $hero['Hero_Name'] . '.' . $ext;
+                        $name       = $hero['Hero_Name'];
+                        $folder     = 'src/assets/images/heroes/';
+                        $serverPath = __DIR__ . "/src/assets/images/heroes/{$name}.";
+                        $img        = 'src/assets/images/placeholder.jpg';
+                        foreach (['jpg', 'jpeg', 'png', 'webp'] as $e) {
+                            if (file_exists("{$serverPath}{$e}")) {
+                                $img = "{$folder}{$name}.{$e}";
                                 break;
                             }
                         }
                         ?>
                         <div class="Hero-Option"
-                            data-hero-name="<?= htmlspecialchars($heroName) ?>"
+                            data-hero-name="<?= htmlspecialchars($name) ?>"
                             data-hero-class="<?= htmlspecialchars($hero['First_Class']) ?>"
                             data-hero-second-class="<?= htmlspecialchars($hero['Second_Class']) ?>"
+                            data-hero-lane="<?= htmlspecialchars($hero['First_Lane']) ?>"
+                            data-hero-second-lane="<?= htmlspecialchars($hero['Second_Lane']) ?>"
                             onclick="selectHero(this)">
-                            <img src="<?= $heroImage ?>" class="hero-thumbnail" alt="<?= htmlspecialchars($heroName) ?>">
-                            <span><?= htmlspecialchars($heroName) ?></span>
+
+                            <img src="<?= $img ?>" class="hero-thumbnail" alt="<?= htmlspecialchars($name) ?>">
+                            <span><?= htmlspecialchars($name) ?></span>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
         </div>
+
+        <!-- Select Class & Select Lane -->
         <div class="ClassAndLane-Container">
+            <!-- Class -->
             <div class="Class-Container">
                 <h1>Select Class</h1>
                 <div class="Class-Dropdown">
                     <div class="Class-Dropdown-Toggle" onclick="toggleClassDropdown()">
                         <span id="selected-class-text">Select Class</span>
-                        <span class="icon">?</span>
+                        <span class="icon">▾</span>
                     </div>
-                    <div class="hidden" id="Class-Dropdown-Menu">
-                        <div class="Dropdown-Option" onclick="selectClass('Fighter')">Fighter</div>
-                        <div class="Dropdown-Option" onclick="selectClass('Tank')">Tank</div>
-                        <div class="Dropdown-Option" onclick="selectClass('Mage')">Mage</div>
-                        <div class="Dropdown-Option" onclick="selectClass('Carry')">Carry</div>
-                        <div class="Dropdown-Option" onclick="selectClass('Support')">Support</div>
+                    <div id="Class-Dropdown-Menu" class="hidden">
+                        <?php foreach ($heroClasses as $class): ?>
+                            <div class="Dropdown-Option" onclick="selectClass('<?= htmlspecialchars($class) ?>')">
+                                <?= htmlspecialchars($class) ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
+
+            <!-- Lane -->
             <div class="Lane-Container">
                 <h1>Select Lane</h1>
                 <div class="Lane-Dropdown">
                     <div class="Lane-Dropdown-Toggle" onclick="toggleLaneDropdown()">
                         <span id="selected-lane-text">Select Lane</span>
-                        <span class="icon">?</span>
+                        <span class="icon">▾</span>
                     </div>
-                    <div id="FarmItemSection" class="hidden">
-                        <h1>Select Farm Item <span>(Only 1 item)</span></h1>
-                        <div id="selected-farm-item" class="dropdown-btn" onclick="toggleFarmDropdown()">-- Select Farm Item --</div>
-                        <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
-                            <?php
-                            foreach ($farmItemImages as $itemPath) {
-                                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                                echo "<div class='dropdown-item' onclick=\"selectFarmItem('$itemName', '$itemPath')\">
-                                        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
-                                        <span class='dropdown-text'>$itemName</span>
-                                    </div>";
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <input type="hidden" id="selectedFarmItem" name="farm_item">
-                    <div id="SupportItemSection" class="hidden">
-                        <h1>Select Support Item <span>(Only 1 item)</span></h1>
-                        <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">-- Select Support Item --</div>
-                        <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
-                            <?php
-                            foreach ($supportItemImages as $itemPath) {
-                                $itemName = pathinfo($itemPath, PATHINFO_FILENAME);
-                                echo "<div class='dropdown-item' onclick=\"selectSupportItem('$itemName', '$itemPath')\">
-                                        <img src='$itemPath' class='dropdown-img' alt='$itemName'>
-                                        <span class='dropdown-text'>$itemName</span>
-                                    </div>";
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <input type="hidden" id="selectedSupportItem" name="support_item">
-                    <div class="hidden" id="Lane-Dropdown-Menu">
-                        <div class="Dropdown-Option" onclick="selectLane('Dark Slayer Lane')">Dark Slayer Lane</div>
-                        <div class="Dropdown-Option" onclick="selectLane('Abyssal Dragon Lane')">Abyssal Dragon Lane</div>
-                        <div class="Dropdown-Option" onclick="selectLane('Middle Lane')">Middle Lane</div>
-                        <div class="Dropdown-Option" onclick="selectLane('Jungle')">Jungle</div>
-                        <div class="Dropdown-Option" onclick="selectLane('Roaming')">Roaming</div>
+                    <div id="Lane-Dropdown-Menu" class="hidden">
+                        <?php foreach ($lanes as $lane): ?>
+                            <div class="Dropdown-Option" onclick="selectLane('<?= htmlspecialchars($lane) ?>')">
+                                <?= htmlspecialchars($lane) ?>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+
+    </div> <!-- ปิด Input-Container -->
+
+    <!-- Item Header -->
     <div class="Item-Header">
         <p>-- Item --</p>
     </div>
-    <!-- Item Selection Popup with Search -->
+    <!-- Support Item -->
+    <div id="SupportItemSection" class="hidden">
+        <h1>Select Support Item <span>(Only 1 item)</span></h1>
+        <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">
+            -- Select Support Item --
+        </div>
+        <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
+            <?php foreach ($supportItemImages as $itemPath): ?>
+                <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
+                <div class="dropdown-item" onclick="selectSupportItem('<?= $itemName ?>','<?= $itemPath ?>')">
+                    <img src="<?= $itemPath ?>" class="dropdown-img" alt="<?= $itemName ?>">
+                    <span class="dropdown-text"><?= $itemName ?></span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <input type="hidden" id="selectedSupportItem" name="support_item">
+    </div>
+
+    <!-- Farm Item -->
+    <div id="FarmItemSection" class="hidden">
+        <h1>Select Farm Item <span>(Only 1 item)</span></h1>
+        <div id="selected-farm-item" class="dropdown-btn" onclick="toggleFarmDropdown()">
+            -- Select Farm Item --
+        </div>
+        <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
+            <?php foreach ($farmItemImages as $itemPath): ?>
+                <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
+                <div class="dropdown-item Farm-Item-Option" data-item-name="<?= $itemName ?>">
+                    <img src="<?= $itemPath ?>" class="dropdown-img" alt="<?= $itemName ?>">
+                    <span class="dropdown-text"><?= $itemName ?></span>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <input type="hidden" id="selectedFarmItem" name="farm_item">
+    </div>
+
+    <!-- Item Selection Popup -->
     <div id="item-popup" class="popup-overlay hidden">
         <div class="popup-content">
             <input id="item-search" type="text" placeholder="Search Items" oninput="filterItemList()">
             <div id="popup-item-list" class="popup-item-grid">
                 <?php foreach ($allItemImages as $itemPath): ?>
                     <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
+                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>','<?= htmlspecialchars($itemPath) ?>')">
                         <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
                     </div>
                 <?php endforeach; ?>
@@ -232,6 +267,23 @@ $supportItemImages = array_map(function($path) {
             <button class="popup-close" onclick="closeItemPopup()">X</button>
         </div>
     </div>
+
+    <!-- Meta Item Popup -->
+    <div id="meta-item-popup" class="popup-overlay hidden">
+        <div class="popup-content">
+            <input id="meta-search" type="text" placeholder="Search Items" oninput="filterItemList('meta')">
+            <div id="meta-popup-item-list" class="popup-item-grid">
+                <?php foreach ($allItemImages as $itemPath): ?>
+                    <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
+                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>','<?= htmlspecialchars($itemPath) ?>')">
+                        <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <button class="popup-close" onclick="closeItemPopup('meta')">Close</button>
+        </div>
+    </div>
+
     <!-- Force Container -->
     <div class="Force-Container">
         <div class="Force-Text">
@@ -240,12 +292,13 @@ $supportItemImages = array_map(function($path) {
         </div>
         <div class="Force-Button">
             <?php for ($i = 0; $i < 3; $i++): ?>
-                <button id="force-btn-<?= $i ?>" onclick="forceBanButtonClick(event, 'force', <?= $i ?>)">
+                <button id="force-btn-<?= $i ?>" onclick="forceBanButtonClick(event,'force',<?= $i ?>)">
                     <span class="plus-icon">+</span>
                 </button>
             <?php endfor; ?>
         </div>
     </div>
+
     <!-- BAN Container -->
     <div class="BAN-Container">
         <div class="BAN-Text">
@@ -254,12 +307,13 @@ $supportItemImages = array_map(function($path) {
         </div>
         <div class="BAN-Button">
             <?php for ($i = 0; $i < 3; $i++): ?>
-                <button id="ban-btn-<?= $i ?>" onclick="forceBanButtonClick(event, 'ban', <?= $i ?>)">
+                <button id="ban-btn-<?= @$i ?>" onclick="forceBanButtonClick(event,'ban',<?= $i ?>)">
                     <span class="plus-icon">+</span>
                 </button>
             <?php endfor; ?>
         </div>
     </div>
+
     <div class="Calculate-Container">
         <p>//////////////////</p>
         <button>Calculate</button>
@@ -423,7 +477,14 @@ $supportItemImages = array_map(function($path) {
                 item.style.display = name.includes(searchValue) ? 'inline-block' : 'none';
             });
         }
+        // ฟังก์ชันกรอง class แล้วรีโหลดหน้า
+        function filterByClass(encodedClass) {
+            const params = new URLSearchParams(window.location.search);
+            params.set('filter', decodeURIComponent(encodedClass));
+            window.location.search = params.toString();
+        }
     </script>
     <script src="src/common/scripts/dropdown.js"></script>
 </body>
+
 </html>
