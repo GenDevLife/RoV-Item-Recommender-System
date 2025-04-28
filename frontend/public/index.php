@@ -217,7 +217,7 @@ $supportItemImages = array_map(
         <p>-- Item --</p>
     </div>
     <!-- Support Item -->
-    <div id="SupportItemSection" class="hidden">
+    <div id="SupportItemSection" style="display: none;">
         <h1>Select Support Item <span>(Only 1 item)</span></h1>
         <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">
             -- Select Support Item --
@@ -255,17 +255,19 @@ $supportItemImages = array_map(
     <!-- Item Selection Popup -->
     <div id="item-popup" class="popup-overlay hidden">
         <div class="popup-content">
-            <input id="item-search" type="text" placeholder="Search Items" oninput="filterItemList()">
-            <div id="popup-item-list" class="popup-item-grid">
+            <input id="meta-search" type="text" placeholder="Search Items">
+            <div class="popup-item-grid" id="meta-popup-item-list">
                 <?php foreach ($allItemImages as $itemPath): ?>
                     <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>','<?= htmlspecialchars($itemPath) ?>')">
+                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
                         <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
                     </div>
                 <?php endforeach; ?>
             </div>
-            <button class="popup-close" onclick="closeItemPopup()">X</button>
         </div>
+
+        <button class="popup-close" onclick="closeItemPopup()">X</button>
+    </div>
     </div>
 
     <!-- Meta Item Popup -->
@@ -307,7 +309,7 @@ $supportItemImages = array_map(
         </div>
         <div class="BAN-Button">
             <?php for ($i = 0; $i < 3; $i++): ?>
-                <button id="ban-btn-<?= @$i ?>" onclick="forceBanButtonClick(event,'ban',<?= $i ?>)">
+                <button id="ban-btn-<?= $i ?>" onclick="forceBanButtonClick(event,'ban',<?= $i ?>)">
                     <span class="plus-icon">+</span>
                 </button>
             <?php endfor; ?>
