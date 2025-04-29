@@ -438,4 +438,72 @@ function filterItemList(type) {
   }
 }
 
+let compareChart = null;
+
+function updateCompareChart(resultStats = [0, 0, 0, 0, 0], metaStats = [0, 0, 0, 0, 0]) {
+    const ctx = document.getElementById('CompareChartCanvas').getContext('2d');
+
+    if (compareChart) {
+        compareChart.destroy();  // ลบกราฟเดิมก่อน
+    }
+
+    compareChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: ['Attack', 'Defense', 'Magic', 'Speed', 'Utility'], // เปลี่ยนหมวดหมู่ตามจริงได้
+            datasets: [
+                {
+                    label: 'Result Item',
+                    data: resultStats,
+                    borderColor: 'red',
+                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                    pointBackgroundColor: 'red'
+                },
+                {
+                    label: 'Meta Item',
+                    data: metaStats,
+                    borderColor: 'white',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    pointBackgroundColor: 'white'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: { color: '#888' },
+                    grid: { color: '#555' },
+                    pointLabels: {
+                        color: '#fff',
+                        font: { size: 14 }
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: 'white',
+                        stepSize: 20,
+                        beginAtZero: true
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'white',
+                        font: { size: 14 }
+                    }
+                }
+            }
+        }
+    });
+}
+// เรียกตอนโหลดหน้าเว็บ เพื่อวาดกราฟเบื้องต้น
+document.addEventListener('DOMContentLoaded', function() {
+  updateCompareChart(
+      [80, 65, 70, 85, 60],  // ข้อมูลฝั่ง Result Item (ตัวอย่าง)
+      [90, 70, 75, 80, 65]   // ข้อมูลฝั่ง Meta Item (ตัวอย่าง)
+  );
+});
+
 
