@@ -1,27 +1,32 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- phpMyAdmin SQL Dump
+-- version 5.2.2
+-- https://www.phpmyadmin.net/
 --
--- Host: localhost    Database: rov
--- ------------------------------------------------------
--- Server version	9.2.0
+-- Host: db
+-- Generation Time: Apr 26, 2025 at 03:57 PM
+-- Server version: 9.2.0
+-- PHP Version: 8.2.27
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `rov`
+--
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `heroes`
 --
 
-DROP TABLE IF EXISTS `heroes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `heroes` (
   `HeroID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Hero_Name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
@@ -29,66 +34,55 @@ CREATE TABLE `heroes` (
   `Second_Class` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `First_Lane` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `Second_Lane` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Attack_Range` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`HeroID`)
+  `Attack_Range` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `heroes`
 --
 
-LOCK TABLES `heroes` WRITE;
-/*!40000 ALTER TABLE `heroes` DISABLE KEYS */;
-INSERT INTO `heroes` VALUES 
-('H001','Yue','Mage','','Mid','','Ranged'),
-('H002','Aya','Support','','Support','','Ranged'),
-('H003','Tachi','Fighter','','Dark Slayer','Farm','Melee');
-/*!40000 ALTER TABLE `heroes` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `heroes` (`HeroID`, `Hero_Name`, `First_Class`, `Second_Class`, `First_Lane`, `Second_Lane`, `Attack_Range`) VALUES
+('H001', 'Yue', 'Mage', '', 'Mid', '', 'Ranged'),
+('H002', 'Aya', 'Support', '', 'Support', '', 'Ranged'),
+('H003', 'Tachi', 'Fighter', '', 'Dark Slayer', 'Farm', 'Melee'),
+('H004', 'Bright', 'Fighter', '', 'Farm', 'Dark Slayer', 'Ranged'),
+('H005', 'Lorion', 'Mage', '', 'Mid', '', 'Ranged'),
+('H006', 'Iggy', 'Mage', '', 'Mid', '', 'Ranged');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `heroskills`
 --
 
-DROP TABLE IF EXISTS `heroskills`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `heroskills` (
   `SkillID` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `HeroID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `SkillName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `SkillType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `Effect` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `RecommendItemType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Column7` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Column8` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `Column9` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  PRIMARY KEY (`SkillID`),
-  KEY `fk_heroskills_heroes` (`HeroID`),
-  CONSTRAINT `fk_heroskills_heroes` FOREIGN KEY (`HeroID`) REFERENCES `heroes` (`HeroID`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `RecommendItemType` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `heroskills`
 --
 
-LOCK TABLES `heroskills` WRITE;
-/*!40000 ALTER TABLE `heroskills` DISABLE KEYS */;
-INSERT INTO `heroskills` VALUES 
-('S001','H001','Borrowed Might','Passive','Gains a mark next skill usage is upgraded, and cooldowns are reset','Magic','','',''),
-('S002','H001','Aqua Force','Magic','Deals magic damage in a curved pattern','Magic','','','');
-/*!40000 ALTER TABLE `heroskills` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `heroskills` (`SkillID`, `HeroID`, `SkillName`, `SkillType`, `Effect`, `RecommendItemType`) VALUES
+('S001', 'H001', 'Borrowed Might	', 'Passive', 'Gains a mark next skill usage is upgraded, and cooldowns are reset', 'Magic'),
+('S002', 'H001', 'Aqua Force	', 'Magic', 'Deals magic damage in a curved pattern', 'Magic'),
+('S003', 'H001', 'Mountain Crusher	', 'Magic', 'Deals magic damage in a curved pattern', 'Magic'),
+('S004', 'H001', 'Rising Wind	', 'Magic', 'Knocks back enemies in front while retreating', 'Magic'),
+('S005', 'H002', 'Squirrel Spirit	', 'Transform', 'Becomes untargetable when HP is low	', 'Defense, Support'),
+('S006', 'H002', 'Sound Breaker	', 'Magic', 'Deals magic damage and slows enemies	', 'Magic'),
+('S007', 'H002', 'Idol Love	', 'Magic', 'Jumps onto an ally and grants a shield	', 'Defense');
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `herostats`
 --
 
-DROP TABLE IF EXISTS `herostats`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `herostats` (
   `HeroID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `Level` int NOT NULL,
@@ -108,67 +102,83 @@ CREATE TABLE `herostats` (
   `Mana_5_sec` int DEFAULT NULL,
   `Magic_Pierce` float DEFAULT NULL,
   `Magic_Life_Steal` float DEFAULT NULL,
-  `Resistance` float DEFAULT NULL,
-  PRIMARY KEY (`HeroID`,`Level`),
-  CONSTRAINT `herostats_ibfk_1` FOREIGN KEY (`HeroID`) REFERENCES `heroes` (`HeroID`)
+  `Resistance` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `herostats`
 --
 
-LOCK TABLES `herostats` WRITE;
-/*!40000 ALTER TABLE `herostats` DISABLE KEYS */;
-INSERT INTO `herostats` VALUES 
-('H001',1,169,3475,140,0,0,45,18,0,15,490,50,0,360,18,18,0,0),
-('H001',2,178,3742,158,0.01,0,46,21,0,18,597,63,0,360,19,21,0,0),
-('H002',1,170,3558,130,0,0,55,0,0,15,470,80,0,360,17,0,0,0);
-/*!40000 ALTER TABLE `herostats` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `herostats` (`HeroID`, `Level`, `Phys_ATK`, `HP`, `Phys_Defense`, `Attack_Speed`, `Critical_Rate`, `HP_5_sec`, `Armor_Pierce`, `Life_Steal`, `Magic_Power`, `Max_Mana`, `Magic_Defense`, `Cooldown_Reduction`, `Movement_Speed`, `Mana_5_sec`, `Magic_Pierce`, `Magic_Life_Steal`, `Resistance`) VALUES
+('H001', 1, 169, 3475, 140, 0, 0, 45, 18, 0, 15, 490, 50, 0, 360, 18, 18, 0, 0),
+('H001', 2, 178, 3742, 158, 0.01, 0, 46, 21, 0, 18, 597, 63, 0, 360, 19, 21, 0, 0),
+('H001', 3, 188, 4009, 177, 0.02, 0, 48, 24, 0, 21, 704, 77, 0, 360, 21, 24, 0, 0),
+('H001', 4, 198, 4276, 196, 0.03, 0, 50, 27, 0, 24, 811, 90, 0, 360, 23, 27, 0, 0),
+('H001', 5, 208, 4543, 215, 0.04, 0, 52, 30, 0, 27, 918, 104, 0, 360, 25, 30, 0, 0),
+('H001', 6, 218, 4810, 234, 0.05, 0, 54, 33, 0, 30, 1025, 117, 0, 360, 27, 33, 0, 0),
+('H001', 7, 228, 5077, 253, 0.06, 0, 56, 36, 0, 33, 1132, 130, 0, 360, 29, 36, 0, 0),
+('H001', 8, 238, 5344, 272, 0.07, 0, 58, 39, 0, 36, 1239, 144, 0, 360, 31, 39, 0, 0),
+('H001', 9, 247, 5611, 290, 0.08, 0, 59, 42, 0, 39, 1346, 157, 0, 360, 32, 42, 0, 0),
+('H001', 10, 257, 5878, 309, 0.09, 0, 61, 45, 0, 42, 1453, 171, 0, 360, 34, 45, 0, 0),
+('H001', 11, 267, 6145, 328, 0.1, 0, 63, 48, 0, 45, 1560, 184, 0, 360, 36, 48, 0, 0),
+('H001', 12, 277, 6412, 347, 0.11, 0, 65, 51, 0, 48, 1667, 198, 0, 360, 38, 51, 0, 0),
+('H001', 13, 287, 6679, 366, 0.12, 0, 67, 54, 0, 51, 1774, 211, 0, 360, 40, 54, 0, 0),
+('H001', 14, 296, 6946, 384, 0.13, 0, 68, 57, 0, 54, 1881, 225, 0, 360, 41, 57, 0, 0),
+('H001', 15, 306, 7213, 403, 0.14, 0, 70, 60, 0, 57, 1988, 238, 0, 360, 43, 60, 0, 0),
+('H002', 1, 170, 3558, 130, 0, 0, 55, 0, 0, 15, 470, 80, 0, 360, 17, 0, 0, 0),
+('H002', 2, 180, 3813, 150, 0.01, 0, 57, 0, 0, 18, 574, 93, 0, 360, 18, 0, 0, 0),
+('H002', 3, 191, 4069, 170, 0.02, 0, 60, 0, 0, 21, 678, 107, 0, 360, 20, 0, 0, 0),
+('H002', 4, 202, 4325, 190, 0.03, 0, 63, 0, 0, 24, 782, 120, 0, 360, 22, 0, 0, 0),
+('H002', 5, 213, 4581, 210, 0.04, 0, 66, 0, 0, 27, 886, 134, 0, 360, 24, 0, 0, 0),
+('H002', 6, 224, 4837, 230, 0.05, 0, 69, 0, 0, 30, 990, 147, 0, 360, 26, 0, 0, 0),
+('H002', 7, 235, 5093, 250, 0.06, 0, 72, 0, 0, 33, 1094, 160, 0, 360, 28, 0, 0, 0),
+('H002', 8, 246, 5349, 270, 0.07, 0, 75, 0, 0, 36, 1198, 174, 0, 360, 30, 0, 0, 0),
+('H002', 9, 256, 5604, 290, 0.08, 0, 77, 0, 0, 39, 1302, 187, 0, 360, 31, 0, 0, 0),
+('H002', 10, 267, 5860, 310, 0.09, 0, 80, 0, 0, 42, 1406, 201, 0, 360, 33, 0, 0, 0),
+('H002', 11, 278, 6116, 330, 0.1, 0, 83, 0, 0, 45, 1510, 214, 0, 360, 35, 0, 0, 0),
+('H002', 12, 289, 6372, 350, 0.11, 0, 86, 0, 0, 48, 1614, 228, 0, 360, 37, 0, 0, 0),
+('H002', 13, 300, 6628, 370, 0.12, 0, 89, 0, 0, 51, 1718, 241, 0, 360, 39, 0, 0, 0),
+('H002', 14, 310, 6883, 390, 0.13, 0, 91, 0, 0, 54, 1822, 255, 0, 360, 40, 0, 0, 0),
+('H002', 15, 321, 7139, 410, 0.14, 0, 94, 0, 0, 57, 1926, 268, 0, 360, 42, 0, 0, 0);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `itemcomposition`
 --
 
-DROP TABLE IF EXISTS `itemcomposition`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `itemcomposition` (
   `Composite_ItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `BaseItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `Quantity` int DEFAULT NULL,
-  PRIMARY KEY (`Composite_ItemID`,`BaseItemID`),
-  KEY `BaseItemID` (`BaseItemID`),
-  CONSTRAINT `itemcomposition_ibfk_1` FOREIGN KEY (`Composite_ItemID`) REFERENCES `items` (`ItemID`),
-  CONSTRAINT `itemcomposition_ibfk_2` FOREIGN KEY (`BaseItemID`) REFERENCES `items` (`ItemID`)
+  `Quantity` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `itemcomposition`
 --
 
-LOCK TABLES `itemcomposition` WRITE;
-/*!40000 ALTER TABLE `itemcomposition` DISABLE KEYS */;
-INSERT INTO `itemcomposition` VALUES 
-('I006','I001',1),
-('I007','I001',1),
-('I007','I002',1);
-/*!40000 ALTER TABLE `itemcomposition` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `itemcomposition` (`Composite_ItemID`, `BaseItemID`, `Quantity`) VALUES
+('I006', 'I001', 1),
+('I007', 'I001', 1),
+('I007', 'I002', 1),
+('I008', 'I002', 1),
+('I009', 'I001', 2),
+('I010', 'I002', 2);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `items`
 --
 
-DROP TABLE IF EXISTS `items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `items` (
   `ItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `ItemName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `Class` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `PassiveTag` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `EffectDesc` text COLLATE utf8mb4_general_ci,
+  `DamageRatioPhysical` float DEFAULT NULL,
+  `DamageRatioMagic` float DEFAULT NULL,
   `Price` int DEFAULT NULL,
   `Phys_ATK` float DEFAULT NULL,
   `HP` int DEFAULT NULL,
@@ -186,32 +196,214 @@ CREATE TABLE `items` (
   `Mana_5_sec` int DEFAULT NULL,
   `Magic_Pierce` float DEFAULT NULL,
   `Magic_Life_Steal` float DEFAULT NULL,
-  `Resistance` float DEFAULT NULL,
-  PRIMARY KEY (`ItemID`)
+  `Resistance` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `items`
 --
 
-LOCK TABLES `items` WRITE;
-/*!40000 ALTER TABLE `items` DISABLE KEYS */;
-INSERT INTO `items` VALUES ('I001','Short Sword','Attack',250,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I002','Dagger','Attack',290,0,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0),('I003','Gloves','Attack',300,0,0,0,0,0.08,0,0,0,0,0,0,0,0,0,0,0,0),('I004','Bloodied Club','Attack',410,10,0,0,0,0,0,0,0.08,0,0,0,0,0,0,0,0,0),('I005','Chain Hammer','Attack',450,40,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I006','Cleaving Claymore','Attack',910,80,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I007','Arcane Hammer','Attack',740,25,0,0,0.15,0,0,0,0,0,0,0,0,0,0,0,0,0),('I008','Tempest Blades','Attack',780,0,0,0,0.25,0,0,0,0,0,0,0,0,0.05,0,0,0,0),('I009','Astral Spear','Attack',830,50,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I010','Shuriken','Attack',750,0,0,0,0.2,0,0,0,0,0,0,0,0,0,0,0,0,0),('I011','Chaos Bow','Attack',110,40,0,0,0.1,0,0,0,0,0,0,0,0,0,0,0,0,0),('I012','Uriel\'s Brand','Attack',2020,60,0,0,0.25,0,0,0,0,0,0,180,0,0,0,0,0,0),('I013','Curse of Death','Attack',1900,80,800,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I014','Death Sickle','Attack',2000,60,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0,0),('I015','Bow of Slaughter','Attack',2250,90,0,0,0,0.1,0,0,0.1,0,0,0,0,0,0,0,0,0),('I016','The Diminisher','Attack',2120,100,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I017','The Morning Star','Attack',2980,50,0,0,0.3,0.1,0,0,0,0,0,0,0,0,0,0,0,0),('I018','Spear of Longinus','Attack',2030,80,500,0,0,0,0,0,0,0,0,0,0.15,0,0,0,0,0),('I019','Fafnir\'s Talon','Attack',2040,60,0,0,0.3,0,0,0,0,0,0,0,0,0,0,0,0,0),('I020','Claves Sancti','Attack',2120,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I021','Muramasa','Attack',2020,75,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I022','The Beast','Attack',1740,100,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I023','Omni Arms','Attack',2150,70,600,0,0.15,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I024','Slikk\'s String','Attack',1920,0,0,0,0.35,0.25,0,0,0,0,0,0,0,0.07,0,0,0,0),('I025','Fenrir\'s Tooth','Attack',2950,200,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I026','Blitz Blade','Attack',1900,0,0,0,0.35,0.15,0,0,0,0,0,0,0,0.05,0,0,0,0),('I027','Ifrit\'s Claw','Attack',1960,0,0,0,0.3,0.2,0,0,0,0,0,0,0,0.05,0,0,0,0),('I028','Broken Spears','Attack',1900,110,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I029','Eclipsing Bow','Attack',2000,0,0,0,0.3,0.1,0,0,0,0,0,0,0,0.05,0,0,0,0),('I030','Ring of Vitality','Defense',300,0,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I031','Light Armor','Defense',220,0,0,90,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I032','Gladitor Gauntlets','Defense',220,0,0,0,0,0,0,0,0,0,0,90,0,0,0,0,0,0),('I033','Tailsman of Strenght','Defense',140,0,0,0,0,0,30,0,0,0,0,0,0,0,0,0,0,0),('I034','Necklace of Vitality','Defense',540,0,600,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I035','Greaves of Protection','Defense',900,0,1000,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I036','Heart of Incubus','Defense',720,0,0,150,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I037','Belt of Clarity','Defense',1000,0,700,0,0,0,0,0,0,0,0,110,0,0,0,0,0,0),('I038','Platinum Gauntlets','Defense',660,0,0,110,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I039','Knight\'s Plate','Defense',730,0,0,210,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I040','Mail of Pain','Defense',1940,0,1200,300,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I041','Hercules\' Madness','Defense',2080,80,0,180,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I042','Odin\'s Will','Defense',1900,0,1200,225,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0),('I043','Mantle of Ra','Defense',1900,0,1000,225,0,0,60,0,0,0,0,0,0,0,0,0,0,0),('I044','Shield of the Lost','Defense',2100,0,1200,275,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I045','The Aegis','Defense',2180,0,0,360,0,0,0,0,0,0,400,0,0.2,0,0,0,0,0),('I046','Gaia\'s Standard','Defense',1960,0,1200,0,0,0,0,0,0,0,0,200,0,0.05,0,0,0,0),('I047','Medallion of Troy','Defense',2320,0,1000,0,0,0,0,0,0,0,0,200,0.1,0,0,0,0,0),('I048','Hyoga\'s Edge','Defense',1920,0,1200,100,0,0,0,0,0,0,0,100,0,0,0,0,0,0),('I049','Blade of Eternity','Defense',2400,0,0,120,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I050','Frost Cape','Defense',1970,0,800,200,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I051','Amulet of Longevity','Defense',1980,0,2000,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I052','Rock Shield','Defense',1980,0,1000,240,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I053','Spell Tome','Magic',300,0,0,0,0,0,0,0,0,40,0,0,0,0,0,0,0,0),('I054','Lapis Ring','Magic',220,0,0,0,0,0,0,0,0,0,300,0,0,0,0,0,0,0),('I055','Pendant of Faith','Magic',120,0,0,0,0,0,0,0,0,0,0,0,0,0,10,0,0,0),('I056','Ancient Scriptures','Magic',540,0,0,0,0,0,0,0,0,80,0,0,0,0,0,0,0,0),('I057','Magic Ring','Magic',300,0,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0,0),('I058','Enchanted Scroll','Magic',820,0,0,0,0,0,0,0,0,120,0,0,0,0,0,0,0,0),('I059','Trick Blade','Magic',820,0,0,0,0,0,0,0,0,40,0,0,0.1,0,0,0,0,0),('I060','Spoonky Mask','Magic',960,0,0,0,0,0,0,0,0,100,0,0,0,0,0,0,0,0),('I061','Phoenix Tear','Magic',500,0,0,0,0,0,0,0,0,50,0,0,0,0,0,0,0,0),('I062','Virtue\'s Bracelet','Magic',720,0,0,0,0,0,0,0,0,60,0,0,0.05,0,20,0,0,0),('I063','Vlad\'s Impaler','Magic',900,0,0,0,0,0,0,0,0,60,0,0,0.05,0,0,0,0,0),('I064','Staff of Nuul','Magic',2050,0,0,0,0,0,0,0,0,180,0,0,0.1,0,0,0,0,0),('I065','Evil Secrets','Magic',1980,0,0,0,0,0,0,0,0,180,0,0,0,0,0,0,0,0),('I066','Soul Scroll','Magic',1900,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I067','Virtue\'s Necklace','Magic',1800,0,0,0,0,0,0,0,0,160,0,0,0.15,0,25,0,0,0),('I068','Orrery','Magic',800,0,0,0,0,0,0,0,0,80,0,0,0,0,0,0,0,0),('I069','Boomstick','Magic',1800,0,0,0,0,0,0,0,0,200,0,0,0,0.05,0,0,0,0),('I070','Hecate\'s Diadem','Magic',2400,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,0,0),('I071','Orb of the Magi','Magic',1900,0,0,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I072','Rhea\'s Blessing','Magic',2050,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I073','Zewihander','Magic',1900,0,0,0,0.2,0,0,0,0,180,0,0,0,0.05,0,0,0,0),('I074','Frosty Revenge','Magic',2020,0,850,0,0,0,0,0,0,140,0,0,0,0.05,0,0,0,0),('I075','Berith\'s Agony','Magic',1800,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I076','Apocalypse','Magic',1900,0,0,0,0,0,0,0,0,180,0,0,0.1,0.05,0,0,0,0),('I077','Soring Aura','Magic',2100,0,600,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I078','Holy of Holies','Magic',2990,0,0,0,0,0,0,0,0,400,0,0,0,0,0,0,0,0),('I079','Arctic Orbs','Magic',2200,0,0,0,0,0,0,0,0,240,0,0,0,0,0,0,0,0),('I080','Frostguard','Magic',2100,0,600,0,0,0,0,0,0,140,0,0,0.05,0,0,0,0,0),('I081','Boots of Speed','Movement',250,0,0,0,0,0,0,0,0,0,0,0,0,30,0,0,0,0),('I082','Sonic Boots','Movement',700,0,0,110,0,0,0,0,0,0,0,0,0,60,0,0,0,0),('I083','Gilded Greaves','Movement',700,0,0,0,0,0,0,0,0,0,0,90,60,0,0,0,0,0.35),('I084','Flashy Boots','Movement',700,0,0,0,0,0,0,0,0,0,0,0,0.15,60,0,0,0,0),('I085','Enchanted Kicks','Movement',700,0,0,0,0,0,0,0,0,0,0,0,0,60,0,0,0,0),('I086','War Boots','Movement',700,0,0,0,0.25,0,0,0,0,0,0,0,0,60,0,75,0,0),('I087','Hermes\'s Select','Movement',700,0,0,0,0,0,0,0,0,0,0,0,0,60,0,0,0,0),('I088','Elemental Stone','Support',300,0,0,0,0,0,0,0,0,0,0,0,0,0.05,0,0,0,0),('I089','Earth Gem','Support',900,0,400,0,0,0,0,0,0,0,0,0,0.05,0.05,0,0,0,0),('I090','Fire Gem','Support',900,20,0,0,0,0,0,0,0,0,0,0,0.05,0.05,0,0,0,0),('I091','Mother Earth: Barrier','Support',1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0),('I092','Mother Earth: Magic Eye','Support',1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0),('I093','Mother Earth: Accelerate','Support',1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0),('I094','Mother Earth: Cleansing','Support',1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0),('I095','Mother Earth: Rejuvenate','Support',1600,0,400,0,0,0,0,0,0,0,0,0,0.1,0.05,0,0,0,0),('I096','Wildfire: Barrier','Support',1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0),('I097','Wildfire: Magic Eye','Support',1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0),('I098','Wildfire: Accelerate','Support',1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0),('I099','Wildfire: Cleansing','Support',1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0),('I100','Wildfire: Rejuvenate','Support',1600,0,600,0,0.05,0,0,0,0,0,0,0,0,0,0,0,0,0),('I101','Hunter\'s Knife','Jungle',250,10,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I102','Monster\'s Bane','Jungle',750,0,0,0,0,0,0,0,0,40,0,0,0,0,0,0,0,0),('I103','Gnoll Cleaver','Jungle',750,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I104','Mr. Stabby','Jungle',750,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I105','Stormy Bow','Jungle',750,20,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I106','Loki\'s Curse','Jungle',1750,0,0,0,0,0,0,0,0,140,0,0,0.1,0,0,0,0,0),('I107','Leviathan','Jungle',1750,0,600,120,0,0,0,0,0,0,0,0,0,0,0,0,0,0),('I108','Soulreaver','Jungle',1750,80,0,0,0,0,0,0,0,0,0,0,0.1,0,0,0,0,0),('I109','FireStorm Bow','Jungle',1750,30,0,0,0.2,0,0,0,0.1,0,0,0,0,0,0,0,0,0);
-/*!40000 ALTER TABLE `items` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `items` (`ItemID`, `ItemName`, `Class`, `PassiveTag`, `EffectDesc`, `DamageRatioPhysical`, `DamageRatioMagic`, `Price`, `Phys_ATK`, `HP`, `Phys_Defense`, `Attack_Speed`, `Critical_Rate`, `HP_5_sec`, `Armor_Pierce`, `Life_Steal`, `Magic_Power`, `Max_Mana`, `Magic_Defense`, `Cooldown_Reduction`, `Movement_Speed`, `Mana_5_sec`, `Magic_Pierce`, `Magic_Life_Steal`, `Resistance`) VALUES
+('I001', 'Short Sword', 'Attack', NULL, NULL, NULL, NULL, 250, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I002', 'Dagger', 'Attack', NULL, NULL, NULL, NULL, 290, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I003', 'Gloves', 'Attack', NULL, NULL, NULL, NULL, 300, 0, 0, 0, 0, 0.08, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I004', 'Bloodied Club', 'Attack', NULL, NULL, NULL, NULL, 410, 10, 0, 0, 0, 0, 0, 0, 0.08, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I005', 'Chain Hammer', 'Attack', NULL, NULL, NULL, NULL, 450, 40, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I006', 'Cleaving Claymore', 'Attack', NULL, NULL, NULL, NULL, 910, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I007', 'Arcane Hammer', 'Attack', NULL, NULL, NULL, NULL, 740, 25, 0, 0, 0.15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I008', 'Tempest Blades', 'Attack', NULL, NULL, NULL, NULL, 780, 0, 0, 0, 0.25, 0, 0, 0, 0, 0, 0, 0, 0, 0.05, 0, 0, 0, 0),
+('I009', 'Astral Spear', 'Attack', NULL, NULL, NULL, NULL, 830, 50, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I010', 'Shuriken', 'Attack', NULL, NULL, NULL, NULL, 750, 0, 0, 0, 0.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+('I011', 'Chaos Bow', 'Attack', NULL, NULL, NULL, NULL, 110, 40, 0, 0, 0.1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
 
 --
--- Dumping routines for database 'rov'
+-- Table structure for table `item_effects`
 --
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+CREATE TABLE `item_effects` (
+  `ItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `EffectType` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `Param1` float DEFAULT NULL,
+  `Param2` float DEFAULT NULL,
+  `Description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `item_effects`
+--
+
+INSERT INTO `item_effects` (`ItemID`, `EffectType`, `Param1`, `Param2`, `Description`) VALUES
+('I007', 'Speed_Up', 10, NULL, 'เมื่อทำการโจมตีปกติ รับความเร็วเคลื่อนที่ +10%'),
+('I010', 'Heel', 21, 35, 'การโจมตีปกติสร้างความเสียหายกายภาพเพิ่มขึ้น 21-35(ระยะใกล้)/42-70(ระยะไกล) CD 0.3 วินาที'),
+('I011', 'Stab', 10, 2, 'เพิ่มเจาะเกราะ 10%(ฮีโร่ตีไกลได้รับผล 2 เท่า)'),
+('I012', 'Savior\'s_Edge', 40, 600, 'เมื่อ HP ต่ำกว่า 40% จะสร้างโล่เวท(600-2000) เป็นเวลา 5 วิทนาที รวมถึงได้รับต้านสถานะ 25% และวิ่งเร็วขึ้น 30% เป็นเวลา 2 วินาที (CD 75 วินาที)'),
+('I012', 'Speed_Up', 10, NULL, 'เมื่อทำการโจมตีปกติจะวิ่งเร็วขึ้น 10%'),
+('I013', 'Soul_Prison', 40, 2, 'ลดการฟื้นฟูของเป้าหมายลง 40% เป็นเวลา 2 วินาที (หากความเสียหายมาจากการโจมตีปกติจะเพิ่มขึ้นเป็น 4 วินาทีแทน)'),
+('I014', 'Divine_Intervention', 20, 1, 'อมตะเมื่อ HP ต่ำและวิ่งเร็วขึ้น 20% เป็นเวลา 1 วินาที CD 90 วินาที'),
+('I015', '[Bloodthirst]', 60, 3, 'ดูดเลือดเพิ่มขึ้น 60% เป็นเวลา 3 วินาที(ระยะไกลเท่านั้น) CD 60 วินาที'),
+('I016', 'Cripple', 30, 20, 'หากใช้สกิลฮีโร่ศัตรูตัวแรกที่โดนจะวิ่งช้าลง 30% และความเสียหายลดลง 20% เป็นเวลา 3 วินาที (CD: 8 วินาที)'),
+('I016', '[Sturdy]', 40, 2, 'ลดความเสียหายที่ได้รับลง 40% เป็นเวลา 2 วินาที (สามารถใช้ได้ขณะถูกสถานะควบคุม) CD 90 วินาที');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_passives`
+--
+
+CREATE TABLE `item_passives` (
+  `ItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `PassiveTag` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `item_passives`
+--
+
+INSERT INTO `item_passives` (`ItemID`, `PassiveTag`) VALUES
+('I108', ''),
+('I018', 'Armor_Break'),
+('I071', 'Bide'),
+('I048', 'Biting_Cold'),
+('I040', 'Blitz'),
+('I016', 'Cripple'),
+('I106', 'Curse_Power'),
+('I017', 'Dawning_Star'),
+('I028', 'Destroyer'),
+('I014', 'Divine_Intervention'),
+('I019', 'Dragon\'s_Breath');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item_synergy`
+--
+
+CREATE TABLE `item_synergy` (
+  `SynergyGroup` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ItemID` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `BonusValue` float NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `item_synergy`
+--
+
+INSERT INTO `item_synergy` (`SynergyGroup`, `ItemID`, `BonusValue`) VALUES
+('', 'I108', 60),
+('Armor_Break', 'I018', 60),
+('Barrier', 'I091', 680),
+('Bide', 'I071', 30),
+('Biting_Cold', 'I048', 25),
+('Blitz', 'I040', 15),
+('Cripple', 'I016', 30),
+('Curse_Power', 'I106', 35),
+('Dawning_Star', 'I017', 50),
+('Destroyer', 'I028', 40),
+('Divine_Intervention', 'I014', 20),
+('Dragon\'s_Breath', 'I019', 8),
+('Echo', 'I068', 180);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `heroes`
+--
+ALTER TABLE `heroes`
+  ADD PRIMARY KEY (`HeroID`);
+
+--
+-- Indexes for table `heroskills`
+--
+ALTER TABLE `heroskills`
+  ADD PRIMARY KEY (`SkillID`),
+  ADD KEY `fk_heroskills_heroes` (`HeroID`);
+
+--
+-- Indexes for table `herostats`
+--
+ALTER TABLE `herostats`
+  ADD PRIMARY KEY (`HeroID`,`Level`);
+
+--
+-- Indexes for table `itemcomposition`
+--
+ALTER TABLE `itemcomposition`
+  ADD PRIMARY KEY (`Composite_ItemID`,`BaseItemID`),
+  ADD KEY `BaseItemID` (`BaseItemID`);
+
+--
+-- Indexes for table `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`ItemID`);
+
+--
+-- Indexes for table `item_effects`
+--
+ALTER TABLE `item_effects`
+  ADD PRIMARY KEY (`ItemID`,`EffectType`),
+  ADD KEY `idx_effect_type` (`EffectType`);
+
+--
+-- Indexes for table `item_passives`
+--
+ALTER TABLE `item_passives`
+  ADD PRIMARY KEY (`ItemID`,`PassiveTag`),
+  ADD KEY `idx_passive_tag` (`PassiveTag`);
+
+--
+-- Indexes for table `item_synergy`
+--
+ALTER TABLE `item_synergy`
+  ADD PRIMARY KEY (`SynergyGroup`,`ItemID`),
+  ADD KEY `idx_synergy_item` (`ItemID`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `heroskills`
+--
+ALTER TABLE `heroskills`
+  ADD CONSTRAINT `fk_heroskills_heroes` FOREIGN KEY (`HeroID`) REFERENCES `heroes` (`HeroID`) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+--
+-- Constraints for table `herostats`
+--
+ALTER TABLE `herostats`
+  ADD CONSTRAINT `herostats_ibfk_1` FOREIGN KEY (`HeroID`) REFERENCES `heroes` (`HeroID`);
+
+--
+-- Constraints for table `itemcomposition`
+--
+ALTER TABLE `itemcomposition`
+  ADD CONSTRAINT `itemcomposition_ibfk_1` FOREIGN KEY (`Composite_ItemID`) REFERENCES `items` (`ItemID`),
+  ADD CONSTRAINT `itemcomposition_ibfk_2` FOREIGN KEY (`BaseItemID`) REFERENCES `items` (`ItemID`);
+
+--
+-- Constraints for table `item_effects`
+--
+ALTER TABLE `item_effects`
+  ADD CONSTRAINT `fk_item_effects_item` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ItemID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `item_passives`
+--
+ALTER TABLE `item_passives`
+  ADD CONSTRAINT `fk_item_passives_item` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ItemID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `item_synergy`
+--
+ALTER TABLE `item_synergy`
+  ADD CONSTRAINT `fk_item_synergy_item` FOREIGN KEY (`ItemID`) REFERENCES `items` (`ItemID`) ON DELETE CASCADE;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2025-04-11 14:52:04
