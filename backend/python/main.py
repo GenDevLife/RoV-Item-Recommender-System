@@ -1,372 +1,423 @@
-#!/usr/bin/env python3
-# main.py – RoV Genetic-Algorithm Item Recommender
-# rev-C • 11 พ.ค. 2025
-"""
-▸ แก้ปัญหา --force ไม่ทำงาน
-▸ เปลี่ยน budget เป็น exp-decay ต่อเนื่อง
-▸ ปรับ THETA / Phase Weight (Early 0.3 Mid 0.3 Late 0.4)
-▸ Lazy-init connection-pool และ fallback TCP 127.0.0.1 บน Windows
-* I/O CLI และ schema ฐานข้อมูล ไม่เปลี่ยน *
-"""
-
 from __future__ import annotations
-import os, random, math, time, json, argparse, sys
+import os
+import random
+import math
+import time
+import json
+import argparse
 from functools import lru_cache
-from typing import Dict, List, Tuple, Optional, Set
+from typing import Dict, List, Tuple, Optional, Set, Any
 from collections import defaultdict
 
 import mysql.connector
 from mysql.connector import pooling, Error
 from dotenv import load_dotenv
 
-# ────────────────────────── 0. น้ำหนัก THETA ──────────────────────────
+# ---------------------------- Parameter Setting -----------------------------
 THETA: Dict[str, float] = {
-    "stat": 1234.5152900513515,
-    "budget": 167.21484907713506,
-    "skill": -330.69627100529004,
-    "synergy": 0.05699362842449318,
-    "cat": 1003.2890944627134,
-    "cat_ATK": 0.0,
-    "cat_Def": -7.105427357601002e-14,
-    "cat_Magic": -7.597867980580487,
-    "class": 757.0236731369758,
-    "lane": -379.0656780893436
+    'stat': 1234.5152900513515,
+    'budget': 167.21484907713506,
+    'skill': -330.69627100529004,
+    'synergy': 0.05699362842449318,
+    'cat': 1003.2890944627134,
+    'cat_ATK': 0.0,
+    'cat_Def': -7.105427357601002e-14,
+    'cat_Magic': -7.597867980580487,
+    'class': 757.0236731369758,
+    'lane': -379.0656780893436,
 }
 
-def load_theta_config(path: str = "weights.json") -> None:
-    """Override THETA จากไฟล์ภายนอกถ้ามี"""
+GA_CONSTANTS: Dict[str, Any] = {
+    'POP_SIZE': 300,
+    'MAX_GEN': 60,
+    'CROSSOVER_RATE': 0.8,
+    'BASE_MUT_RATE': 0.05,
+    'STAGNANT_LIMIT': 6,
+    'PHASE_WEIGHTS': {'Early': 0.3, 'Mid': 0.3, 'Late': 0.4},
+    'BASE_BUDGET': {'Early': 2700, 'Mid': 7500, 'Late': 14000},
+}
+
+def load_theta_config(path: str = 'weights.json') -> None:
+    """Load and override THETA weights from an external JSON file if it exists."""
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, 'r', encoding='utf-8') as f:
             THETA.update(json.load(f))
-            print(f"[INFO] Loaded THETA overrides from {path}")
+            print(f'[INFO] Loaded THETA overrides from {path}')
     except FileNotFoundError:
         pass
 
-# ─────────────────────── 1. การเชื่อมต่อฐานข้อมูล ─────────────────────
-load_dotenv(os.path.join(os.path.dirname(__file__), "../config/.env"))
+# ---------------------------- Database Utilities ----------------------------
+load_dotenv(os.path.join(os.path.dirname(__file__), '../config/.env'))
 DB_CONFIG = {
-    "host": os.getenv("DB_HOST"),
-    "port": int(os.getenv("DB_PRIMARY_PORT", 3306)),
-    "user": os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "database": os.getenv("DB_NAME"),
-    "charset": "utf8mb4",
+    'host': os.getenv('DB_HOST'),
+    'port': int(os.getenv('DB_PRIMARY_PORT', 3306)),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'database': os.getenv('DB_NAME'),
+    'charset': 'utf8mb4',
 }
 
-_POOL: Optional[pooling.MySQLConnectionPool] = None  # lazy
+_CONNECTION_POOL: Optional[pooling.MySQLConnectionPool] = None
 
-def _init_pool():
-    global _POOL
+def initialize_connection_pool() -> None:
+    """Initialize MySQL connection pool with lazy initialization."""
+    global _CONNECTION_POOL
     try:
-        _POOL = pooling.MySQLConnectionPool(pool_name="rov_pool",
-                                            pool_size=3,
-                                            **DB_CONFIG)
-        print("[INFO] MySQL pool initialised")
+        _CONNECTION_POOL = pooling.MySQLConnectionPool(
+            pool_name='rov_pool', pool_size=3, **DB_CONFIG
+        )
+        print('[INFO] MySQL pool initialized')
     except Error as e:
-        print(f"[WARN] pool init failed: {e} – fallback direct connect")
-        _POOL = None
+        print(f'[WARN] Pool init failed: {e} – falling back to direct connect')
+        _CONNECTION_POOL = None
 
-def get_conn():
-    global _POOL
-    if _POOL is None:
-        _init_pool()
+def get_connection() -> mysql.connector.connection.MySQLConnection:
+    """Get a database connection, retrying with exponential backoff if needed."""
+    global _CONNECTION_POOL
+    if _CONNECTION_POOL is None:
+        initialize_connection_pool()
     tries, delay = 0, 1
     while tries < 4:
         try:
-            if _POOL:
-                return _POOL.get_connection()
+            if _CONNECTION_POOL:
+                return _CONNECTION_POOL.get_connection()
             return mysql.connector.connect(**DB_CONFIG)
         except Error as e:
-            print(f"[WARN] DB connect failed: {e}; retry {delay}s")
+            print(f'[WARN] DB connect failed: {e}; retrying in {delay}s')
             time.sleep(delay)
             tries += 1
             delay *= 2
-    raise RuntimeError("Cannot connect to MySQL")
+    raise RuntimeError('Cannot connect to MySQL')
 
-# ───────────────────────── 2. ค่าคงที่ของ GA ──────────────────────────
-POP_SIZE, MAX_GEN = 300, 60
-CROSSOVER_RATE, BASE_MUT_RATE = 0.8, 0.05
-STAGNANT_LIMIT = 6
-PHASE_WEIGHTS = {"Early": .3, "Mid": .3, "Late": .4}
-BASE_BUDGET    = {"Early": 2700, "Mid": 7500, "Late": 14000}
-
-# ─────────────────────── 3. โหลดข้อมูลจาก DB ─────────────────────────
+# ---------------------------- Data Loading ----------------------------------
 @lru_cache(maxsize=None)
 def load_synergy_rules() -> List[Tuple[Set[str], float]]:
-    grp: Dict[str, Set[str]] = defaultdict(set)
-    bonus: Dict[str, float]  = {}
-    with get_conn() as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT SynergyGroup, ItemID, BonusValue FROM item_synergy")
-        for g, iid, b in cur.fetchall():
-            grp[g].add(iid)
-            bonus[g] = float(b or 0.0)
-    print(f"[INFO] Loaded {len(grp)} synergy groups from DB")
-    return [(frozenset(v), bonus[k]) for k, v in grp.items()]
+    """Load synergy rules from the database."""
+    synergy_groups: Dict[str, Set[str]] = defaultdict(set)
+    bonus_values: Dict[str, float] = {}
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT SynergyGroup, ItemID, BonusValue FROM item_synergy')
+        for group, item_id, bonus in cursor.fetchall():
+            synergy_groups[group].add(item_id)
+            bonus_values[group] = float(bonus or 0.0)
+    print(f'[INFO] Loaded {len(synergy_groups)} synergy groups from DB')
+    return [(frozenset(items), bonus_values[group]) for group, items in synergy_groups.items()]
 
 SYNERGY_RULES = load_synergy_rules()
 
 @lru_cache(maxsize=None)
-def load_item_data() -> Dict[str, Dict]:
-    with get_conn() as conn:
-        cur = conn.cursor(dictionary=True)
-        cur.execute("""
-            SELECT ItemID, ItemName, Class, Price,
-                   Phys_ATK, Magic_Power, Phys_Defense, HP,
-                   Cooldown_Reduction, Critical_Rate, Movement_Speed,
-                   Attack_Speed, HP_5_sec, Mana_5_sec,
+def load_item_data() -> Dict[str, Dict[str, float]]:
+    """Load item data from the database."""
+    with get_connection() as conn:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT ItemID, ItemName, Class, Price, Phys_ATK, Magic_Power,
+                   Phys_Defense, HP, Cooldown_Reduction, Critical_Rate,
+                   Movement_Speed, Attack_Speed, HP_5_sec, Mana_5_sec,
                    Armor_Pierce, Magic_Pierce, Life_Steal, Magic_Life_Steal,
                    Max_Mana, Magic_Defense, Resistance
-            FROM items""")
-        data = {}
-        for row in cur.fetchall():
-            for k, v in row.items():
-                if k not in ("ItemID", "ItemName", "Class"):
-                    row[k] = float(v or 0.0)
-            data[row["ItemID"]] = row
-        return data
+            FROM items
+        """)
+        items = {}
+        for row in cursor.fetchall():
+            for key, value in row.items():
+                if key not in ('ItemID', 'ItemName', 'Class'):
+                    row[key] = float(value or 0.0)
+            items[row['ItemID']] = row
+        return items
 
-item_data = load_item_data()
+ITEM_DATA = load_item_data()
 
-# hero helpers -------------------------------------------------------------
 @lru_cache(maxsize=128)
 def load_hero_stats(hero: str, level: int) -> Dict[str, float]:
-    with get_conn() as conn:
-        cur = conn.cursor(dictionary=True)
-        cur.execute("""
+    """Load hero base stats at a given level."""
+    with get_connection() as conn:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
             SELECT Phys_ATK, Magic_Power, Phys_Defense, HP,
                    Cooldown_Reduction, Critical_Rate, Movement_Speed
-            FROM herostats WHERE HeroID=%s AND Level=%s""",
-            (hero, level))
-        return cur.fetchone() or {}
+            FROM herostats WHERE HeroID=%s AND Level=%s
+        """, (hero, level))
+        return cursor.fetchone() or {}
 
 @lru_cache(maxsize=128)
-def load_stat_caps(hero: str, buf: float = 0.20) -> Dict[str, float]:
-    base = load_hero_stats(hero, 15)
-    return {k.upper(): v * (1 + buf) for k, v in base.items()}
+def load_stat_caps(hero: str, buffer: float = 0.20) -> Dict[str, float]:
+    """Load hero stat caps with a buffer."""
+    base_stats = load_hero_stats(hero, 15)
+    return {stat.upper(): value * (1 + buffer) for stat, value in base_stats.items()}
 
 @lru_cache(maxsize=128)
 def get_recommended_item_types(hero: str) -> List[str]:
-    with get_conn() as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT DISTINCT RecommendItemType FROM heroskills WHERE HeroID=%s", (hero,))
-        return [r[0] for r in cur.fetchall() if r[0]]
+    """Get recommended item types for a hero."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT DISTINCT RecommendItemType FROM heroskills WHERE HeroID=%s', (hero,))
+        return [row[0] for row in cursor.fetchall() if row[0]]
 
 @lru_cache(maxsize=128)
 def get_hero_info(hero: str) -> Dict[str, Optional[str]]:
-    with get_conn() as conn:
-        cur = conn.cursor()
-        cur.execute("SELECT First_Class, Second_Class, First_Lane FROM heroes WHERE HeroID=%s", (hero,))
-        r = cur.fetchone()
+    """Get hero class and lane information."""
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT First_Class, Second_Class, First_Lane FROM heroes WHERE HeroID=%s', (hero,))
+        row = cursor.fetchone()
     return {
-        "primary":   r[0] if r else "Fighter",
-        "secondary": r[1] if r and r[1] else None,
-        "lane":      r[2] if r and r[2] else "Mid",
+        'primary': row[0] if row else 'Fighter',
+        'secondary': row[1] if row and row[1] else None,
+        'lane': row[2] if row and row[2] else 'Mid',
     }
 
-# ─────────────────────── 4. ฟังก์ชันช่วยคำนวณ ─────────────────────────
-_n = lambda x: float(x or 0.0)
-STAT_MAP = [
-    ("patk", "Phys_ATK"),
-    ("ap",   "Magic_Power"),
-    ("def",  "Phys_Defense"),
-    ("hp",   "HP"),
-    ("cdr",  "Cooldown_Reduction"),
-    ("crit", "Critical_Rate"),
-    ("ms",   "Movement_Speed"),
+# ---------------------------- Helper Functions ------------------------------
+def safe_float(value: Any) -> float:
+    """Convert a value to float, defaulting to 0.0 if None."""
+    return float(value or 0.0)
+
+STAT_MAPPING = [
+    ('patk', 'Phys_ATK'),
+    ('ap', 'Magic_Power'),
+    ('def', 'Phys_Defense'),
+    ('hp', 'HP'),
+    ('cdr', 'Cooldown_Reduction'),
+    ('crit', 'Critical_Rate'),
+    ('ms', 'Movement_Speed'),
 ]
 
-def get_phase_weight(info, phase):
-    w = {"patk": .30, "ap": .20, "def": .20, "hp": .20,
-         "cdr": .05, "crit": .05, "ms": .05}
-    if phase == "Early":
-        w["cdr"] += .05
-    if phase == "Late":
-        w["hp"]  += .10
-    if info["lane"] == "Support":
-        w["hp"]  += .05
-        w["cdr"] += .05
-    return w
+def get_phase_weight(hero_info: Dict[str, Optional[str]], phase: str) -> Dict[str, float]:
+    """Calculate stat weights based on phase and lane."""
+    weights = {'patk': 0.30, 'ap': 0.20, 'def': 0.20, 'hp': 0.20, 'cdr': 0.05, 'crit': 0.05, 'ms': 0.05}
+    if phase == 'Early':
+        weights['cdr'] += 0.05
+    if phase == 'Late':
+        weights['hp'] += 0.10
+    if hero_info['lane'] == 'Support':
+        weights['hp'] += 0.05
+        weights['cdr'] += 0.05
+    return weights
 
-def score_stats(ch, hb, caps, w):
-    base = {s: _n(hb.get(db)) for s, db in STAT_MAP}
-    for it in ch:
-        row = item_data[it]
-        for s, db in STAT_MAP:
-            base[s] += row.get(db, 0.0)
-    return sum(w[s] * min(base[s] / caps.get(s.upper(), 1), 1.0) for s in base)
+def score_stats(chromosome: List[str], hero_base_stats: Dict[str, float],
+                stat_caps: Dict[str, float], weights: Dict[str, float]) -> float:
+    """Score chromosome stats relative to caps and weights."""
+    stats = {short: safe_float(hero_base_stats.get(db_name)) for short, db_name in STAT_MAPPING}
+    for item_id in chromosome:
+        item = ITEM_DATA[item_id]
+        for short, db_name in STAT_MAPPING:
+            stats[short] += item.get(db_name, 0.0)
+    return sum(weights[stat] * min(stats[stat] / stat_caps.get(stat.upper(), 1), 1.0) for stat in stats)
 
-# components ---------------------------------------------------------------
-score_budget      = lambda cost, bud: 1.0 if cost <= bud else math.exp(-0.8 * ((cost - bud) / bud))
-skill_component   = lambda ch, rec:   sum(.2 for it in ch if item_data[it]["Class"] in rec)
-synergy_component = lambda ch:        sum(v for req, v in SYNERGY_RULES if req <= set(ch))
-category_component= lambda ch, cat:   sum(1 for it in ch if item_data[it]["Class"] == cat)
-class_component   = lambda ch, info:  sum(1 for it in ch if item_data[it]["Class"] == info["primary"])
-lane_component    = lambda ch, info:  sum(1 for it in ch if item_data[it]["Class"] == info["lane"])
+def score_budget(total_cost: float, budget: float) -> float:
+    """Score budget usage with exponential decay penalty."""
+    return 1.0 if total_cost <= budget else math.exp(-0.8 * ((total_cost - budget) / budget))
 
-# ─────────────────── 5. chromosome utilities ─────────────────────────────
-def repair_chromosome(ch: List[str], lane: str,
-                      ban: Set[str], force: Set[str]) -> List[str]:
-    """ใส่ของบังคับ, ≤1 Movement, เคารพ ban, เติมครบ 6 ชิ้น"""
-    out: List[str] = []
-    seen: Set[str] = set()
-    move_cnt = 0
+def skill_component(chromosome: List[str], recommended_types: List[str]) -> float:
+    """Score skill synergy based on recommended item types."""
+    return sum(0.2 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in recommended_types)
 
-    # 1) forced items first
-    for it in force:
-        if it in ban or it in seen:
+def synergy_component(chromosome: List[str]) -> float:
+    """Score synergy bonuses from item combinations."""
+    return sum(value for required_items, value in SYNERGY_RULES if required_items <= set(chromosome))
+
+def category_component(chromosome: List[str], category: str) -> float:
+    """Score items matching a specific category."""
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == category)
+
+def class_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
+    """Score items matching hero's primary class."""
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['primary'])
+
+def lane_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
+    """Score items matching hero's lane."""
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['lane'])
+
+# ---------------------------- Chromosome Operations -------------------------
+def repair_chromosome(chromosome: List[str], lane: str, banned_items: Set[str],
+                      forced_items: Set[str]) -> List[str]:
+    """Repair chromosome to enforce rules: forced items, ≤1 Movement, respect bans, exactly 6 items."""
+    result = []
+    seen_items = set()
+    movement_count = 0
+
+    # Add forced items first
+    for item_id in forced_items:
+        if item_id in banned_items or item_id in seen_items:
             continue
-        out.append(it); seen.add(it)
-        if item_data[it]["Class"] == "Movement":
-            move_cnt += 1
+        result.append(item_id)
+        seen_items.add(item_id)
+        if ITEM_DATA[item_id]['Class'] == 'Movement':
+            movement_count += 1
 
-    # 2) keep valid items from original chromosome
-    for it in ch:
-        if len(out) >= 6:
+    # Keep valid items from original chromosome
+    for item_id in chromosome:
+        if len(result) >= 6:
             break
-        if it in ban or it in seen or it in force:
+        if item_id in banned_items or item_id in seen_items or item_id in forced_items:
             continue
-        if item_data[it]["Class"] == "Movement" and move_cnt >= 1:
+        if ITEM_DATA[item_id]['Class'] == 'Movement' and movement_count >= 1:
             continue
-        out.append(it); seen.add(it)
-        if item_data[it]["Class"] == "Movement":
-            move_cnt += 1
+        result.append(item_id)
+        seen_items.add(item_id)
+        if ITEM_DATA[item_id]['Class'] == 'Movement':
+            movement_count += 1
 
-    # 3) random fill
-    pool = [
-        i for i in item_data
-        if i not in seen and i not in ban and
-        not (item_data[i]["Class"] == "Movement" and move_cnt >= 1)
+    # Fill remaining slots randomly
+    available_items = [
+        item_id for item_id in ITEM_DATA
+        if item_id not in seen_items and item_id not in banned_items and
+        not (ITEM_DATA[item_id]['Class'] == 'Movement' and movement_count >= 1)
     ]
-    random.shuffle(pool)
-    out.extend(pool[:max(0, 6 - len(out))])
+    random.shuffle(available_items)
+    result.extend(available_items[:max(0, 6 - len(result))])
 
-    # jungle rule – ต้องมีไอเทม Jungle อย่างน้อย 1 เมื่อ lane = Jungle
-    if lane == "Jungle" and not any(item_data[it]["Class"] == "Jungle" for it in out):
-        jungle_pool = [i for i in pool if item_data[i]["Class"] == "Jungle"]
-        if jungle_pool:
-            out[-1] = random.choice(jungle_pool)
+    # Ensure at least one Jungle item if lane is Jungle
+    if lane == 'Jungle' and not any(ITEM_DATA[item_id]['Class'] == 'Jungle' for item_id in result):
+        jungle_items = [item_id for item_id in available_items if ITEM_DATA[item_id]['Class'] == 'Jungle']
+        if jungle_items:
+            result[-1] = random.choice(jungle_items)
 
-    return out[:6]
+    return result[:6]
 
-def mutate(ch, pool, rate, lane, ban, force):
-    out = ch[:]
-    avail = [i for i in pool if i not in out and i not in ban]
-    for idx in range(6):
-        if out[idx] in force:          # ห้ามเปลี่ยนของบังคับ
+# ---------------------------- Genetic Operators -----------------------------
+def tournament_selection(population: List[List[str]], fitness_scores: List[float],
+                         tournament_size: int = 3) -> List[str]:
+    """Select a chromosome via tournament selection."""
+    indices = random.sample(range(len(population)), tournament_size)
+    return population[max(indices, key=lambda i: fitness_scores[i])]
+
+def crossover(parent1: List[str], parent2: List[str]) -> Tuple[List[str], List[str]]:
+    """Perform single-point crossover between two parents."""
+    if random.random() < GA_CONSTANTS['CROSSOVER_RATE']:
+        point = random.randint(1, 5)
+        return parent1[:point] + parent2[point:], parent2[:point] + parent1[point:]
+    return parent1[:], parent2[:]
+
+def mutate(chromosome: List[str], item_pool: List[str], mutation_rate: float, lane: str,
+           banned_items: Set[str], forced_items: Set[str]) -> List[str]:
+    """Mutate a chromosome with given probability."""
+    result = chromosome[:]
+    available = [item_id for item_id in item_pool if item_id not in result and item_id not in banned_items]
+    for i in range(6):
+        if result[i] in forced_items:
             continue
-        if random.random() < rate and avail:
-            out[idx] = random.choice(avail)
-            avail.remove(out[idx])
-    return repair_chromosome(out, lane, ban, force)
+        if random.random() < mutation_rate and available:
+            result[i] = random.choice(available)
+            available.remove(result[i])
+    return repair_chromosome(result, lane, banned_items, forced_items)
 
-def crossover(p1, p2):
-    if random.random() < CROSSOVER_RATE:
-        pt = random.randint(1, 5)
-        return p1[:pt] + p2[pt:], p2[:pt] + p1[pt:]
-    return p1[:], p2[:]
+def get_adaptive_mutation_rate(generation: int) -> float:
+    """Calculate adaptive mutation rate based on generation."""
+    return GA_CONSTANTS['BASE_MUT_RATE'] * math.exp(-generation / (0.6 * GA_CONSTANTS['MAX_GEN']))
 
-def tournament_select(pop, fits, k=3):
-    idxs = random.sample(range(len(pop)), k)
-    return pop[max(idxs, key=lambda i: fits[i])]
+# ---------------------------- Fitness Evaluation ----------------------------
+def calculate_fitness(chromosome: List[str], hero: str, hero_info: Dict[str, Optional[str]],
+                      phase: str, stat_caps: Dict[str, float]) -> float:
+    """Calculate fitness score for a chromosome."""
+    hero_base_stats = load_hero_stats(hero, {'Early': 3, 'Mid': 9, 'Late': 15}[phase])
+    recommended_types = get_recommended_item_types(hero)
+    total_cost = sum(ITEM_DATA[item_id]['Price'] for item_id in chromosome)
+    budget = GA_CONSTANTS['BASE_BUDGET'][phase]
 
-adaptive_mut_rate = lambda gen: BASE_MUT_RATE * math.exp(-gen / (0.6 * MAX_GEN))
-
-# ────────────────────────── 6. fitness & GA ─────────────────────────────
-def calculate_fitness(ch, hero, info, phase, caps):
-    hb = load_hero_stats(hero, {"Early": 3, "Mid": 9, "Late": 15}[phase])
-    rec = get_recommended_item_types(hero)
-    cost = sum(item_data[i]["Price"] for i in ch)
-    budget = BASE_BUDGET[phase]
-
-    comps = {
-        "stat":    score_stats(ch, hb, caps, get_phase_weight(info, phase)),
-        "budget":  score_budget(cost, budget),
-        "skill":   skill_component(ch, rec),
-        "synergy": synergy_component(ch),
-        "cat":     len(ch),
-        "class":   class_component(ch, info),
-        "lane":    lane_component(ch, info),
+    components = {
+        'stat': score_stats(chromosome, hero_base_stats, stat_caps, get_phase_weight(hero_info, phase)),
+        'budget': score_budget(total_cost, budget),
+        'skill': skill_component(chromosome, recommended_types),
+        'synergy': synergy_component(chromosome),
+        'cat': len(chromosome),
+        'class': class_component(chromosome, hero_info),
+        'lane': lane_component(chromosome, hero_info),
+        'cat_ATK': category_component(chromosome, 'ATK'),
+        'cat_Def': category_component(chromosome, 'Def'),
+        'cat_Magic': category_component(chromosome, 'Magic'),
     }
-    for cat in ["ATK", "Def", "Magic"]:
-        comps[f"cat_{cat}"] = category_component(ch, cat)
 
-    raw = sum(THETA[k] * v for k, v in comps.items())
-    return raw * PHASE_WEIGHTS[phase]
+    raw_score = sum(THETA[component] * value for component, value in components.items())
+    return raw_score * GA_CONSTANTS['PHASE_WEIGHTS'][phase]
 
-def run_ga(hero, lane,
-           hero_class: Optional[str] = None,
-           force_items: Optional[List[str]] = None,
-           ban_items: Optional[List[str]] = None,
-           phase="Late") -> Tuple[List[str], float]:
+# ---------------------------- GA Main Loop ----------------------------------
+def initialize_population(item_pool: List[str], lane: str, banned_items: Set[str],
+                          forced_items: Set[str]) -> List[List[str]]:
+    """Initialize the GA population."""
+    def generate_chromosome() -> List[str]:
+        base = list(forced_items)
+        remaining = random.sample([item_id for item_id in item_pool if item_id not in base],
+                                  k=max(0, 6 - len(base)))
+        return repair_chromosome(base + remaining, lane, banned_items, forced_items)
+    return [generate_chromosome() for _ in range(GA_CONSTANTS['POP_SIZE'])]
 
-    force, ban = set(force_items or []), set(ban_items or [])
-    info = get_hero_info(hero)
-    info["lane"] = lane
+def run_ga(hero: str, lane: str, hero_class: Optional[str] = None,
+           force_items: Optional[List[str]] = None, ban_items: Optional[List[str]] = None,
+           phase: str = 'Late') -> Tuple[List[str], float]:
+    """Run the Genetic Algorithm to find the best item build."""
+    forced_items = set(force_items or [])
+    banned_items = set(ban_items or [])
+    hero_info = get_hero_info(hero)
+    hero_info['lane'] = lane
     if hero_class:
-        info["primary"] = hero_class
+        hero_info['primary'] = hero_class
 
-    if sum(1 for x in force if item_data[x]["Class"] == "Movement") > 1:
-        raise ValueError("มี Movement มากกว่า 1 ชิ้นใน --force")
+    if sum(1 for item_id in forced_items if ITEM_DATA[item_id]['Class'] == 'Movement') > 1:
+        raise ValueError('More than one Movement item in --force')
 
-    caps = load_stat_caps(hero)
-    pool = [i for i in item_data if i not in ban]
+    stat_caps = load_stat_caps(hero)
+    item_pool = [item_id for item_id in ITEM_DATA if item_id not in banned_items]
 
-    # ประชากรเริ่มต้น: รวม force แล้วสุ่มเติมให้ครบ 6
-    def seed() -> List[str]:
-        base = list(force)
-        base += random.sample([i for i in pool if i not in base],
-                              k=max(0, 6 - len(base)))
-        return repair_chromosome(base, lane, ban, force)
+    # Population Initialization
+    population = initialize_population(item_pool, lane, banned_items, forced_items)
 
-    pop = [seed() for _ in range(POP_SIZE)]
+    best_fitness, best_chromosome, stagnant_count = -1.0, [], 0
+    for generation in range(GA_CONSTANTS['MAX_GEN']):
+        # Objective Function Evaluation
+        fitness_scores = [calculate_fitness(chrom, hero, hero_info, phase, stat_caps) for chrom in population]
+        best_idx = max(range(len(fitness_scores)), key=lambda i: fitness_scores[i])
 
-    best_fit, best_ch, stagn = -1.0, [], 0
-    for gen in range(MAX_GEN):
-        fits = [calculate_fitness(ch, hero, info, phase, caps) for ch in pop]
-        idx_best = max(range(len(fits)), key=lambda i: fits[i])
-        if fits[idx_best] > best_fit:
-            best_fit, best_ch, stagn = fits[idx_best], pop[idx_best][:], 0
+        # Update best solution
+        if fitness_scores[best_idx] > best_fitness:
+            best_fitness = fitness_scores[best_idx]
+            best_chromosome = population[best_idx][:]
+            stagnant_count = 0
         else:
-            stagn += 1
-        if stagn >= STAGNANT_LIMIT:
+            stagnant_count += 1
+        if stagnant_count >= GA_CONSTANTS['STAGNANT_LIMIT']:
             break
 
-        elites = [p for p, _ in sorted(zip(pop, fits), key=lambda x: -x[1])]
-        elites = elites[:max(1, int(POP_SIZE * 0.05))]
-        new_pop = elites[:]
+        # Selection and Replacement
+        elites = [chrom for chrom, _ in sorted(zip(population, fitness_scores), key=lambda x: -x[1])]
+        elites = elites[:max(1, int(GA_CONSTANTS['POP_SIZE'] * 0.05))]
+        new_population = elites[:]
 
-        while len(new_pop) < POP_SIZE:
-            p1 = tournament_select(pop, fits)
-            p2 = tournament_select(pop, fits)
-            c1, c2 = crossover(p1, p2)
-            rate = adaptive_mut_rate(gen)
-            new_pop.append(mutate(c1, pool, rate, lane, ban, force))
-            if len(new_pop) < POP_SIZE:
-                new_pop.append(mutate(c2, pool, rate, lane, ban, force))
-        pop = new_pop
+        # Generate offspring
+        while len(new_population) < GA_CONSTANTS['POP_SIZE']:
+            parent1 = tournament_selection(population, fitness_scores)
+            parent2 = tournament_selection(population, fitness_scores)
+            child1, child2 = crossover(parent1, parent2)
+            mutation_rate = get_adaptive_mutation_rate(generation)
+            new_population.append(mutate(child1, item_pool, mutation_rate, lane, banned_items, forced_items))
+            if len(new_population) < GA_CONSTANTS['POP_SIZE']:
+                new_population.append(mutate(child2, item_pool, mutation_rate, lane, banned_items, forced_items))
 
-    return best_ch, best_fit
+        # Replacement (g = g + 1)
+        population = new_population
 
-# ───────────────────────────── 7. CLI ────────────────────────────────
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser(description="RoV GA-based Item Recommender")
-    ap.add_argument("--hero",   required=True)
-    ap.add_argument("--class", dest="hero_class", required=True)
-    ap.add_argument("--lane",   required=True)
-    ap.add_argument("--force", nargs="*", default=None,
-                    help="รายการ ItemID ที่ต้องมี (ใส่ได้หลายชิ้น)")
-    ap.add_argument("--ban",   nargs="*", default=None,
-                    help="รายการ ItemID ที่ห้ามใช้")
-    args = ap.parse_args()
+    return best_chromosome, best_fitness
+
+# ---------------------------- CLI -------------------------------------------
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='RoV GA-based Item Recommender')
+    parser.add_argument('--hero', required=True, help='Hero ID')
+    parser.add_argument('--class', dest='hero_class', required=True, help='Hero class')
+    parser.add_argument('--lane', required=True, help='Lane')
+    parser.add_argument('--force', nargs='*', default=None, help='Forced ItemIDs')
+    parser.add_argument('--ban', nargs='*', default=None, help='Banned ItemIDs')
+    args = parser.parse_args()
 
     load_theta_config()
 
-    for ph in ["Early", "Mid", "Late"]:
-        build, fit = run_ga(args.hero,
-                            args.lane,
-                            args.hero_class,
-                            args.force,
-                            args.ban,
-                            phase=ph)
-        print(f"{ph:<5} Build={build} | Fitness={fit:.4f}")
+    for phase in ['Early', 'Mid', 'Late']:
+        build, fitness = run_ga(
+            hero=args.hero,
+            lane=args.lane,
+            hero_class=args.hero_class,
+            force_items=args.force,
+            ban_items=args.ban,
+            phase=phase,
+        )
+        print(f'{phase:<5} Build={build} | Fitness={fitness:.4f}')
