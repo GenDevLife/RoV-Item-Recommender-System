@@ -318,7 +318,7 @@ $supportItemImages = array_map(
 
     <div class="Calculate-Container">
         <p>//////////////////</p>
-        <button>Calculate</button>
+        <button id="calculate-btn"">Calculate</button>
         <p>//////////////////</p>
     </div>
     <div class="Result-Container">
@@ -331,8 +331,8 @@ $supportItemImages = array_map(
                 <h2>(Level : 3 | Budget : 2,700)</h2>
             </div>
             <div class="Early-Image-Container">
-                <img>
-                <img>
+                <img src="./src/assets/images/item/Astral_Spear.png">
+                <img src="./src/assets/images/item/Gilded_Greaves.png">
                 <img>
                 <img>
                 <img>
@@ -345,7 +345,7 @@ $supportItemImages = array_map(
                 <h2>(Level : 9 | Budget : 7,500)</h2>
             </div>
             <div class="Mid-Image-Container">
-                <img>
+                <img src="./src/assets/images/item/Astral_Spear.png">
                 <img>
                 <img>
                 <img>
@@ -359,8 +359,8 @@ $supportItemImages = array_map(
                 <h2>(Level : 15 | Budget : 14,000)</h2>
             </div>
             <div class="Late-Image-Container">
-                <img>
-                <img>
+                <img src="./src/assets/images/item/Astral_Spear.png">
+                <img src="./src/assets/images/item/Holy_of_Holies.png">
                 <img>
                 <img>
                 <img>
