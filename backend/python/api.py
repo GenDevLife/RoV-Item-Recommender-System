@@ -1,12 +1,13 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import main as ga
 import re, unicodedata
 from pathlib import Path
 from main import load_hero_stats, ITEM_DATA
+import re, unicodedata
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app)
 
 # ── preload ─────────────────────────────────────────────────────
 ga.load_theta_config()
@@ -66,8 +67,10 @@ def decorate(ids: list[str]):
     return out
 
 # ── the GA endpoint ─────────────────────────────────────────────
-@app.post("/ga")
+@app.route("/ga", methods=["POST", "OPTIONS"])
 def run_ga():
+    if request.method == "OPTIONS":
+        return make_response("", 204)
     payload = request.get_json(force=True)
     for k in ("hero", "lane"):
         if k not in payload:
@@ -92,15 +95,37 @@ def run_ga():
 
     return jsonify(result), 200
 
-@app.post("/calculate_stats")
+@app.route("/calculate_stats", methods=["POST", "OPTIONS"])
 def calculate_stats():
-    payload = request.get_json(force=True)
-    hero = payload["hero"]
-    phase = payload["phase"]
-    items = payload["items"]
+    if request.method == "OPTIONS":
+        return make_response("", 204)
 
-    # คำนวณ Stat
-    level = {'Early': 3, 'Mid': 9, 'Late': 15}[phase]
+    # อ่าน JSON payload
+    payload = request.get_json(force=True)
+    hero_raw  = payload.get("hero")
+    phase_raw = payload.get("phase", "")
+    items     = payload.get("items", [])
+
+    # normalize phase: ตัด whitespace, title-case (Early/Mid/Late)
+    phase = phase_raw.strip().title()
+    level_map = {"Early": 3, "Mid": 9, "Late": 15}
+    if phase not in level_map:
+        return jsonify({"error": f"Invalid phase: '{phase_raw}'"}), 400
+    level = level_map[phase]
+
+    # โหลด base stats ของฮีโร่
+    hero = hero_raw  # ถ้าต้องการ strip ก็ .strip() เพิ่มได้
+    hero_base_stats = load_hero_stats(hero, level)
+
+    # คำนวณรวม stats
+    total_stats = {stat: float(hero_base_stats.get(stat, 0)) for stat in [
+        'Phys_ATK','Magic_Power','Phys_Defense','HP',
+        'Cooldown_Reduction','Critical_Rate','Movement_Speed'
+    ]}
+    for item_id in items:
+        item = ITEM_DATA.get(item_id, {})
+        for stat in total_stats:
+            total_stats[stat] = float(item.get(stat, 0))
     hero_base_stats = load_hero_stats(hero, level)
     total_stats = {stat: float(hero_base_stats.get(stat, 0)) for stat in [
         'Phys_ATK', 'Magic_Power', 'Phys_Defense', 'HP', 'Cooldown_Reduction', 'Critical_Rate', 'Movement_Speed'

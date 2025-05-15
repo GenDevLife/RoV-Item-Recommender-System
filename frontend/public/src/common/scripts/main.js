@@ -6,6 +6,9 @@ let selectedMetaItems = [null, null, null, null, null, null];
 let selectedSupportItemId = null;
 let selectedFarmItemId = null;
 let selectedHeroOptionElement = null;
+async function calculateStats(items, hero, phase) { /* … */ }
+async function calculateMetaStats(metaItems, hero, phase) { /* … */ }
+function updateCompareChart(resultStats, metaStats) { /* … */ }
 
 function toggleDropdown() {
   document.getElementById('Hero-Dropdown-Menu').classList.toggle('hidden');
@@ -488,6 +491,25 @@ async function calculateMetaStats(metaItems, hero, phase) {
   if (!response.ok) throw new Error('Failed to calculate meta stats');
   return (await response.json()).stats;
 }
+
+document.getElementById('compare-btn').addEventListener('click', async () => {
+  try {
+    const hero  = document.getElementById('selected-text').innerText;
+    const phase = document.getElementById('game-phase').value;
+    const resultItems = selectedForceItems.concat(selectedBanItems).filter(id => id);
+    const metaItems   = selectedMetaItems.filter(id => id);
+
+    const [resStats, metaStats] = await Promise.all([
+      calculateStats(resultItems, hero, phase),
+      calculateMetaStats(metaItems,   hero, phase)
+    ]);
+
+    updateCompareChart(resStats, metaStats);
+  } catch (err) {
+    console.error(err);
+    alert('เกิดข้อผิดพลาดในการคำนวณกราฟ');
+  }
+});
 
 let compareChart = null;
 function updateCompareChart(resultStats, metaStats) {
