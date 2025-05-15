@@ -29,10 +29,12 @@ body {
 
 .Filter-Container {
     display: flex;
-    align-items: center; /* จัดให้ h1 และปุ่มอยู่ตรงกลางแนวตั้ง */
-    gap: 2vw; /* ระยะห่างระหว่าง h1 กับปุ่ม */
+    align-items: center;
+    /* จัดให้ h1 และปุ่มอยู่ตรงกลางแนวตั้ง */
+    gap: 2vw;
+    /* ระยะห่างระหว่าง h1 กับปุ่ม */
     justify-content: center;
-    
+
 }
 
 .Filter-Container h1 {
@@ -42,14 +44,15 @@ body {
     font-size: 1.5vw;
     margin-bottom: 0.1vw;
 
-    
+
 }
 
 .Filter-Button {
     display: flex;
-    gap: 1vw; /* ระยะห่างระหว่างปุ่ม */
-    
-    
+    gap: 1vw;
+    /* ระยะห่างระหว่างปุ่ม */
+
+
 }
 
 /* Default button styling */
@@ -77,17 +80,20 @@ body {
 
 /* Selected button styling */
 .Filter-Button button.selected {
-    background-color: #ffe30d; /* Change to any color you want */
+    background-color: #ffe30d;
+    /* Change to any color you want */
     color: rgb(16, 1, 1);
-    
+
 }
 
 
 .Hero-Container {
     display: flex;
-    align-items: center; /* Aligns them vertically in the center */
+    align-items: center;
+    /* Aligns them vertically in the center */
     justify-content: center;
-    gap: 2vw; /* Adds space between elements inside the container */
+    gap: 2vw;
+    /* Adds space between elements inside the container */
 }
 
 .Hero-Container h1 {
@@ -101,8 +107,10 @@ body {
 .Hero-Dropdown {
     position: relative;
     width: 20vw;
-    margin-left: 1vw; /* Optional: Add some space on the left side of the dropdown */
-    margin-right: 2vw; /* Optional: space between the dropdown and the header */
+    margin-left: 1vw;
+    /* Optional: Add some space on the left side of the dropdown */
+    margin-right: 2vw;
+    /* Optional: space between the dropdown and the header */
 }
 
 
@@ -119,7 +127,7 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-left: 1vw;
-    
+
 }
 
 #hero-dropdown-icon {
@@ -137,7 +145,7 @@ body {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     padding: 1vw;
     z-index: 100;
-    
+
 }
 
 #hero-search-box {
@@ -177,10 +185,13 @@ body {
 
 .ClassAndLane-Container {
     display: flex;
-    justify-content: center;  /* ✅ จัดให้อยู่ตรงกลางแนวนอน */
-    align-items: center;      /* ✅ จัดให้อยู่ตรงกลางแนวตั้ง (ถ้า container มีความสูงแน่นอน) */
+    justify-content: center;
+    /* ✅ จัดให้อยู่ตรงกลางแนวนอน */
+    align-items: center;
+    /* ✅ จัดให้อยู่ตรงกลางแนวตั้ง (ถ้า container มีความสูงแน่นอน) */
     gap: 15vw;
-    margin-top: 2vw;          /* ✅ เพิ่มระยะห่างด้านบน */
+    margin-top: 2vw;
+    /* ✅ เพิ่มระยะห่างด้านบน */
 }
 
 
@@ -206,20 +217,23 @@ body {
 }
 
 /* Improved Force and BAN item selection areas */
-.Force-Container, .BAN-Container {
+.Force-Container,
+.BAN-Container {
     display: flex;
     flex-direction: column;
     margin-top: 2vw;
     margin-bottom: 2vw;
 }
 
-.Force-Text, .BAN-Text {
+.Force-Text,
+.BAN-Text {
     display: flex;
     align-items: baseline;
     margin-bottom: 1vw;
 }
 
-.Force-Text h1, .BAN-Text h1 {
+.Force-Text h1,
+.BAN-Text h1 {
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 900;
@@ -228,7 +242,8 @@ body {
     margin-right: 0.5vw;
 }
 
-.Force-Text h2, .BAN-Text h2 {
+.Force-Text h2,
+.BAN-Text h2 {
     color: #aaa;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 600;
@@ -237,12 +252,14 @@ body {
 }
 
 /* Improved button styles */
-.Force-Button, .BAN-Button {
+.Force-Button,
+.BAN-Button {
     display: flex;
     gap: 1vw;
 }
 
-.Force-Button button, .BAN-Button button {
+.Force-Button button,
+.BAN-Button button {
     background-color: #333;
     border: 2px solid #fff;
     border-radius: 0.5vw;
@@ -259,13 +276,15 @@ body {
     position: relative;
 }
 
-.Force-Button button:hover, .BAN-Button button:hover {
+.Force-Button button:hover,
+.BAN-Button button:hover {
     background-color: #444;
     transform: scale(1.05);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
-.Force-Button button:active, .BAN-Button button:active {
+.Force-Button button:active,
+.BAN-Button button:active {
     background-color: #555;
     transform: scale(0.98);
 }
@@ -278,7 +297,8 @@ body {
 
 
 /* Styling for when an item is selected */
-.Force-Button button.selected, .BAN-Button button.selected {
+.Force-Button button.selected,
+.BAN-Button button.selected {
     background-color: #222;
     border: 2px solid #ffdb4d;
 }
@@ -289,17 +309,19 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 70vw; /* ลดขนาดจาก 90% */
+    width: 70vw;
+    /* ลดขนาดจาก 90% */
     max-width: 1000px;
-    max-height: 85vh; /* จำกัดความสูงสูงสุด */
+    max-height: 85vh;
+    /* จำกัดความสูงสูงสุด */
     overflow-y: auto;
     background-color: rgba(0, 0, 0, 0.85);
     z-index: 9999;
     padding: 2vw;
     border-radius: 1vw;
-  }
-  
-  .popup-content {
+}
+
+.popup-content {
     background-color: #111;
     border: 2px solid white;
     border-radius: 1vw;
@@ -309,8 +331,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: 75vh; /* ให้เนื้อหาภายในไม่ล้นจอ */
-  }
+    max-height: 75vh;
+    /* ให้เนื้อหาภายในไม่ล้นจอ */
+}
 
 .popup-header {
     font-size: 1.8vw;
@@ -320,15 +343,15 @@ body {
     text-align: center;
 }
 
-  .popup-title {
+.popup-title {
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: 900;
     font-size: 1.8vw;
     margin: 0;
-  }
-  
-  .close-button {
+}
+
+.close-button {
     position: absolute;
     top: 1vw;
     right: 1.5vw;
@@ -346,14 +369,14 @@ body {
 .close-button:hover {
     color: #ff4d4d;
 }
-  
-  /* Search Bar Improvements */
-  .search-container {
+
+/* Search Bar Improvements */
+.search-container {
     width: 100%;
     margin-bottom: 1.5vw;
-  }
-  
-  .search-input {
+}
+
+.search-input {
     width: 100%;
     padding: 0.8vw 1.2vw;
     border-radius: 0.5vw;
@@ -362,20 +385,20 @@ body {
     color: white;
     font-size: 1vw;
     transition: border-color 0.3s ease;
-  }
-  
-  .search-input:focus {
+}
+
+.search-input:focus {
     outline: none;
     border-color: #1972ef;
     box-shadow: 0 0 0 2px rgba(25, 114, 239, 0.3);
-  }
-  
-  .search-input::placeholder {
+}
+
+.search-input::placeholder {
     color: #888;
-  }
-  
-  /* Item Grid Improvements */
-  .popup-item-grid {
+}
+
+/* Item Grid Improvements */
+.popup-item-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 12px;
@@ -384,29 +407,29 @@ body {
     max-height: 70vh;
     background-color: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-  }
-  
-  /* Scrollbar styling */
-  .popup-item-grid::-webkit-scrollbar {
+}
+
+/* Scrollbar styling */
+.popup-item-grid::-webkit-scrollbar {
     width: 8px;
-  }
-  
-  .popup-item-grid::-webkit-scrollbar-track {
+}
+
+.popup-item-grid::-webkit-scrollbar-track {
     background: #222;
     border-radius: 4px;
-  }
-  
-  .popup-item-grid::-webkit-scrollbar-thumb {
+}
+
+.popup-item-grid::-webkit-scrollbar-thumb {
     background: #444;
     border-radius: 4px;
-  }
-  
-  .popup-item-grid::-webkit-scrollbar-thumb:hover {
+}
+
+.popup-item-grid::-webkit-scrollbar-thumb:hover {
     background: #555;
-  }
-  
-  /* Item styling */
-  .item {
+}
+
+/* Item styling */
+.item {
     width: 100%;
     aspect-ratio: 1/1;
     border-radius: 8px;
@@ -418,22 +441,22 @@ body {
     align-items: center;
     position: relative;
     overflow: hidden;
-  }
-  
-  .item:hover {
+}
+
+.item:hover {
     transform: scale(1.08);
     box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
     z-index: 1;
-  }
-  
-  .item img {
+}
+
+.item img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-  }
-  
-  /* Category headers */
-  .category-header {
+}
+
+/* Category headers */
+.category-header {
     grid-column: 1 / -1;
     color: #ffdb4d;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -442,22 +465,29 @@ body {
     margin: 10px 0 5px 0;
     padding-bottom: 5px;
     border-bottom: 1px solid #444;
-  }
-  
-  /* Selected item indicator */
-  .item.selected {
+}
+
+/* Selected item indicator */
+.item.selected {
     box-shadow: 0 0 0 2px #ffdb4d, 0 0 10px #ffdb4d;
-  }
-  
-  /* Add animation for popup */
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .popup-content {
+}
+
+/* Add animation for popup */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.popup-content {
     animation: fadeIn 0.3s ease-out forwards;
-  }
+}
 
 .Calculate-Container {
     display: flex;
@@ -868,7 +898,8 @@ body {
     border: 1px solid white;
     cursor: pointer;
     color: white;
-    width: 240px; /* <<< เล็กกว่าปุ่ม Select Hero มาก */
+    width: 240px;
+    /* <<< เล็กกว่าปุ่ม Select Hero มาก */
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -1074,11 +1105,13 @@ h3 {
 #CompareChartCanvas {
     border-radius: 0.5vw;
 }
+
 /* Select Meta Item Styles */
 .Select-Meta-Item-Container {
     display: flex;
     flex-direction: column;
-    gap: 1vw; /* กำหนดระยะห่างระหว่างส่วนต่างๆ */
+    gap: 1vw;
+    /* กำหนดระยะห่างระหว่างส่วนต่างๆ */
     padding: 1vw;
 }
 
@@ -1086,7 +1119,8 @@ h3 {
     color: white;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 1.5vw;
-    margin-bottom: 1vw; /* เพิ่มระยะห่างระหว่างหัวข้อและปุ่ม */
+    margin-bottom: 1vw;
+    /* เพิ่มระยะห่างระหว่างหัวข้อและปุ่ม */
 }
 
 /* Category Buttons */
@@ -1218,11 +1252,13 @@ h3 {
         grid-template-columns: repeat(5, 1fr);
     }
 }
+
 .Select-Game-Phase-Container,
 .Select-Meta-Item-Container {
     display: flex;
     flex-direction: column;
-    gap: 0.5vw;  /* ลดระยะห่างระหว่างแต่ละบล็อก */
+    gap: 0.5vw;
+    /* ลดระยะห่างระหว่างแต่ละบล็อก */
     padding: 1vw;
 }
 
@@ -1234,13 +1270,15 @@ h3 {
     border: 1px solid #666;
     width: 100%;
     font-size: 1vw;
-    margin-bottom: 0.2vw; /* ลดระยะห่างระหว่าง select กับช่องต่อไป */
+    margin-bottom: 0.2vw;
+    /* ลดระยะห่างระหว่าง select กับช่องต่อไป */
 }
 
 .input-box {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 0.8vw;  /* ปรับ gap ให้พอเหมาะ */
+    gap: 0.8vw;
+    /* ปรับ gap ให้พอเหมาะ */
     width: 100%;
 }
 
@@ -1255,20 +1293,25 @@ h3 {
     color: black;
     font-weight: bold;
 }
+
 /* ทำให้ 6 ช่องเป็นขนาดและสไตล์เดียวกับปุ่ม Select Meta Item */
 /* 1) ปรับ .input-box เป็น flex เพื่อเรียงแถวเดียวกัน (หรือหลายแถวถ้าพื้นที่ไม่พอ) */
 .input-box {
     display: flex;
-    gap: 2vw;      /* ระยะห่างระหว่างช่องแต่ละช่อง */
+    gap: 2vw;
+    /* ระยะห่างระหว่างช่องแต่ละช่อง */
     flex-wrap: wrap;
 }
 
 /* 2) ปรับ .input-item ให้ตรงกับปุ่ม Select Meta Item */
 .input-item {
-    width: 5vw;             /* ความกว้างเท่ากับปุ่ม Meta */
-    height: 5vw;            /* ความสูงเท่ากับปุ่ม Meta */
+    width: 5vw;
+    /* ความกว้างเท่ากับปุ่ม Meta */
+    height: 5vw;
+    /* ความสูงเท่ากับปุ่ม Meta */
     background-color: white;
-    border-radius: 1vw;     /* มุมโค้งเท่ากัน */
+    border-radius: 1vw;
+    /* มุมโค้งเท่ากัน */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1282,6 +1325,7 @@ h3 {
     background-color: #f0f0f0;
 
 }
+
 #meta-item-popup {
     position: fixed;
     top: 50%;
@@ -1294,22 +1338,23 @@ h3 {
     border-radius: 10px;
     border: 2px solid white;
     overflow-y: auto;
-    overflow-x: hidden; /* ✅ ห้ามมี scroll ด้านข้าง */
+    overflow-x: hidden;
+    /* ✅ ห้ามมี scroll ด้านข้าง */
     z-index: 1000;
     display: none;
-  }
-  
-  #meta-item-popup.show {
+}
+
+#meta-item-popup.show {
     display: block;
-  }
-  
-  .popup-content {
+}
+
+.popup-content {
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
-  
-  .popup-item-grid {
+}
+
+.popup-item-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 10px;
@@ -1318,9 +1363,9 @@ h3 {
     box-sizing: border-box;
     overflow-x: hidden;
     justify-items: center;
-  }
-  
-  .item {
+}
+
+.item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1330,26 +1375,59 @@ h3 {
     border-radius: 8px;
     cursor: pointer;
     transition: transform 0.2s ease;
-  }
-  
-  .item:hover {
+}
+
+.item:hover {
     transform: scale(1.05);
-  }
-  
-  .item img {
+}
+
+.item img {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 5px;
     background-color: white;
-  }
-  
-  .item-name {
+}
+
+.item-name {
     color: white;
     font-size: 0.7rem;
     text-align: center;
-    word-break: break-word; /* ชื่อยาว ๆ ขึ้นบรรทัดใหม่ได้ */
-  }
-  
+    word-break: break-word;
+    /* ชื่อยาว ๆ ขึ้นบรรทัดใหม่ได้ */
+}
 
+/* Meta Buttons ให้เหมือน Force/BAN */
+.Select-Meta-Item-Button button {
+    background-color: #333;
+    border: 2px solid #fff;
+    border-radius: 0.5vw;
+    width: 5vw;
+    height: 5vw;
+    color: white;
+    font-weight: bold;
+    font-size: 0.8vw;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
 
+.Select-Meta-Item-Button button:hover {
+    background-color: #444;
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.Select-Meta-Item-Button button:active {
+    background-color: #555;
+    transform: scale(0.98);
+}
+
+/* เมื่อเลือกแล้ว */
+.Select-Meta-Item-Button button.selected {
+    background-color: #222;
+    border: 2px solid #ffdb4d;
+}

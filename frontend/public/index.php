@@ -71,36 +71,63 @@ $lanes = $pdo
 $lanes = array_unique($lanes);
 sort($lanes);
 
-/* ---------- ฟังก์ชันดึงรูปภาพไอเท็มทั้งหมด ---------- */
-function getAllItemImages($directory)
-{
-    $exts   = ['jpg', 'jpeg', 'png', 'webp'];
-    $images = [];
-    if (is_dir($directory)) {
-        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
-        foreach ($it as $file) {
-            if (!$file->isDir()) {
-                $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
-                if (in_array($ext, $exts)) {
-                    $path    = str_replace(__DIR__ . '/', '', str_replace('\\', '/', $file->getPathname()));
-                    $images[] = $path;
-                }
+/* ---------- PHP Slugify function (similar to Python's) ---------- */
+function slugify_php($itemName) {
+    // For common cases, direct replacement. Add 'u' modifier for UTF-8.
+    $name = preg_replace("/[ '’]/u", "_", $itemName);    // Space & apostrophes
+    $name = preg_replace("/[^A-Za-z0-9_]/u", "", $name);  // Keep only A-Z, a-z, 0-9, _
+    return $name;
+}
+
+/* ---------- Fetch all item data from DB and map to image files ---------- */
+$stmtItems = $pdo->query("SELECT ItemID, ItemName FROM items"); // Assuming ItemType might be useful later
+$allItemsFromDB = $stmtItems->fetchAll(PDO::FETCH_ASSOC);
+
+$baseItemImagePath = 'src/assets/images/item/'; // Relative to web root
+
+$categorizedItems = ['all' => [], 'farm' => [], 'support' => []];
+$itemMapById = []; // For easy lookup by ID if needed later
+
+// Scan all image files once to build a map of slugified_filename => path
+$rawImageFilesMap = [];
+$itemImageDirectory = __DIR__ . '/src/assets/images/item/';
+if (is_dir($itemImageDirectory)) {
+    $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($itemImageDirectory));
+    foreach ($it as $file) {
+        if (!$file->isDir()) {
+            $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
+                $relativePath = str_replace(__DIR__ . '/', '', str_replace('\\', '/', $file->getPathname()));
+                // Use the filename (without extension) as the key, assuming it's already slugified
+                $slugifiedFilename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
+                $rawImageFilesMap[$slugifiedFilename] = $relativePath;
             }
         }
     }
-    return $images;
 }
-$allItemImages = getAllItemImages(__DIR__ . '/src/assets/images/item/');
 
-/* ---------- ฟังก์ชันดึง Farm/Support Item ---------- */
-$farmItemImages = array_map(
-    fn($p) => str_replace(__DIR__ . '/', '', $p),
-    glob(__DIR__ . '/src/assets/images/item/farm-item/*.{jpg,jpeg,png,webp}', GLOB_BRACE)
-);
-$supportItemImages = array_map(
-    fn($p) => str_replace(__DIR__ . '/', '', $p),
-    glob(__DIR__ . '/src/assets/images/item/support-item/*.{jpg,jpeg,png,webp}', GLOB_BRACE)
-);
+foreach ($allItemsFromDB as $dbItem) {
+    $slugifiedDbItemName = slugify_php($dbItem['ItemName']);
+    // Try to find image path using slugified name from DB against slugified filenames from filesystem
+    $imagePath = $rawImageFilesMap[$slugifiedDbItemName] ?? null;
+
+    if ($imagePath) {
+        $itemData = [
+            'id' => $dbItem['ItemID'],
+            'name' => $dbItem['ItemName'],
+            'path' => $imagePath
+        ];
+        $categorizedItems['all'][] = $itemData;
+        $itemMapById[$dbItem['ItemID']] = $itemData;
+
+        if (str_starts_with($imagePath, $baseItemImagePath . 'farm-item/')) {
+            $categorizedItems['farm'][] = $itemData;
+        } elseif (str_starts_with($imagePath, $baseItemImagePath . 'support-item/')) {
+            $categorizedItems['support'][] = $itemData;
+        }
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -125,7 +152,7 @@ $supportItemImages = array_map(
                 <?php foreach ($heroClasses as $class): ?>
                     <button
                         value="<?= htmlspecialchars($class) ?>"
-                        onclick="filterByClass('<?= rawurlencode($class) ?>')">
+                        onclick="filterByClass('<?= htmlspecialchars($class, ENT_QUOTES) ?>')">
                         <?= htmlspecialchars($class) ?>
                     </button>
                 <?php endforeach; ?>
@@ -217,21 +244,22 @@ $supportItemImages = array_map(
         <p>-- Item --</p>
     </div>
     <!-- Support Item -->
-    <div id="SupportItemSection" style="display: none;">
+    <div id="SupportItemSection" class="hidden"> <!-- Use class "hidden" for consistency -->
         <h1>Select Support Item <span>(Only 1 item)</span></h1>
         <div id="selected-support-item" class="dropdown-btn" onclick="toggleSupportDropdown()">
             -- Select Support Item --
         </div>
         <div id="Support-Dropdown-Menu" class="dropdown-menu hidden">
-            <?php foreach ($supportItemImages as $itemPath): ?>
-                <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                <div class="dropdown-item" onclick="selectSupportItem('<?= $itemName ?>','<?= $itemPath ?>')">
-                    <img src="<?= $itemPath ?>" class="dropdown-img" alt="<?= $itemName ?>">
-                    <span class="dropdown-text"><?= $itemName ?></span>
+            <?php foreach ($categorizedItems['support'] as $item): ?>
+                <div class="dropdown-item"
+                     data-item-id="<?= htmlspecialchars($item['id']) ?>"
+                     onclick="selectSupportItemJS('<?= htmlspecialchars($item['id']) ?>', '<?= htmlspecialchars($item['name']) ?>', '<?= htmlspecialchars($item['path']) ?>')">
+                    <img src="<?= htmlspecialchars($item['path']) ?>" class="dropdown-img" alt="<?= htmlspecialchars($item['name']) ?>">
+                    <span class="dropdown-text"><?= htmlspecialchars($item['name']) ?></span>
                 </div>
             <?php endforeach; ?>
         </div>
-        <input type="hidden" id="selectedSupportItem" name="support_item">
+        <input type="hidden" id="selectedSupportItemId" name="support_item_id">
     </div>
 
     <!-- Farm Item -->
@@ -241,51 +269,37 @@ $supportItemImages = array_map(
             -- Select Farm Item --
         </div>
         <div id="Farm-Dropdown-Menu" class="dropdown-menu hidden">
-            <?php foreach ($farmItemImages as $itemPath): ?>
-                <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                <div class="dropdown-item Farm-Item-Option" data-item-name="<?= $itemName ?>">
-                    <img src="<?= $itemPath ?>" class="dropdown-img" alt="<?= $itemName ?>">
-                    <span class="dropdown-text"><?= $itemName ?></span>
+            <?php foreach ($categorizedItems['farm'] as $item): ?>
+                <div class="dropdown-item Farm-Item-Option"
+                     data-item-id="<?= htmlspecialchars($item['id']) ?>"
+                     data-item-name="<?= htmlspecialchars($item['name']) ?>"
+                     data-item-path="<?= htmlspecialchars($item['path']) ?>"
+                     onclick="selectFarmItemJS(this)">
+                    <img src="<?= htmlspecialchars($item['path']) ?>" class="dropdown-img" alt="<?= htmlspecialchars($item['name']) ?>">
+                    <span class="dropdown-text"><?= htmlspecialchars($item['name']) ?></span>
                 </div>
             <?php endforeach; ?>
         </div>
-        <input type="hidden" id="selectedFarmItem" name="farm_item">
+        <input type="hidden" id="selectedFarmItemId" name="farm_item_id">
     </div>
 
     <!-- Item Selection Popup -->
     <div id="item-popup" class="popup-overlay hidden">
         <div class="popup-content">
-            <input id="meta-search" type="text" placeholder="Search Items">
-            <div class="popup-item-grid" id="meta-popup-item-list">
-                <?php foreach ($allItemImages as $itemPath): ?>
-                    <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
-                        <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
+            <input id="item-search-box" type="text" placeholder="Search Items" oninput="filterItemList('item-search-box', 'popup-item-list')">
+            <div class="popup-item-grid" id="popup-item-list">
+                <?php foreach ($categorizedItems['all'] as $itemData): ?>
+                    <div class="item-container"
+                         data-item-id="<?= htmlspecialchars($itemData['id']) ?>"
+                         data-item-name="<?= htmlspecialchars($itemData['name']) ?>"
+                         onclick="selectPopupItem('<?= htmlspecialchars($itemData['id']) ?>', '<?= htmlspecialchars($itemData['name']) ?>', '<?= htmlspecialchars($itemData['path']) ?>')">
+                        <img src="<?= htmlspecialchars($itemData['path']) ?>" alt="<?= htmlspecialchars($itemData['name']) ?>">
                     </div>
                 <?php endforeach; ?>
             </div>
-        </div>
-
-        <button class="popup-close" onclick="closeItemPopup()">X</button>
-    </div>
-    </div>
-
-    <!-- Meta Item Popup -->
-    <div id="meta-item-popup" class="popup-overlay hidden">
-        <div class="popup-content">
-            <input id="meta-search" type="text" placeholder="Search Items" oninput="filterItemList('meta')">
-            <div id="meta-popup-item-list" class="popup-item-grid">
-                <?php foreach ($allItemImages as $itemPath): ?>
-                    <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                    <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>','<?= htmlspecialchars($itemPath) ?>')">
-                        <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
-                    </div>
-                <?php endforeach; ?>
-            </div>
-            <button class="popup-close" onclick="closeItemPopup('meta')">Close</button>
+            <button class="popup-close" onclick="closeItemPopup()">X</button> <!-- Removed 'meta' param -->
         </div>
     </div>
-
     <!-- Force Container -->
     <div class="Force-Container">
         <div class="Force-Text">
@@ -318,7 +332,7 @@ $supportItemImages = array_map(
 
     <div class="Calculate-Container">
         <p>//////////////////</p>
-        <button id="calculate-btn"">Calculate</button>
+        <button id="calculate-btn">Calculate</button>
         <p>//////////////////</p>
     </div>
     <div class="Result-Container">
@@ -331,12 +345,6 @@ $supportItemImages = array_map(
                 <h2>(Level : 3 | Budget : 2,700)</h2>
             </div>
             <div class="Early-Image-Container">
-                <img src="./src/assets/images/item/Astral_Spear.png">
-                <img src="./src/assets/images/item/Gilded_Greaves.png">
-                <img>
-                <img>
-                <img>
-                <img>
             </div>
         </div>
         <div class="Mid-Game">
@@ -345,12 +353,6 @@ $supportItemImages = array_map(
                 <h2>(Level : 9 | Budget : 7,500)</h2>
             </div>
             <div class="Mid-Image-Container">
-                <img src="./src/assets/images/item/Astral_Spear.png">
-                <img>
-                <img>
-                <img>
-                <img>
-                <img>
             </div>
         </div>
         <div class="Late-Game">
@@ -359,35 +361,22 @@ $supportItemImages = array_map(
                 <h2>(Level : 15 | Budget : 14,000)</h2>
             </div>
             <div class="Late-Image-Container">
-                <img src="./src/assets/images/item/Astral_Spear.png">
-                <img src="./src/assets/images/item/Holy_of_Holies.png">
-                <img>
-                <img>
-                <img>
-                <img>
             </div>
         </div>
     </div>
     <div class="Compare-Container">
-        <div class="Compare-Header">
-            <p>-- Result vs Meta Item --</p>
-        </div>
-
-        <!-- เพิ่ม flex-container ครอบ 2 ฝั่ง -->
+        <div class="Compare-Header"><p>-- Result vs Meta Item --</p></div>
         <div class="Compare-Media" style="display: flex; gap: 2vw;">
-
-            <!-- ฝั่งซ้าย -->
             <div class="Compare-Left" style="flex: 1;">
                 <div class="Select-Game-Phase-Container">
                     <h1>Select Game Phase</h1>
                     <div class="game-phase-box">
                         <select id="game-phase">
-                            <option value="select">Select</option>
+                            <option value="">Select</option>
                             <option value="early">Early Game</option>
                             <option value="mid">Mid Game</option>
                             <option value="late">Late Game</option>
                         </select>
-                        <!-- ช่อง 6 ช่องที่คุณต้องการ -->
                         <div class="input-box">
                             <div class="input-item"></div>
                             <div class="input-item"></div>
@@ -403,29 +392,37 @@ $supportItemImages = array_map(
                 <div class="VS-Container">
                     <p>VS</p>
                 </div>
+                <div class="Comapre-Container"><button id="compare-btn">Compare</button></div>
 
                 <!-- Select Meta Item Section -->
                 <div class="Select-Meta-Item-Container">
                     <h1>Select Meta Item</h1>
                     <div class="Select-Meta-Item-Button">
-                        <button id="meta-btn-0" onclick="forceBanButtonClick(event, 'meta', 0)">Click Here</button>
-                        <button id="meta-btn-1" onclick="forceBanButtonClick(event, 'meta', 1)">Click Here</button>
-                        <button id="meta-btn-2" onclick="forceBanButtonClick(event, 'meta', 2)">Click Here</button>
-                        <button id="meta-btn-3" onclick="forceBanButtonClick(event, 'meta', 3)">Click Here</button>
-                        <button id="meta-btn-4" onclick="forceBanButtonClick(event, 'meta', 4)">Click Here</button>
-                        <button id="meta-btn-5" onclick="forceBanButtonClick(event, 'meta', 5)">Click Here</button>
+                        <?php for ($i = 0; $i < 6; $i++): ?>
+                            <button id="meta-btn-<?= $i ?>" onclick="forceBanButtonClick(event, 'meta', <?= $i ?>)">
+                                <span class="plus-icon">+</span>
+                            </button>
+                        <?php endfor; ?>
                     </div>
                 </div>
-
-                <!-- Meta Item Popup -->
                 <div id="meta-item-popup" class="popup-overlay hidden">
                     <div class="popup-content">
-                        <input id="meta-search" type="text" placeholder="Search Items" oninput="filterItemList('meta')">
+                        <input id="meta-search-box" type="text"
+                            placeholder="Search Items"
+                            oninput="filterItemList('meta-search-box','meta-popup-item-list')">
                         <div id="meta-popup-item-list" class="popup-item-grid">
-                            <?php foreach ($allItemImages as $itemPath): ?>
-                                <?php $itemName = pathinfo($itemPath, PATHINFO_FILENAME); ?>
-                                <div class="item-container" onclick="selectPopupItem('<?= htmlspecialchars($itemName) ?>', '<?= htmlspecialchars($itemPath) ?>')">
-                                    <img src="<?= $itemPath ?>" alt="<?= htmlspecialchars($itemName) ?>">
+                            <?php foreach ($categorizedItems['all'] as $itemData): ?>
+                                <div class="item-container"
+                                    data-item-id="<?= htmlspecialchars($itemData['id']) ?>"
+                                    data-item-name="<?= htmlspecialchars($itemData['name']) ?>"
+                                    data-item-path="<?= htmlspecialchars($itemData['path']) ?>"
+                                    onclick="selectPopupItem(
+                                        '<?= htmlspecialchars($itemData['id']) ?>',
+                                        '<?= htmlspecialchars($itemData['name']) ?>',
+                                        '<?= htmlspecialchars($itemData['path']) ?>'
+                                    )">
+                                <img src="<?= htmlspecialchars($itemData['path']) ?>"
+                                    alt="<?= htmlspecialchars($itemData['name']) ?>">
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -442,67 +439,7 @@ $supportItemImages = array_map(
 
         </div> <!-- จบ Compare-Media -->
     </div>
-
-    <!-- Inline Script สำหรับ Item Popup -->
-    <script>
-        let currentSlot = null;
-        let currentType = null;
-
-        // ฟังก์ชันที่ใช้ในการคลิกปุ่ม Force/Ban/Meta
-        function forceBanButtonClick(event, type, slotIndex) {
-            const btn = event.currentTarget;
-
-            // ถ้ามีไอเทมในปุ่มแล้ว ให้เคลียร์
-            if (btn.querySelector('img')) {
-                btn.innerHTML = "Click Here";
-            } else {
-                currentSlot = slotIndex;
-                currentType = type;
-                document.getElementById('meta-search').value = ""; // เคลียร์ช่องค้นหา
-                if (type === 'meta') {
-                    document.getElementById('meta-item-popup').classList.remove('hidden'); // เปิด Meta Item Popup
-                } else {
-                    document.getElementById('item-popup').classList.remove('hidden'); // เปิด Item Popup
-                }
-            }
-        }
-
-        // ปิด popup
-        function closeItemPopup(type) {
-            if (type === 'meta') {
-                document.getElementById('meta-item-popup').classList.add('hidden');
-            } else {
-                document.getElementById('item-popup').classList.add('hidden');
-            }
-        }
-
-        // เมื่อเลือกไอเทมจาก popup
-        function selectPopupItem(itemName, itemPath) {
-            const buttonId = `${currentType}-btn-${currentSlot}`;
-            const button = document.getElementById(buttonId);
-
-            // เพิ่มไอเทมที่เลือกเข้าไปในปุ่ม
-            button.innerHTML = `<img src="${itemPath}" alt="${itemName}" style="width:100%; height:100%; object-fit:contain;">`;
-        }
-
-        // ฟังก์ชันค้นหาไอเทมใน popup
-        function filterItemList(type) {
-            const searchValue = document.getElementById('meta-search').value.toLowerCase();
-            const items = document.querySelectorAll(`#${type}-popup-item-list .item-container`);
-            items.forEach(item => {
-                let name = item.querySelector('img').getAttribute('alt').toLowerCase();
-                item.style.display = name.includes(searchValue) ? 'inline-block' : 'none';
-            });
-        }
-        // ฟังก์ชันกรอง class แล้วรีโหลดหน้า
-        function filterByClass(encodedClass) {
-            const params = new URLSearchParams(window.location.search);
-            params.set('filter', decodeURIComponent(encodedClass));
-            window.location.search = params.toString();
-        }
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="src/common/scripts/dropdown.js"></script>
+    <script src="src/common/scripts/main.js"></script>
 </body>
-
 </html>
