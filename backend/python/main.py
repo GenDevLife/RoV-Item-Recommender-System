@@ -33,7 +33,7 @@ GA_CONSTANTS: Dict[str, Any] = {
     'CROSSOVER_RATE': 0.8,
     'BASE_MUT_RATE': 0.05,
     'STAGNANT_LIMIT': 6,
-    'PHASE_WEIGHTS': {'Early': 0.3, 'Mid': 0.3, 'Late': 0.4},
+    'PHASE_WEIGHTS': {'Early': 0.1, 'Mid': 0.3, 'Late': 0.6},
     'BASE_BUDGET': {'Early': 2700, 'Mid': 7500, 'Late': 14000},
 }
 
