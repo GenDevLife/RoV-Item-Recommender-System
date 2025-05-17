@@ -155,17 +155,27 @@ def get_recommended_item_types(hero: str) -> List[str]:
         cursor.execute('SELECT DISTINCT RecommendItemType FROM heroskills WHERE HeroID=%s', (hero,))
         return [row[0] for row in cursor.fetchall() if row[0]]
 
-@lru_cache(maxsize=128)
 def get_hero_info(hero: str) -> Dict[str, Optional[str]]:
-    """Get hero class and lane information."""
+    """คืนข้อมูลคลาสหลัก/รอง และเลนหลักรองของฮีโร่"""
     with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT First_Class, Second_Class, First_Lane FROM heroes WHERE HeroID=%s', (hero,))
-        row = cursor.fetchone()
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT First_Class, Second_Class, First_Lane, Second_Lane "
+            "FROM heroes WHERE HeroID=%s",
+            (hero,)
+        )
+        row = cur.fetchone() or (None, None, None, None)
+
+    first_class, second_class, first_lane, second_lane = row
+    # รวบเลนทั้งสอง (ถ้ามี)  ถ้าไม่มีเลยให้ Default เป็น Mid
+    lanes = [l for l in (first_lane, second_lane) if l] or ["Mid"]
+
     return {
-        'primary': row[0] if row else 'Fighter',
-        'secondary': row[1] if row and row[1] else None,
-        'lane': row[2] if row and row[2] else 'Mid',
+        "primary":    first_class   or "Fighter",
+        "secondary":  second_class  or None,
+        "lanes":      lanes,
+        # เพื่อไม่ให้กระทบที่ใช้กันเดิม ยังคงมี field "lane" คืนเป็นเลนแรก (fallback)
+        "lane":       first_lane    or second_lane or "Mid",
     }
 
 # ---------------------------- Helper Functions ------------------------------
@@ -226,8 +236,15 @@ def class_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) 
     return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['primary'])
 
 def lane_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
-    """Score items matching hero's lane."""
-    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['lane'])
+    """Score items matching any of hero's lanes."""
+    # ใช้ info['lanes'] (list) แทน info['lane']
+    lanes = hero_info.get('lanes', [hero_info.get('lane')])
+    return sum(
+        1
+        for item_id in chromosome
+        if ITEM_DATA[item_id]['Class'] in lanes
+    )
+
 
 # ---------------------------- Chromosome Operations -------------------------
 def repair_chromosome(chromosome: List[str], lane: str, banned_items: Set[str],
