@@ -142,10 +142,11 @@ def load_hero_stats(hero: str, level: int) -> Dict[str, float]:
         return cursor.fetchone() or {}
 
 @lru_cache(maxsize=128)
-def load_stat_caps(hero: str, buffer: float = 0.20) -> Dict[str, float]:
+def load_stat_caps(hero: str, phase: str, buffer: float = 0.20) -> Dict[str, float]:
     """Load hero stat caps with a buffer."""
     phase_levels = {'Early': 3, 'Mid': 9, 'Late': 15}
-    base_stats = load_hero_stats(hero, phase_levels[phase])
+    level = phase_levels[phase]
+    base_stats = load_hero_stats(hero, level)
     return {stat.upper(): value * (1 + buffer) for stat, value in base_stats.items()}
 
 @lru_cache(maxsize=128)
@@ -376,7 +377,7 @@ def run_ga(hero: str, lane: str, hero_class: Optional[str] = None,
         raise ValueError('More than one Movement item in --force')
 
     PHASE_BUFFERS = {'Early': 0.10, 'Mid': 0.20, 'Late': 0.30}
-    stat_caps = load_stat_caps(hero, buffer=PHASE_BUFFERS[phase])
+    stat_caps = load_stat_caps(hero, phase,buffer=PHASE_BUFFERS[phase])
     item_pool = [item_id for item_id in ITEM_DATA if item_id not in banned_items]
 
     # Population Initialization
