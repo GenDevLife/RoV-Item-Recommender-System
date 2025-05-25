@@ -13,7 +13,7 @@ from main import (
     load_hero_stats,
     get_recommended_item_types, get_hero_info,
     score_stats, score_budget as budget_component,
-    skill_component, synergy_component, category_component,
+    skill_component, category_component,
     class_component, lane_component, get_phase_weight,
     load_item_data, THETA,
 )
@@ -58,7 +58,6 @@ def build_feature_row(row: pd.Series) -> dict[str, float]:
                        sum(item_data[i]["Price"] for i in build),
                        LATE_BUDGET),
         "skill":   skill_component(build, get_recommended_item_types(hero)),
-        "synergy": synergy_component(set(build)),
         "cat":     len(build),
         "class":   class_component(build, hero_info),
         "lane":    lane_component(build, hero_info),
