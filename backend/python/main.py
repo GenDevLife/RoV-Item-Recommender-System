@@ -27,11 +27,11 @@ THETA: Dict[str, float] = {
 }
 
 GA_CONSTANTS: Dict[str, Any] = {
-    'POP_SIZE': 300,
-    'MAX_GEN': 60,
+    'POP_SIZE': 600,
+    'MAX_GEN': 300,
     'CROSSOVER_RATE': 0.8,
-    'BASE_MUT_RATE': 0.05,
-    'STAGNANT_LIMIT': 10,
+    'BASE_MUT_RATE': 0.5,
+    'STAGNANT_LIMIT': 50,
     'PHASE_WEIGHTS': {'Early': 0.1, 'Mid': 0.3, 'Late': 0.6},
     'BASE_BUDGET': {'Early': 2700, 'Mid': 7500, 'Late': 14000},
 }
@@ -215,17 +215,31 @@ def category_component(chromosome: List[str], category: str) -> float:
 
 def class_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
     """Score items matching hero's primary class."""
-    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['primary'])
+    class_mapping = {
+        'Fighter': ['Attack', 'Defense'],
+        'Mage': ['Magic'],
+        'Support': ['Support'],
+        'Tank': ['Defense'],
+        'Assassin': ['Attack', 'Jungle'],
+        'Carry': ['Attack']
+    }
+    suitable_classes = class_mapping.get(hero_info['primary'], [])
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in suitable_classes)
 
 def lane_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
-    """Score items matching any of hero's lanes."""
-    # ใช้ info['lanes'] (list) แทน info['lane']
+    """Score items matching hero's lanes based on a mapping."""
+    lane_mapping = {
+        'Mid': ['Magic'],
+        'Support': ['Support', 'Defense'],
+        'Farm': ['Jungle'],
+        'Dark Slayer': ['Attack'],
+        'Dragon Slayer': ['Attack']
+    }
     lanes = hero_info.get('lanes', [hero_info.get('lane')])
-    return sum(
-        1
-        for item_id in chromosome
-        if ITEM_DATA[item_id]['Class'] in lanes
-    )
+    suitable_classes = set()
+    for lane in lanes:
+        suitable_classes.update(lane_mapping.get(lane, []))
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in suitable_classes)
 
 
 # ---------------------------- Chromosome Operations -------------------------
@@ -322,8 +336,8 @@ def calculate_fitness(chromosome: List[str], hero: str, hero_info: Dict[str, Opt
         'cat': len(chromosome),
         'class': class_component(chromosome, hero_info),
         'lane': lane_component(chromosome, hero_info),
-        'cat_ATK': category_component(chromosome, 'ATK'),
-        'cat_Def': category_component(chromosome, 'Def'),
+        'cat_ATK': category_component(chromosome, 'Attack'),
+        'cat_Def': category_component(chromosome, 'Defense'),
         'cat_Magic': category_component(chromosome, 'Magic'),
     }
 
