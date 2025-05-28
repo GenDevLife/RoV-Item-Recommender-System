@@ -18,7 +18,6 @@ THETA: Dict[str, float] = {
     "stat": 12.210533136438032,
     "budget": 1.5418784650503874,
     "skill": -3.227235535145378,
-    "synergy": -0.0012660792782528407,
     "cat": 9.251270790312363,
     "cat_ATK": 0.0,
     "cat_Def": 2.220446049250313e-16,
@@ -28,11 +27,11 @@ THETA: Dict[str, float] = {
 }
 
 GA_CONSTANTS: Dict[str, Any] = {
-    'POP_SIZE': 300,
-    'MAX_GEN': 60,
+    'POP_SIZE': 600,
+    'MAX_GEN': 300,
     'CROSSOVER_RATE': 0.8,
-    'BASE_MUT_RATE': 0.05,
-    'STAGNANT_LIMIT': 10,
+    'BASE_MUT_RATE': 0.5,
+    'STAGNANT_LIMIT': 50,
     'PHASE_WEIGHTS': {'Early': 0.1, 'Mid': 0.3, 'Late': 0.6},
     'BASE_BUDGET': {'Early': 2700, 'Mid': 7500, 'Late': 14000},
 }
@@ -90,21 +89,6 @@ def get_connection() -> mysql.connector.connection.MySQLConnection:
     raise RuntimeError('Cannot connect to MySQL')
 
 # ---------------------------- Data Loading ----------------------------------
-@lru_cache(maxsize=None)
-def load_synergy_rules() -> List[Tuple[Set[str], float]]:
-    """Load synergy rules from the database."""
-    synergy_groups: Dict[str, Set[str]] = defaultdict(set)
-    bonus_values: Dict[str, float] = {}
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT SynergyGroup, ItemID, BonusValue FROM item_synergy')
-        for group, item_id, bonus in cursor.fetchall():
-            synergy_groups[group].add(item_id)
-            bonus_values[group] = float(bonus or 0.0)
-    print(f'[INFO] Loaded {len(synergy_groups)} synergy groups from DB')
-    return [(frozenset(items), bonus_values[group]) for group, items in synergy_groups.items()]
-
-SYNERGY_RULES = load_synergy_rules()
 
 @lru_cache(maxsize=None)
 def load_item_data() -> Dict[str, Dict[str, float]]:
@@ -225,27 +209,37 @@ def skill_component(chromosome: List[str], recommended_types: List[str]) -> floa
     """Score skill synergy based on recommended item types."""
     return sum(0.2 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in recommended_types)
 
-def synergy_component(chromosome: List[str]) -> float:
-    """Score synergy bonuses from item combinations."""
-    return sum(value for required_items, value in SYNERGY_RULES if required_items <= set(chromosome))
-
 def category_component(chromosome: List[str], category: str) -> float:
     """Score items matching a specific category."""
     return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == category)
 
 def class_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
     """Score items matching hero's primary class."""
-    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] == hero_info['primary'])
+    class_mapping = {
+        'Fighter': ['Attack', 'Defense'],
+        'Mage': ['Magic'],
+        'Support': ['Support'],
+        'Tank': ['Defense'],
+        'Assassin': ['Attack', 'Jungle'],
+        'Carry': ['Attack']
+    }
+    suitable_classes = class_mapping.get(hero_info['primary'], [])
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in suitable_classes)
 
 def lane_component(chromosome: List[str], hero_info: Dict[str, Optional[str]]) -> float:
-    """Score items matching any of hero's lanes."""
-    # ใช้ info['lanes'] (list) แทน info['lane']
+    """Score items matching hero's lanes based on a mapping."""
+    lane_mapping = {
+        'Mid': ['Magic'],
+        'Support': ['Support', 'Defense'],
+        'Farm': ['Jungle'],
+        'Dark Slayer': ['Attack'],
+        'Dragon Slayer': ['Attack']
+    }
     lanes = hero_info.get('lanes', [hero_info.get('lane')])
-    return sum(
-        1
-        for item_id in chromosome
-        if ITEM_DATA[item_id]['Class'] in lanes
-    )
+    suitable_classes = set()
+    for lane in lanes:
+        suitable_classes.update(lane_mapping.get(lane, []))
+    return sum(1 for item_id in chromosome if ITEM_DATA[item_id]['Class'] in suitable_classes)
 
 
 # ---------------------------- Chromosome Operations -------------------------
@@ -339,12 +333,11 @@ def calculate_fitness(chromosome: List[str], hero: str, hero_info: Dict[str, Opt
         'stat': score_stats(chromosome, hero_base_stats, stat_caps, get_phase_weight(hero_info, phase)),
         'budget': score_budget(total_cost, budget),
         'skill': skill_component(chromosome, recommended_types),
-        'synergy': synergy_component(chromosome),
         'cat': len(chromosome),
         'class': class_component(chromosome, hero_info),
         'lane': lane_component(chromosome, hero_info),
-        'cat_ATK': category_component(chromosome, 'ATK'),
-        'cat_Def': category_component(chromosome, 'Def'),
+        'cat_ATK': category_component(chromosome, 'Attack'),
+        'cat_Def': category_component(chromosome, 'Defense'),
         'cat_Magic': category_component(chromosome, 'Magic'),
     }
 
