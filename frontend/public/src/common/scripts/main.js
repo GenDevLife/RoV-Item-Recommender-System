@@ -6,12 +6,18 @@ let selectedMetaItems = [null, null, null, null, null, null];
 let selectedSupportItemId = null;
 let selectedFarmItemId = null;
 let selectedHeroOptionElement = null;
-async function calculateStats(items, hero, phase) { /* … */ }
-async function calculateMetaStats(metaItems, hero, phase) { /* … */ }
-function updateCompareChart(resultStats, metaStats) { /* … */ }
+async function calculateStats(items, hero, phase) {
+  /* … */
+}
+async function calculateMetaStats(metaItems, hero, phase) {
+  /* … */
+}
+function updateCompareChart(resultStats, metaStats) {
+  /* … */
+}
 
 function toggleDropdown() {
-  document.getElementById('Hero-Dropdown-Menu').classList.toggle('hidden');
+  document.getElementById("Hero-Dropdown-Menu").classList.toggle("hidden");
   // Clear search and refilter when opening/closing
   const heroSearchBox = document.getElementById("hero-search-box");
   if (heroSearchBox) {
@@ -21,13 +27,13 @@ function toggleDropdown() {
 }
 
 function HerofilterOption() {
-  const heroSearchBox = document.getElementById('hero-search-box');
+  const heroSearchBox = document.getElementById("hero-search-box");
   if (!heroSearchBox) return;
   const input = heroSearchBox.value.toLowerCase();
-  const options = document.querySelectorAll('#Hero-Dropdown-Menu .Hero-Option');
-  options.forEach(option => {
+  const options = document.querySelectorAll("#Hero-Dropdown-Menu .Hero-Option");
+  options.forEach((option) => {
     const name = option.dataset.heroName.toLowerCase();
-    option.style.display = name.includes(input) ? 'flex' : 'none';
+    option.style.display = name.includes(input) ? "flex" : "none";
   });
 }
 
@@ -42,9 +48,9 @@ function selectHero(heroElement) {
   document.getElementById("Hero-Dropdown-Menu").classList.add("hidden");
 
   if (selectedHeroOptionElement) {
-    selectedHeroOptionElement.classList.remove('selected');
+    selectedHeroOptionElement.classList.remove("selected");
   }
-  heroElement.classList.add('selected');
+  heroElement.classList.add("selected");
   selectedHeroOptionElement = heroElement;
 
   // Show/hide support section
@@ -56,10 +62,10 @@ function selectHero(heroElement) {
     } else {
       supportItemSection.classList.add("hidden");
       selectedSupportItemId = null;
-      const disp = document.getElementById('selected-support-item');
+      const disp = document.getElementById("selected-support-item");
       if (disp) disp.innerHTML = `-- Select Support Item --`;
-      const hid = document.getElementById('selectedSupportItemId');
-      if (hid) hid.value = '';
+      const hid = document.getElementById("selectedSupportItemId");
+      if (hid) hid.value = "";
     }
   }
 
@@ -136,32 +142,33 @@ function selectHero(heroElement) {
   const farmItemSection = document.getElementById("FarmItemSection");
   if (farmItemSection) farmItemSection.classList.add("hidden");
   selectedFarmItemId = null;
-  const farmDisp = document.getElementById('selected-farm-item');
+  const farmDisp = document.getElementById("selected-farm-item");
   if (farmDisp) farmDisp.innerHTML = `-- Select Farm Item --`;
-  document.getElementById('selectedFarmItemId').value = '';
+  document.getElementById("selectedFarmItemId").value = "";
 }
 
 function filterByClass(className) {
   // decode URL-encoded class (to match data-hero-class)
   className = decodeURIComponent(className);
-  const allOptions = document.querySelectorAll('.Hero-Option');
-  const searchBox = document.getElementById('hero-search-box');
-  if (searchBox) searchBox.value = '';
+  const allOptions = document.querySelectorAll(".Hero-Option");
+  const searchBox = document.getElementById("hero-search-box");
+  if (searchBox) searchBox.value = "";
 
-  allOptions.forEach(option => {
-    const c1 = option.getAttribute('data-hero-class');
-    const c2 = option.getAttribute('data-hero-second-class');
-    option.style.display = (c1 === className || c2 === className) ? 'flex' : 'none';
+  allOptions.forEach((option) => {
+    const c1 = option.getAttribute("data-hero-class");
+    const c2 = option.getAttribute("data-hero-second-class");
+    option.style.display =
+      c1 === className || c2 === className ? "flex" : "none";
   });
-  document.getElementById('Hero-Dropdown-Menu').classList.remove('hidden');
+  document.getElementById("Hero-Dropdown-Menu").classList.remove("hidden");
 }
 
 function toggleClassDropdown() {
-  document.getElementById('Class-Dropdown-Menu').classList.toggle('hidden');
+  document.getElementById("Class-Dropdown-Menu").classList.toggle("hidden");
 }
 function selectClass(className) {
-  document.getElementById('selected-class-text').textContent = className;
-  document.getElementById('Class-Dropdown-Menu').classList.add('hidden');
+  document.getElementById("selected-class-text").textContent = className;
+  document.getElementById("Class-Dropdown-Menu").classList.add("hidden");
   const supportItemSection = document.getElementById("SupportItemSection");
   if (supportItemSection) {
     if (className === "Support") {
@@ -169,10 +176,10 @@ function selectClass(className) {
     } else {
       supportItemSection.classList.add("hidden");
       selectedSupportItemId = null;
-      const disp = document.getElementById('selected-support-item');
+      const disp = document.getElementById("selected-support-item");
       if (disp) disp.innerHTML = `-- Select Support Item --`;
-      const hid = document.getElementById('selectedSupportItemId');
-      if (hid) hid.value = '';
+      const hid = document.getElementById("selectedSupportItemId");
+      if (hid) hid.value = "";
     }
   }
   const f2 = document.getElementById("force-btn-2");
@@ -203,11 +210,11 @@ function selectClass(className) {
 }
 
 function toggleLaneDropdown() {
-  document.getElementById('Lane-Dropdown-Menu').classList.toggle('hidden');
+  document.getElementById("Lane-Dropdown-Menu").classList.toggle("hidden");
 }
 function selectLane(laneName) {
-  document.getElementById('selected-lane-text').textContent = laneName;
-  document.getElementById('Lane-Dropdown-Menu').classList.add('hidden');
+  document.getElementById("selected-lane-text").textContent = laneName;
+  document.getElementById("Lane-Dropdown-Menu").classList.add("hidden");
   const farmItemSection = document.getElementById("FarmItemSection");
   if (farmItemSection) {
     if (laneName === "Farm") {
@@ -215,10 +222,10 @@ function selectLane(laneName) {
     } else {
       farmItemSection.classList.add("hidden");
       selectedFarmItemId = null;
-      const disp = document.getElementById('selected-farm-item');
+      const disp = document.getElementById("selected-farm-item");
       if (disp) disp.innerHTML = `-- Select Farm Item --`;
-      const hid = document.getElementById('selectedFarmItemId');
-      if (hid) hid.value = '';
+      const hid = document.getElementById("selectedFarmItemId");
+      if (hid) hid.value = "";
     }
   }
 }
@@ -231,11 +238,11 @@ function toggleFarmDropdown() {
 }
 
 function selectSupportItemJS(itemId, itemName, itemPath) {
-  const disp = document.getElementById('selected-support-item');
+  const disp = document.getElementById("selected-support-item");
   if (disp) {
     disp.innerHTML = `<img src="${itemPath}" class="dropdown-img" alt="${itemName}" style="height:20px;margin-right:5px;vertical-align:middle;"> ${itemName}`;
   }
-  const hid = document.getElementById('selectedSupportItemId');
+  const hid = document.getElementById("selectedSupportItemId");
   if (hid) hid.value = itemId;
   selectedSupportItemId = itemId;
   toggleSupportDropdown();
@@ -245,11 +252,11 @@ function selectFarmItemJS(element) {
   const itemId = element.dataset.itemId;
   const itemName = element.dataset.itemName;
   const itemPath = element.dataset.itemPath;
-  const disp = document.getElementById('selected-farm-item');
+  const disp = document.getElementById("selected-farm-item");
   if (disp) {
     disp.innerHTML = `<img src="${itemPath}" class="dropdown-img" alt="${itemName}" style="height:20px;margin-right:5px;vertical-align:middle;"> ${itemName}`;
   }
-  const hid = document.getElementById('selectedFarmItemId');
+  const hid = document.getElementById("selectedFarmItemId");
   if (hid) hid.value = itemId;
   selectedFarmItemId = itemId;
   toggleFarmDropdown();
@@ -263,36 +270,37 @@ function forceBanButtonClick(event, type, slotIndex) {
   if (btn.dataset.itemId) {
     // ถ้ามีการเลือกแล้ว ให้รีเซ็ตปุ่มกลับเป็น "+"
     btn.innerHTML = `<span class="plus-icon">+</span>`;
-    btn.classList.remove('selected');
+    btn.classList.remove("selected");
     delete btn.dataset.itemId;
-    if (type === 'force')      selectedForceItems[slotIndex] = null;
-    else if (type === 'ban')   selectedBanItems[slotIndex]  = null;
-    else if (type === 'meta')  selectedMetaItems[slotIndex] = null;
+    if (type === "force") selectedForceItems[slotIndex] = null;
+    else if (type === "ban") selectedBanItems[slotIndex] = null;
+    else if (type === "meta") selectedMetaItems[slotIndex] = null;
   } else {
     // เปิด popup ทั้งสองกรณี (force/ban หรือ meta)
-    if (type === 'meta') {
-      const mBox = document.getElementById('meta-search-box');
+    if (type === "meta") {
+      const mBox = document.getElementById("meta-search-box");
       mBox && (mBox.value = "");
-      const pop = document.getElementById('meta-item-popup');
-      pop.classList.remove('hidden');
-      pop.classList.add('show');
+      const pop = document.getElementById("meta-item-popup");
+      pop.classList.remove("hidden");
+      pop.classList.add("show");
     } else {
-      const iBox = document.getElementById('item-search-box');
+      const iBox = document.getElementById("item-search-box");
       iBox && (iBox.value = "");
-      const pop = document.getElementById('item-popup');
-      pop.classList.remove('hidden');
-      pop.classList.add('show');
+      const pop = document.getElementById("item-popup");
+      pop.classList.remove("hidden");
+      pop.classList.add("show");
     }
   }
 }
 
 function closeItemPopup(popupType) {
-  const pop = (popupType === 'meta')
-    ? document.getElementById('meta-item-popup')
-    : document.getElementById('item-popup');
+  const pop =
+    popupType === "meta"
+      ? document.getElementById("meta-item-popup")
+      : document.getElementById("item-popup");
 
-  pop.classList.add('hidden');
-  pop.classList.remove('show');
+  pop.classList.add("hidden");
+  pop.classList.remove("show");
 
   currentType = null;
   currentSlot = null;
@@ -305,151 +313,174 @@ function selectPopupItem(itemId, itemName, itemPath) {
   if (button) {
     button.innerHTML = `<img src="${itemPath}" alt="${itemName}" style="width:100%;height:100%;object-fit:contain;">`;
     button.dataset.itemId = itemId;
-    if (currentType === 'force') {
+    if (currentType === "force") {
       selectedForceItems[currentSlot] = itemId;
-    } else if (currentType === 'ban') {
+    } else if (currentType === "ban") {
       selectedBanItems[currentSlot] = itemId;
-    } else if (currentType === 'meta') {
+    } else if (currentType === "meta") {
       selectedMetaItems[currentSlot] = itemId;
-      button.classList.add('selected');
+      button.classList.add("selected");
     }
   }
-  closeItemPopup(currentType === 'meta' ? 'meta' : undefined);
+  closeItemPopup(currentType === "meta" ? "meta" : undefined);
 }
-
 
 function filterItemList(searchBoxId, itemListId) {
-    const searchInput = document.getElementById(searchBoxId);
-    if (!searchInput) return;
-    const searchValue = searchInput.value.toLowerCase();
-    const items = document.querySelectorAll(`#${itemListId} .item-container`);
-    items.forEach(item => {
-        const name = item.dataset.itemName.toLowerCase();
-        item.style.display = name.includes(searchValue) ? 'inline-block' : 'none';
-    });
+  const searchInput = document.getElementById(searchBoxId);
+  if (!searchInput) return;
+  const searchValue = searchInput.value.toLowerCase();
+  const items = document.querySelectorAll(`#${itemListId} .item-container`);
+  items.forEach((item) => {
+    const name = item.dataset.itemName.toLowerCase();
+    item.style.display = name.includes(searchValue) ? "inline-block" : "none";
+  });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const calculateBtn = document.getElementById('calculate-btn');
-    if (calculateBtn) {
-        calculateBtn.addEventListener('click', async () => {
-            const heroName = document.getElementById('selected-text').textContent;
-            let heroClass = document.getElementById('selected-class-text').textContent;
-            let lane = document.getElementById('selected-lane-text').textContent;
-            
-            if (!heroName || heroName === 'Select' || heroName === 'Select Hero') {
-                alert('Please select a hero.');
-                return;
-            }
-            if (!heroClass || heroClass === 'Select Class') {
-                if (selectedHeroOptionElement && selectedHeroOptionElement.dataset.heroClass) {
-                    heroClass = selectedHeroOptionElement.dataset.heroClass;
-                } else {
-                    alert('Please select a hero class.');
-                    return;
-                }
-            }
-            if (!lane || lane === 'Select Lane') {
-                if (selectedHeroOptionElement && selectedHeroOptionElement.dataset.heroLane) {
-                    lane = selectedHeroOptionElement.dataset.heroLane;
-                } else if (selectedHeroOptionElement && selectedHeroOptionElement.dataset.heroSecondLane) {
-                    lane = selectedHeroOptionElement.dataset.heroSecondLane;
-                } else {
-                    alert('Please select a lane.');
-                    return;
-                }
-            }
-            
-            const forceIds = selectedForceItems.filter(id => id !== null);
-            const banIds = selectedBanItems.filter(id => id !== null);
-            
-            if (selectedFarmItemId && !forceIds.includes(selectedFarmItemId)) {
-                forceIds.push(selectedFarmItemId);
-            }
-            if (selectedSupportItemId && !forceIds.includes(selectedSupportItemId)) {
-                forceIds.push(selectedSupportItemId);
-            }
-            
-            const payload = {
-                hero: heroName,
-                lane: lane,
-                heroClass: heroClass,
-                force: forceIds,
-                ban: banIds
-            };
-            console.log("Sending payload:", payload);
-            
-            try {
-                const response = await fetch('http://localhost:5000/ga', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-                }
-                const result = await response.json();
-                console.log("Received result:", result);
-                displayResults(result);
-            } catch (error) {
-                console.error('Error calling API:', error);
-                alert(`Error: ${error.message}`);
-            }
+document.addEventListener("DOMContentLoaded", () => {
+  const calculateBtn = document.getElementById("calculate-btn");
+  if (calculateBtn) {
+    calculateBtn.addEventListener("click", async () => {
+      const heroName = document.getElementById("selected-text").textContent;
+      let heroClass = document.getElementById(
+        "selected-class-text"
+      ).textContent;
+      let lane = document.getElementById("selected-lane-text").textContent;
+
+      if (!heroName || heroName === "Select" || heroName === "Select Hero") {
+        alert("Please select a hero.");
+        return;
+      }
+      if (!heroClass || heroClass === "Select Class") {
+        if (
+          selectedHeroOptionElement &&
+          selectedHeroOptionElement.dataset.heroClass
+        ) {
+          heroClass = selectedHeroOptionElement.dataset.heroClass;
+        } else {
+          alert("Please select a hero class.");
+          return;
+        }
+      }
+      if (!lane || lane === "Select Lane") {
+        if (
+          selectedHeroOptionElement &&
+          selectedHeroOptionElement.dataset.heroLane
+        ) {
+          lane = selectedHeroOptionElement.dataset.heroLane;
+        } else if (
+          selectedHeroOptionElement &&
+          selectedHeroOptionElement.dataset.heroSecondLane
+        ) {
+          lane = selectedHeroOptionElement.dataset.heroSecondLane;
+        } else {
+          alert("Please select a lane.");
+          return;
+        }
+      }
+
+      const forceIds = selectedForceItems.filter((id) => id !== null);
+      const banIds = selectedBanItems.filter((id) => id !== null);
+
+      if (selectedFarmItemId && !forceIds.includes(selectedFarmItemId)) {
+        forceIds.push(selectedFarmItemId);
+      }
+      if (selectedSupportItemId && !forceIds.includes(selectedSupportItemId)) {
+        forceIds.push(selectedSupportItemId);
+      }
+
+      const payload = {
+        hero: heroName,
+        lane: lane,
+        heroClass: heroClass,
+        force: forceIds,
+        ban: banIds,
+      };
+      console.log("Sending payload:", payload);
+
+      // Show Loading
+      const loadingOverlay = document.getElementById("loading-overlay");
+      if (loadingOverlay) loadingOverlay.classList.remove("hidden");
+
+      try {
+        const response = await fetch("http://localhost:5000/ga", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
-    }
-    
-    // Initial chart draw and filter button styling
-    updateCompareChart([0,0,0,0,0,0,0], [0,0,0,0,0,0,0]);
-    const filterButtons = document.querySelectorAll('.Filter-Button button');
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            filterButtons.forEach(b => b.classList.remove('selected'));
-            this.classList.add('selected');
-        });
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error || `HTTP error! status: ${response.status}`
+          );
+        }
+        const result = await response.json();
+        console.log("Received result:", result);
+        displayResults(result);
+      } catch (error) {
+        console.error("Error calling API:", error);
+        alert(`Error: ${error.message}`);
+      } finally {
+        // Hide Loading
+        if (loadingOverlay) loadingOverlay.classList.add("hidden");
+      }
     });
-    
-    // Compare button updates both image boxes and radar chart
-    const phaseSelect = document.getElementById('game-phase');
-    phaseSelect.addEventListener('change', () => updateCompareSection(phaseSelect.value));
-    const compareBtn = document.getElementById('compare-btn');
-    if (compareBtn && phaseSelect) {
-        compareBtn.addEventListener('click', async () => {
-            const phase = phaseSelect.value;
-            if (!phase) {
-                alert('Please select a game phase first.');
-                return;
+  }
+
+  // Initial chart draw and filter button styling
+  updateCompareChart([0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0]);
+  const filterButtons = document.querySelectorAll(".Filter-Button button");
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      filterButtons.forEach((b) => b.classList.remove("selected"));
+      this.classList.add("selected");
+    });
+  });
+
+  // Compare button updates both image boxes and radar chart
+  const phaseSelect = document.getElementById("game-phase");
+  phaseSelect.addEventListener("change", () =>
+    updateCompareSection(phaseSelect.value)
+  );
+  const compareBtn = document.getElementById("compare-btn");
+  if (compareBtn && phaseSelect) {
+    compareBtn.addEventListener("click", async () => {
+      const phase = phaseSelect.value;
+      if (!phase) {
+        alert("Please select a game phase first.");
+        return;
       }
       // อัพเดตกล่องภาพไอเทมฝั่งซ้าย
       updateCompareSection(phase);
 
       // ดึงค่า stats แล้วอัพเดตกราฟ
-      const hero = document.getElementById('selected-text').textContent;
+      const hero = document.getElementById("selected-text").textContent;
       const resultItems = getResultItems(phase);
-      const metaItems = selectedMetaItems.filter(id => id !== null);
+      const metaItems = selectedMetaItems.filter((id) => id !== null);
       try {
         const [stats1, stats2] = await Promise.all([
           calculateStats(resultItems, hero, phase),
-          calculateMetaStats(metaItems, hero, phase)
+          calculateMetaStats(metaItems, hero, phase),
         ]);
         updateCompareChart(stats1, stats2);
       } catch (e) {
         console.error(e);
-        alert('Error updating chart');
+        alert("Error updating chart");
       }
     });
   }
 });
 
 function displayResults(data) {
-  const phases = ['Early','Mid','Late'];
-  phases.forEach(phase => {
+  const phases = ["Early", "Mid", "Late"];
+  phases.forEach((phase) => {
     const phaseData = data[phase];
-    const container = document.querySelector(`.${phase}-Game .${phase}-Image-Container`);
+    const container = document.querySelector(
+      `.${phase}-Game .${phase}-Image-Container`
+    );
     if (container) {
-      container.innerHTML = '';
-      for (let i=0; i<6; i++){
-        const img = document.createElement('img');
+      container.innerHTML = "";
+      for (let i = 0; i < 6; i++) {
+        const img = document.createElement("img");
         if (phaseData.items[i]) {
           const item = phaseData.items[i];
           img.src = item.img;
@@ -464,91 +495,133 @@ function displayResults(data) {
 }
 
 function getResultItems(phase) {
-  const map = {'early':'Early','mid':'Mid','late':'Late'};
-  const container = document.querySelector(`.${map[phase]}-Game .${map[phase]}-Image-Container`);
+  const map = { early: "Early", mid: "Mid", late: "Late" };
+  const container = document.querySelector(
+    `.${map[phase]}-Game .${map[phase]}-Image-Container`
+  );
   if (!container) return [];
-  return Array.from(container.querySelectorAll('img'))
-    .map(img => img.dataset.itemId)
-    .filter(id => id);
+  return Array.from(container.querySelectorAll("img"))
+    .map((img) => img.dataset.itemId)
+    .filter((id) => id);
 }
 
 async function calculateStats(items, hero, phase) {
-  const response = await fetch('http://localhost:5000/calculate_stats', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({hero, phase, items})
+  const response = await fetch("http://localhost:5000/calculate_stats", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ hero, phase, items }),
   });
-  if (!response.ok) throw new Error('Failed to calculate stats');
+  if (!response.ok) throw new Error("Failed to calculate stats");
   return (await response.json()).stats;
 }
 
 async function calculateMetaStats(metaItems, hero, phase) {
-  const response = await fetch('http://localhost:5000/calculate_stats', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({hero, phase, items:metaItems})
+  const response = await fetch("http://localhost:5000/calculate_stats", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ hero, phase, items: metaItems }),
   });
-  if (!response.ok) throw new Error('Failed to calculate meta stats');
+  if (!response.ok) throw new Error("Failed to calculate meta stats");
   return (await response.json()).stats;
 }
 
-document.getElementById('compare-btn').addEventListener('click', async () => {
+document.getElementById("compare-btn").addEventListener("click", async () => {
   try {
-    const hero  = document.getElementById('selected-text').innerText;
-    const phase = document.getElementById('game-phase').value;
-    const resultItems = selectedForceItems.concat(selectedBanItems).filter(id => id);
-    const metaItems   = selectedMetaItems.filter(id => id);
+    const hero = document.getElementById("selected-text").innerText;
+    const phase = document.getElementById("game-phase").value;
+    const resultItems = selectedForceItems
+      .concat(selectedBanItems)
+      .filter((id) => id);
+    const metaItems = selectedMetaItems.filter((id) => id);
 
     const [resStats, metaStats] = await Promise.all([
       calculateStats(resultItems, hero, phase),
-      calculateMetaStats(metaItems,   hero, phase)
+      calculateMetaStats(metaItems, hero, phase),
     ]);
 
     updateCompareChart(resStats, metaStats);
   } catch (err) {
     console.error(err);
-    alert('เกิดข้อผิดพลาดในการคำนวณกราฟ');
+    alert("เกิดข้อผิดพลาดในการคำนวณกราฟ");
   }
 });
 
 let compareChart = null;
 function updateCompareChart(resultStats, metaStats) {
-  const labels = ['Phys_ATK','Magic_Power','Phys_Defense','HP','Cooldown_Reduction','Critical_Rate','Movement_Speed'];
-  const resultData = labels.map(l => resultStats[l]||0);
-  const metaData = labels.map(l => metaStats[l]||0);
-  const ctx = document.getElementById('CompareChartCanvas').getContext('2d');
+  const labels = [
+    "Phys_ATK",
+    "Magic_Power",
+    "Phys_Defense",
+    "HP",
+    "Cooldown_Reduction",
+    "Critical_Rate",
+    "Movement_Speed",
+  ];
+  const resultData = labels.map((l) => resultStats[l] || 0);
+  const metaData = labels.map((l) => metaStats[l] || 0);
+  const ctx = document.getElementById("CompareChartCanvas").getContext("2d");
   if (compareChart) compareChart.destroy();
   compareChart = new Chart(ctx, {
-    type:'radar',
-    data:{labels,datasets:[
-      {label:'Result Item',data:resultData,borderColor:'red',backgroundColor:'rgba(255,0,0,0.2)',pointBackgroundColor:'red'},
-      {label:'Meta Item',data:metaData,borderColor:'white',backgroundColor:'rgba(255,255,255,0.2)',pointBackgroundColor:'white'}
-    ]},
-    options:{
-      responsive:true,
-      maintainAspectRatio:false,
-      scales:{r:{angleLines:{color:'#888'},grid:{color:'#555'},pointLabels:{color:'#fff',font:{size:14}},ticks:{backdropColor:'transparent',color:'white',beginAtZero:true}}},
-      plugins:{legend:{labels:{color:'white',font:{size:14}}}}
-    }
+    type: "radar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Result Item",
+          data: resultData,
+          borderColor: "red",
+          backgroundColor: "rgba(255,0,0,0.2)",
+          pointBackgroundColor: "red",
+        },
+        {
+          label: "Meta Item",
+          data: metaData,
+          borderColor: "white",
+          backgroundColor: "rgba(255,255,255,0.2)",
+          pointBackgroundColor: "white",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          angleLines: { color: "#888" },
+          grid: { color: "#555" },
+          pointLabels: { color: "#fff", font: { size: 14 } },
+          ticks: {
+            backdropColor: "transparent",
+            color: "white",
+            beginAtZero: true,
+          },
+        },
+      },
+      plugins: { legend: { labels: { color: "white", font: { size: 14 } } } },
+    },
   });
 }
 
 function updateCompareSection(phase) {
-  const boxes = document.querySelectorAll('.Select-Game-Phase-Container .input-box .input-item');
+  const boxes = document.querySelectorAll(
+    ".Select-Game-Phase-Container .input-box .input-item"
+  );
   if (!phase) {
-    boxes.forEach(b=>b.innerHTML='');
+    boxes.forEach((b) => (b.innerHTML = ""));
     return;
   }
   const cap = phase.charAt(0).toUpperCase() + phase.slice(1);
-  const imgs = document.querySelectorAll(`.${cap}-Game .${cap}-Image-Container img`);
-  boxes.forEach((box,i)=>{
-    box.innerHTML = '';
+  const imgs = document.querySelectorAll(
+    `.${cap}-Game .${cap}-Image-Container img`
+  );
+  boxes.forEach((box, i) => {
+    box.innerHTML = "";
     if (imgs[i]) {
-      const img = document.createElement('img');
+      const img = document.createElement("img");
       img.src = imgs[i].src;
       img.alt = imgs[i].alt;
-      img.style.maxWidth = '100%';
-      img.style.maxHeight = '100%';
+      img.style.maxWidth = "100%";
+      img.style.maxHeight = "100%";
       box.appendChild(img);
     }
   });

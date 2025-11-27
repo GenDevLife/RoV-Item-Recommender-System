@@ -1,30 +1,19 @@
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
-import main as ga
-import re, unicodedata
+import ga_engine as ga
+import config
+import database
+import utils
 from pathlib import Path
-from main import load_hero_stats, ITEM_DATA
-import re, unicodedata
+from database import load_hero_stats, ITEM_DATA
 
 app = Flask(__name__)
 CORS(app)
 
 # ── preload ─────────────────────────────────────────────────────
-ga.load_theta_config()
-ga.initialize_connection_pool()
-ITEM_DATA = ga.load_item_data()
-
-# ── slugify item name to match your filenames ──────────────────
-def slugify(item_name: str) -> str:
-    # normalize
-    name = unicodedata.normalize("NFKD", item_name)
-    # spaces → _
-    name = re.sub(r"\s+", "_", name)
-    # curly apostrophe → straight
-    name = name.replace("’", "'")
-    # keep only A–Z, a–z, 0–9, _ and '
-    name = re.sub(r"[^A-Za-z0-9_']", "", name)
-    return name
+config.load_theta_config()
+database.initialize_connection_pool()
+# ITEM_DATA is already loaded in database module
 
 # ── where to point URLs (from your frontend public folder) ───────
 IMG_BASE = "./src/assets/images/item"
@@ -43,7 +32,7 @@ def decorate(ids: list[str]):
         if not meta:
             continue
 
-        slug = slugify(meta["ItemName"])
+        slug = utils.slugify(meta["ItemName"])
         fname = f"{slug}.png"
         rel_path = None
 

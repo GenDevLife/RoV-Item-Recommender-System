@@ -1,183 +1,16 @@
 from __future__ import annotations
-import os
 import random
 import math
-import time
-import json
 import argparse
-from functools import lru_cache
-from typing import Dict, List, Tuple, Optional, Set, Any
-from collections import defaultdict
+from typing import Dict, List, Tuple, Optional, Set
 
-import mysql.connector
-from mysql.connector import pooling, Error
-from dotenv import load_dotenv
-
-# ---------------------------- Parameter Setting -----------------------------
-THETA: Dict[str, float] = {
-    "stat": 12.210533136438032,
-    "budget": 1.5418784650503874,
-    "skill": -3.227235535145378,
-    "cat": 9.251270790312363,
-    "cat_ATK": 0.0,
-    "cat_Def": 2.220446049250313e-16,
-    "cat_Magic": -0.02990767569504543,
-    "class": 6.8907772290645015,
-    "lane": -5.282919354476533
-}
-
-GA_CONSTANTS: Dict[str, Any] = {
-    'POP_SIZE': 600,
-    'MAX_GEN': 300,
-    'CROSSOVER_RATE': 0.8,
-    'BASE_MUT_RATE': 0.5,
-    'STAGNANT_LIMIT': 50,
-    'PHASE_WEIGHTS': {'Early': 0.1, 'Mid': 0.3, 'Late': 0.6},
-    'BASE_BUDGET': {'Early': 2700, 'Mid': 7500, 'Late': 14000},
-}
-
-def load_theta_config(path: str = 'weights.json') -> None:
-    """Load and override THETA weights from an external JSON file if it exists."""
-    try:
-        with open(path, 'r', encoding='utf-8') as f:
-            THETA.update(json.load(f))
-            print(f'[INFO] Loaded THETA overrides from {path}')
-    except FileNotFoundError:
-        pass
-
-# ---------------------------- Database Utilities ----------------------------
-load_dotenv(os.path.join(os.path.dirname(__file__), '../config/.env'))
-DB_CONFIG = {
-    'host': os.getenv('DB_HOST'),
-    'port': int(os.getenv('DB_PRIMARY_PORT', 3306)),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_NAME'),
-    'charset': 'utf8mb4',
-}
-
-_CONNECTION_POOL: Optional[pooling.MySQLConnectionPool] = None
-
-def initialize_connection_pool() -> None:
-    """Initialize MySQL connection pool with lazy initialization."""
-    global _CONNECTION_POOL
-    try:
-        _CONNECTION_POOL = pooling.MySQLConnectionPool(
-            pool_name='rov_pool', pool_size=3, **DB_CONFIG
-        )
-        print('[INFO] MySQL pool initialized')
-    except Error as e:
-        print(f'[WARN] Pool init failed: {e} – falling back to direct connect')
-        _CONNECTION_POOL = None
-
-def get_connection() -> mysql.connector.connection.MySQLConnection:
-    """Get a database connection, retrying with exponential backoff if needed."""
-    global _CONNECTION_POOL
-    if _CONNECTION_POOL is None:
-        initialize_connection_pool()
-    tries, delay = 0, 1
-    while tries < 4:
-        try:
-            if _CONNECTION_POOL:
-                return _CONNECTION_POOL.get_connection()
-            return mysql.connector.connect(**DB_CONFIG)
-        except Error as e:
-            print(f'[WARN] DB connect failed: {e}; retrying in {delay}s')
-            time.sleep(delay)
-            tries += 1
-            delay *= 2
-    raise RuntimeError('Cannot connect to MySQL')
-
-# ---------------------------- Data Loading ----------------------------------
-
-@lru_cache(maxsize=None)
-def load_item_data() -> Dict[str, Dict[str, float]]:
-    """Load item data from the database."""
-    with get_connection() as conn:
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT ItemID, ItemName, Class, Price, Phys_ATK, Magic_Power,
-                   Phys_Defense, HP, Cooldown_Reduction, Critical_Rate,
-                   Movement_Speed, Attack_Speed, HP_5_sec, Mana_5_sec,
-                   Armor_Pierce, Magic_Pierce, Life_Steal, Magic_Life_Steal,
-                   Max_Mana, Magic_Defense, Resistance
-            FROM items
-        """)
-        items = {}
-        for row in cursor.fetchall():
-            for key, value in row.items():
-                if key not in ('ItemID', 'ItemName', 'Class'):
-                    row[key] = float(value or 0.0)
-            items[row['ItemID']] = row
-        return items
-
-ITEM_DATA = load_item_data()
-
-@lru_cache(maxsize=128)
-def load_hero_stats(hero: str, level: int) -> Dict[str, float]:
-    """Load hero base stats at a given level."""
-    with get_connection() as conn:
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("""
-            SELECT Phys_ATK, Magic_Power, Phys_Defense, HP,
-                   Cooldown_Reduction, Critical_Rate, Movement_Speed
-            FROM herostats WHERE HeroID=%s AND Level=%s
-        """, (hero, level))
-        return cursor.fetchone() or {}
-
-@lru_cache(maxsize=128)
-def load_stat_caps(hero: str, phase: str, buffer: float = 0.20) -> Dict[str, float]:
-    """Load hero stat caps with a buffer."""
-    phase_levels = {'Early': 3, 'Mid': 9, 'Late': 15}
-    level = phase_levels[phase]
-    base_stats = load_hero_stats(hero, level)
-    return {stat.upper(): value * (1 + buffer) for stat, value in base_stats.items()}
-
-@lru_cache(maxsize=128)
-def get_recommended_item_types(hero: str) -> List[str]:
-    """Get recommended item types for a hero."""
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT DISTINCT RecommendItemType FROM heroskills WHERE HeroID=%s', (hero,))
-        return [row[0] for row in cursor.fetchall() if row[0]]
-
-def get_hero_info(hero: str) -> Dict[str, Optional[str]]:
-    """คืนข้อมูลคลาสหลัก/รอง และเลนหลักรองของฮีโร่"""
-    with get_connection() as conn:
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT First_Class, Second_Class, First_Lane, Second_Lane "
-            "FROM heroes WHERE HeroID=%s",
-            (hero,)
-        )
-        row = cur.fetchone() or (None, None, None, None)
-
-    first_class, second_class, first_lane, second_lane = row
-    # รวบเลนทั้งสอง (ถ้ามี)  ถ้าไม่มีเลยให้ Default เป็น Mid
-    lanes = [l for l in (first_lane, second_lane) if l] or ["Mid"]
-
-    return {
-        "primary":    first_class   or "Fighter",
-        "secondary":  second_class  or None,
-        "lanes":      lanes,
-        # เพื่อไม่ให้กระทบที่ใช้กันเดิม ยังคงมี field "lane" คืนเป็นเลนแรก (fallback)
-        "lane":       first_lane    or second_lane or "Mid",
-    }
+import config
+import database
+import utils
+from config import THETA, GA_CONSTANTS
+from database import ITEM_DATA
 
 # ---------------------------- Helper Functions ------------------------------
-def safe_float(value: Any) -> float:
-    """Convert a value to float, defaulting to 0.0 if None."""
-    return float(value or 0.0)
-
-STAT_MAPPING = [
-    ('patk', 'Phys_ATK'),
-    ('ap', 'Magic_Power'),
-    ('def', 'Phys_Defense'),
-    ('hp', 'HP'),
-    ('cdr', 'Cooldown_Reduction'),
-    ('crit', 'Critical_Rate'),
-    ('ms', 'Movement_Speed'),
-]
 
 def get_phase_weight(hero_info: Dict[str, Optional[str]], phase: str) -> Dict[str, float]:
     """Calculate stat weights based on phase and lane."""
@@ -194,10 +27,10 @@ def get_phase_weight(hero_info: Dict[str, Optional[str]], phase: str) -> Dict[st
 def score_stats(chromosome: List[str], hero_base_stats: Dict[str, float],
                 stat_caps: Dict[str, float], weights: Dict[str, float]) -> float:
     """Score chromosome stats relative to caps and weights."""
-    stats = {short: safe_float(hero_base_stats.get(db_name)) for short, db_name in STAT_MAPPING}
+    stats = {short: utils.safe_float(hero_base_stats.get(db_name)) for short, db_name in utils.STAT_MAPPING}
     for item_id in chromosome:
         item = ITEM_DATA[item_id]
-        for short, db_name in STAT_MAPPING:
+        for short, db_name in utils.STAT_MAPPING:
             stats[short] += item.get(db_name, 0.0)
     return sum(weights[stat] * min(stats[stat] / stat_caps.get(stat.upper(), 1), 1.0) for stat in stats)
 
@@ -324,8 +157,8 @@ def get_adaptive_mutation_rate(generation: int) -> float:
 def calculate_fitness(chromosome: List[str], hero: str, hero_info: Dict[str, Optional[str]],
                       phase: str, stat_caps: Dict[str, float]) -> float:
     """Calculate fitness score for a chromosome."""
-    hero_base_stats = load_hero_stats(hero, {'Early': 3, 'Mid': 9, 'Late': 15}[phase])
-    recommended_types = get_recommended_item_types(hero)
+    hero_base_stats = database.load_hero_stats(hero, {'Early': 3, 'Mid': 9, 'Late': 15}[phase])
+    recommended_types = database.get_recommended_item_types(hero)
     total_cost = sum(ITEM_DATA[item_id]['Price'] for item_id in chromosome)
     budget = GA_CONSTANTS['BASE_BUDGET'][phase]
 
@@ -361,7 +194,7 @@ def run_ga(hero: str, lane: str, hero_class: Optional[str] = None,
     """Run the Genetic Algorithm to find the best item build."""
     forced_items = set(force_items or [])
     banned_items = set(ban_items or [])
-    hero_info = get_hero_info(hero)
+    hero_info = database.get_hero_info(hero)
     hero_info['lane'] = lane
     if hero_class:
         hero_info['primary'] = hero_class
@@ -370,7 +203,7 @@ def run_ga(hero: str, lane: str, hero_class: Optional[str] = None,
         raise ValueError('More than one Movement item in --force')
 
     PHASE_BUFFERS = {'Early': 0.10, 'Mid': 0.20, 'Late': 0.30}
-    stat_caps = load_stat_caps(hero, phase,buffer=PHASE_BUFFERS[phase])
+    stat_caps = database.load_stat_caps(hero, phase, buffer=PHASE_BUFFERS[phase])
     item_pool = [item_id for item_id in ITEM_DATA if item_id not in banned_items]
 
     # Population Initialization
@@ -422,7 +255,7 @@ if __name__ == '__main__':
     parser.add_argument('--ban', nargs='*', default=None, help='Banned ItemIDs')
     args = parser.parse_args()
 
-    load_theta_config()
+    config.load_theta_config()
 
     for phase in ['Early', 'Mid', 'Late']:
         build, fitness = run_ga(

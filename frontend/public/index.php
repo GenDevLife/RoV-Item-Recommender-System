@@ -97,7 +97,8 @@ if (is_dir($itemImageDirectory)) {
         if (!$file->isDir()) {
             $ext = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'webp'])) {
-                $relativePath = str_replace(__DIR__ . '/', '', str_replace('\\', '/', $file->getPathname()));
+                $baseDir = str_replace('\\', '/', __DIR__);
+                $relativePath = str_replace($baseDir . '/', '', str_replace('\\', '/', $file->getPathname()));
                 // Use the filename (without extension) as the key, assuming it's already slugified
                 $slugifiedFilename = pathinfo($file->getFilename(), PATHINFO_FILENAME);
                 $rawImageFilesMap[$slugifiedFilename] = $relativePath;
@@ -439,6 +440,13 @@ foreach ($allItemsFromDB as $dbItem) {
 
         </div> <!-- จบ Compare-Media -->
     </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden">
+        <div class="loader"></div>
+        <p>Calculating Best Items...</p>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="src/common/scripts/main.js"></script>
 </body>
