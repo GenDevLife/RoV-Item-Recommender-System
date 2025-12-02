@@ -1,0 +1,120 @@
+hero_id,hero_name,primary_class,secondary_class,primary_lane,sencondary_lane,attack_range
+H001,Yue,Mage,,Mid,,Ranged
+H002,Aya,Support,,Support,,Ranged
+H003,Tachi,Fighter,,Dark Slayer,Farm,Melee
+H004,Bright,Fighter,,Farm,Dark Slayer,Ranged
+H005,Lorion,Mage,,Mid,,Ranged
+H006,Iggy,Mage,,Mid,,Ranged
+H007,Allain,Fighter,,Dark Slayer,Farm,Melee
+H008,Aoi,Assassin,,Farm,Dark Slayer,Melee
+H009,Sinestrea,Assassin,,Farm,Dark Slayer,Melee
+H010,Dextra,Fighter,Tank,Dark Slayer,,Melee
+H011,Thorne,Carry,,Dragon Slayer,Farm,Ranged
+H012,Keera,Assassin,,Farm,,Melee
+H013,Dirak,Mage,,Mid,,Ranged
+H014,Ata,Tank,,Dark Slayer,Support,Melee
+H015,Rouie,Support,,Support,,Ranged
+H016,Krizzix,Support,,Support,,Ranged
+H017,Arduin,Fighter ,Tank,Dark Slayer,Support,Melee
+H018,Wonder Woman,Fighter,,Dark Slayer,,Melee
+H019,Stuart,Carry,,Dragon Slayer,,Ranged
+H020,Xeniel,Tank,Support,Dark Slayer,Support,Melee
+H021,Ignis,Mage,,Mid,,Ranged
+H022,Kahlii,Mage,,Mid,,Ranged
+H023,Taara,Fighter,Tank,Dark Slayer,,Melee
+H024,Mganga,Mage,,Mid,,Ranged
+H025,Alice,Support,,Support,,Ranged
+H026,Ormarr,Tank,,Support,,Melee
+H027,Chaugnar,Tank,Support,Support,,Melee
+H028,Krixi,Mage,,Mid,,Ranged
+H029,Ryoma,Fighter,Assassin,Dark Slayer,Farm,Melee
+H030,Superman,Fighter,,Dark Slayer,,Melee
+H031,Murad,Assassin,,Farm,,Melee
+H032,Kill'Groth,Fighter,,Dark Slayer,,Melee
+H033,Zill,Assassin,,Farm,,Melee
+H034,Moren,Carry,,Dragon Slayer,,Ranged
+H035,Lindis,Carry,,Farm,Dragon Slayer,Ranged
+H036,TeeMee,Tank,Support,Support,,Melee
+H037,Volkath,Fighter,Assassin,Dark Slayer,Farm,Melee
+H038,Ishar,Mage,Support,Mid,Support,Ranged
+H039,Eland'orr,Carry,,Farm,Dragon Slayer,Ranged
+H040,Hayate,Carry,,Dragon Slayer,,Ranged
+H041,Astrid,Fighter,Assassin,Dark Slayer,Farm,Melee
+H042,Tel'Annas,Carry,,Dragon Slayer,,Ranged
+H043,Valhein,Carry,,Dragon Slayer,,Ranged
+H044,Thane,Tank,,Support,Dark Slayer,Melee
+H045,Veera,Mage,,Mid,,Ranged
+H046,Azzen'Ka,Mage,,Mid,,Ranged
+H047,Gildur,Tank,Support,Support,Dark Slayer,Melee
+H048,Toro,Tank,Support,Support,Dark Slayer,Melee
+H049,Violet,Carry,,Dragon Slayer,,Ranged
+H050,Diao Chan,Mage,,Mid,,Ranged
+H051,Zephys,Fighter,Assassin,Farm,Dark Slayer,Melee
+H052,Nakroth,Assassin,,Farm,,Melee
+H053,Grakk,Tank,Support,Support,,Melee
+H054,Mina,Tank,Support,Dark Slayer,Support,Melee
+H055,Fennik,Carry,,Farm,Dragon Slayer,Ranged
+H056,Zanis,Fighter,,Farm,Dark Slayer,Melee
+H057,Aleister,Mage,,Mid,,Ranged
+H058,Butterfly,Fighter,Assassin,Farm,,Melee
+H059,Lumburr,Tank,Support,Support,,Melee
+H060,Helen,Support,,Support,,Ranged
+H061,Yorn,Carry,,Dragon Slayer,,Ranged
+H062,Natalya,Mage,,Mid,,Ranged
+H063,Lu Bu,Fighter,,Dark Slayer,,Melee
+H064,Cresht,Tank,Support,Support,,Melee
+H065,Jinna,Mage,,Mid,,Ranged
+H066,Omega, Tank,Support,Support,Dark Slayer,Melee
+H067,Maloch, Fighter,Tank,Dark Slayer,,Melee
+H068,Paine,Assassin,,Farm,,Ranged
+H069,Ilumia,Mage,,Mid,,Ranged
+H070,WuKong,Assassin,,Farm,,Melee
+H071,Kriknak,Assassin,,Farm,,Melee
+H072,Mortos,Fighter,,Dark Slayer,,Melee
+H073,Kaine,Assassin,,Farm,,Melee
+H074,Slimz,Carry,,Dragon Slayer,,Ranged
+H075,Preyta,Mage,,Mid,,Ranged
+H076,Airi, Fighter,Assassin,Dark Slayer ,Farm,Melee
+H077,Skud, Fighter,Tank,Dark Slayer ,Farm,Melee
+H078,Raz, Assassin,Mage,Mid,,Melee
+H079,Lauriel,Mage,,Mid,,Ranged
+H080,Zuka, Fighter,Assassin,Dark Slayer,Farm,Melee
+H081,Tulen,Mage,,Mid,,Ranged
+H082,Omen,Fighter,,Dark Slayer,,Melee
+H083,Baldum, Tank,Support,Support,,Melee
+H084,Max,Tank,,Dark Slayer,,Melee
+H085,Liliana, Mage,Assassin,Mid,,Ranged
+H086,Y'bneth,Tank,,Support,Dark Slayer,Melee
+H087,Wisp,Carry,,Dragon Slayer,,Ranged
+H088,Marja,Mage,,Dark Slayer,,Ranged
+H089,The Flash,Assassin,,Farm,Mid,Melee
+H090,Arum, Tank,Support,Support,,Ranged
+H091,Rourke,Fighter,,Farm,,Melee
+H092,Riktor,Fighter,,Dark Slayer,Support,Melee
+H093,Roxie, Fighter,Tank,Dark Slayer,,Melee
+H094,Annette, Mage,Support,Support,Mid,Ranged
+H095,Quillen,Assassin,,Farm,,Melee
+H096,Sephera, Mage,Support,Support,Mid,Ranged
+H097,Zip,Support,,Support,,Melee
+H098,D'Arcy,Mage,,Mid,,Ranged
+H099,Errol,Fighter,,Dark Slayer,,Melee
+H100,Florentino,Fighter,,Dark Slayer,,Melee
+H101,Veres,Fighter,,Dark Slayer,,Melee
+H102,Amily,Fighter,,Dark Slayer,,Melee
+H103,Elsu,Carry,,Dragon Slayer,,Ranged
+H104,Wiro, Fighter,Tank,Support,Dark Slayer,Melee
+H105,Capheny,Carry,,Dragon Slayer,,Ranged
+H106,Qi, Fighter,Assassin,Dark Slayer,Farm,Melee
+H107,Yena,Fighter,,Dark Slayer,,Melee
+H108,Enzo,Assassin,,Farm,,Melee
+H109,Laville,Carry,,Dragon Slayer,,Ranged
+H110,Celica,Carry,,Dragon Slayer,,Ranged
+H111,Yan, Fighter,Assassin,Farm,Dark Slayer,Melee
+H112,Zata, Mage,Assassin,Mid,,Ranged
+H113,Teeri,Carry,,Dragon Slayer,,Jarak
+H114,Ming,Support,,Support,,Ranged
+H115,Erin,Carry,,Dragon Slayer,Farm,Ranged
+H116,Bijan,Fighter,,Dark Slayer,Farm,Ranged
+H117,Bonnie,Mage,,Mid,,Melee
+H118,Charlotte,Fighter,,Dark Slayer,Farm,Melee
+H119,Dolia,Support,,Support,,Ranged
