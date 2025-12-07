@@ -3,6 +3,8 @@ import os
 import json
 import pandas as pd
 import numpy as np
+from sklearn.linear_model import Ridge
+from sklearn.preprocessing import StandardScaler
 
 # ==========================================
 # 1. Setup Paths
@@ -15,8 +17,14 @@ from app.data.repository import RoVRepository
 from app.core.evaluator import BuildEvaluator
 
 # Config Files
-CSV_PATH = os.path.join(PROJECT_ROOT, 'data', 'raw', 'test_fitness.csv')
+SYNTHETIC_CSV_PATH = os.path.join(PROJECT_ROOT, 'data', 'raw', 'synthetic_training_data.csv')
+REAL_CSV_PATH = os.path.join(PROJECT_ROOT, 'data', 'raw', 'test_fitness.csv')
 OUTPUT_WEIGHTS_PATH = os.path.join(PROJECT_ROOT, 'app', 'core', 'learned_weights.json')
+
+# Check command line arguments for data source
+USE_SYNTHETIC = '--use-synthetic' in sys.argv or '--synthetic' in sys.argv
+CSV_PATH = SYNTHETIC_CSV_PATH if USE_SYNTHETIC else REAL_CSV_PATH
+TARGET_COLUMN = 'NoisyScore' if USE_SYNTHETIC else 'CombatPower'
 
 # Features ที่เราสนใจ (ต้องตรงกับ keys ใน calculate_stats ของ evaluator)
 FEATURE_NAMES = [
@@ -58,24 +66,13 @@ def extract_features(row, evaluator, all_items):
     return [stats.get(k, 0.0) for k in FEATURE_NAMES]
 
 # ==========================================
-# 3. Math & Algorithms
+# 3. Main Calibration Function
 # ==========================================
-def ridge_regression(X, y, alpha=1.0):
-    """
-    คำนวณ Ridge Regression: w = (X^T X + alpha*I)^-1 X^T y
-    ช่วยลดปัญหา Multicollinearity (Stat สัมพันธ์กันเอง)
-    """
-    n_features = X.shape[1]
-    I = np.eye(n_features)
-    # ป้องกัน Bias (column สุดท้าย) โดน Penalize
-    I[-1, -1] = 0 
-    
-    # w = inv(X'X + aI) * X'y
-    weights = np.linalg.inv(X.T @ X + alpha * I) @ X.T @ y
-    return weights
-
 def run_calibration():
-    print("🚀 Starting Advanced Calibration...")
+    data_source = "Synthetic Data" if USE_SYNTHETIC else "Real Data"
+    print(f"🚀 Starting Advanced Calibration with scikit-learn Ridge Regression...")
+    print(f"📂 Data Source: {data_source} ({CSV_PATH})")
+    print(f"🎯 Target Column: {TARGET_COLUMN}")
     
     # 1. Init System
     try:
@@ -98,72 +95,78 @@ def run_calibration():
         for _, row in df.iterrows():
             feats = extract_features(row, evaluator, all_items)
             X_raw.append(feats)
-            y.append(row['WinRate'])
+            y.append(row[TARGET_COLUMN])
             
         X_raw = np.array(X_raw)
         y = np.array(y)
         
-        # --- Step 3: Standardization (Normalize Data) ---
-        # ทำให้ทุก Stat มีหน่วยเป็น "Standard Deviation" (ค่าเฉลี่ย 0, ความกว้าง 1)
-        # เพื่อให้ OLS/Ridge เปรียบเทียบความสำคัญได้จริง
-        mean = np.mean(X_raw, axis=0)
-        std = np.std(X_raw, axis=0)
-        
-        # ป้องกันการหารด้วย 0 (กรณี Stat บางตัวเท่ากันหมดทั้งไฟล์)
-        std[std == 0] = 1.0 
-        
-        X_norm = (X_raw - mean) / std
-        
-        # Add Bias Column (Intercept)
-        ones = np.ones((X_norm.shape[0], 1))
-        X_final = np.hstack([X_norm, ones])
+        # --- Step 3: Standardization using StandardScaler ---
+        # ทำให้ทุก Stat มีค่าเฉลี่ย 0 และ Variance 1 (Z-score normalization)
+        # เพื่อให้ Ridge Regression เปรียบเทียบความสำคัญได้จริง
+        print("📐 Applying StandardScaler for data normalization...")
+        scaler = StandardScaler()
+        X_scaled = scaler.fit_transform(X_raw)
         
     except Exception as e:
         print(f"❌ Data Error: {e}")
         import traceback; traceback.print_exc()
         return
 
-    # 4. Train Model (Ridge Regression)
-    print("🧮 Calculating Weights (Ridge Regression)...")
+    # 4. Train Model (Ridge Regression using sklearn)
+    print("🧮 Training Ridge Regression Model...")
     try:
-        # Alpha คือความแรงในการลด overfitting (ปรับได้ 0.1 - 10.0)
-        weights_norm = ridge_regression(X_final, y, alpha=2.0)
+        # Alpha (regularization strength) คือความแรงในการลด overfitting
+        # ค่าที่แนะนำ: 0.1-10.0 (ยิ่งสูง = ยิ่ง regularize มาก)
+        alpha = 1.0
         
-        # 5. Analyze & Un-normalize
-        # เราได้ Weight ของข้อมูล Norm มาแล้ว แต่ Evaluator เราใช้ข้อมูลดิบ
-        # ต้องแปลงกลับ: w_raw = w_norm / std
+        ridge_model = Ridge(alpha=alpha, fit_intercept=True)
+        ridge_model.fit(X_scaled, y)
         
+        # 5. Extract Coefficients
+        # model.coef_ ให้ coefficients สำหรับ scaled data
+        # model.intercept_ ให้ bias term
+        coefficients_scaled = ridge_model.coef_
+        intercept = ridge_model.intercept_
+        
+        # 6. Un-normalize Coefficients
+        # เนื่องจาก Evaluator ใช้ข้อมูลดิบ เราต้องแปลง coefficients กลับ
+        # w_raw = w_scaled / scale (where scale = std)
         final_weights_raw = {}
         
-        print("\n=== 📊 Feature Importance (Normalized) ===")
-        print("*(ค่านี้บอกว่า Stat ไหนส่งผลต่อการชนะมากที่สุด)*")
-        print("-" * 40)
+        print(f"\n=== 📊 Ridge Regression Results (alpha={alpha}) ===")
+        print("Feature Importance & Raw Weights")
+        print("-" * 70)
+        print(f"{'Feature Name':<20} | {'Coefficient':<12} | {'Raw Weight':<15}")
+        print("-" * 70)
         
-        w_feats_norm = weights_norm[:-1] # ตัด Bias ออก
+        # จับคู่ชื่อกับ coefficients และ unscale
+        feature_importance = []
+        for i, name in enumerate(FEATURE_NAMES):
+            coef_scaled = coefficients_scaled[i]
+            # Un-normalize: w_raw = w_scaled / std
+            w_raw = coef_scaled / scaler.scale_[i]
+            final_weights_raw[name] = float(w_raw)
+            feature_importance.append((name, coef_scaled, w_raw))
         
-        # จับคู่ชื่อกับค่า
-        feature_importance = list(zip(FEATURE_NAMES, w_feats_norm, std))
-        # เรียงตามความสำคัญ (มากไปน้อย)
+        # เรียงตามความสำคัญ (absolute value ของ coefficient)
         feature_importance.sort(key=lambda x: abs(x[1]), reverse=True)
         
-        for name, w_norm, s in feature_importance:
-            # แปลงกลับเป็น Raw Weight
-            w_raw = w_norm / s
-            final_weights_raw[name] = float(w_raw)
-            
-            # แสดงผล (โชว์ค่า Norm เพื่อดูความสำคัญ, โชว์ค่า Raw เพื่อดูค่าจริง)
-            print(f"{name:<20} | Importance: {w_norm:>7.4f} | Raw Weight: {w_raw:>10.6f}")
-
-        # Bias Calculation (ซับซ้อนหน่อยเมื่อ Un-normalize แต่เราอาจไม่ใช้ใน GA)
-        bias_norm = weights_norm[-1]
-        # bias_raw = bias_norm - sum((w_norm * mean) / std)
+        for name, coef, w_raw in feature_importance:
+            print(f"{name:<20} | {coef:>11.6f} | {w_raw:>14.8f}")
         
-        # 6. Save
+        print("-" * 70)
+        print(f"Intercept (bias): {intercept:.6f}")
+        print("-" * 70)
+        print("\n💡 Interpretation:")
+        print("  - Coefficient: Feature importance on scaled data (comparable across features)")
+        print("  - Raw Weight: Actual weight for use with raw stats in the Evaluator")
+        print("  - Higher |coefficient| = more important feature for predicting win rate")
+        
+        # 7. Save Weights
         with open(OUTPUT_WEIGHTS_PATH, 'w') as f:
             json.dump(final_weights_raw, f, indent=4)
             
-        print("-" * 40)
-        print(f"💾 Saved optimized weights to: {OUTPUT_WEIGHTS_PATH}")
+        print(f"\n💾 Saved optimized weights to: {OUTPUT_WEIGHTS_PATH}")
         print("✅ Calibration Complete! Run 'python -m app.main' to test recommendations.")
 
     except Exception as e:

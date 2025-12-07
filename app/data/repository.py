@@ -1,10 +1,11 @@
-# app/data/repository.py
+# repository.py - จัดการการเข้าถึง database
 import sqlite3
-import os
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 from app.config import DB_PATH
 
 class RoVRepository:
+    """คลาสสำหรับดึงข้อมูล heroes และ items จาก SQLite"""
+    
     def __init__(self, db_path=DB_PATH):
         self.db_path = db_path
     
@@ -12,24 +13,19 @@ class RoVRepository:
         return sqlite3.connect(self.db_path)
 
     def get_hero_data(self, hero_code_name: str, level: int = 15) -> Optional[Dict]:
-        """
-        ดึงข้อมูล Hero + Base Stat ที่เลเวลที่กำหนด (Default Lv.15)
-        """
+        """ดึงข้อมูล hero พร้อม stats ที่ level ที่กำหนด"""
         conn = self._get_conn()
-        conn.row_factory = sqlite3.Row # เพื่อให้ดึงข้อมูลโดยใช้ชื่อ column ได้
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # 1. ดึง Info หลัก
-        cursor.execute("""
-            SELECT * FROM heroes WHERE code_name = ?
-        """, (hero_code_name.lower(),))
+        cursor.execute("SELECT * FROM heroes WHERE code_name = ?", 
+                      (hero_code_name.lower(),))
         hero_row = cursor.fetchone()
         
         if not hero_row:
             conn.close()
             return None
             
-        # 2. ดึง Scaling Stat (Base Stat)
         cursor.execute("""
             SELECT * FROM hero_scaling 
             WHERE hero_id = ? AND level = ?
@@ -38,26 +34,20 @@ class RoVRepository:
         
         conn.close()
         
-        # รวมร่างเป็น Dict เดียว
         hero_data = dict(hero_row)
         if stat_row:
-            hero_data.update(dict(stat_row)) # เอา stat มาแปะรวม
+            hero_data.update(dict(stat_row))
         else:
-            # Fallback ถ้าไม่มี stat (ไม่ควรเกิดขึ้นถ้า migrate ดี)
             print(f"[WARN] No stats found for {hero_code_name} at level {level}")
             
         return hero_data
 
     def get_all_items(self) -> Dict[int, Dict]:
-        """
-        ดึงไอเทมทั้งหมดที่ Active อยู่ พร้อม Stats และ Rules
-        Return: Dict {item_id: item_data}
-        """
+        """ดึง items ทั้งหมดพร้อม stats, passives และ restrictions"""
         conn = self._get_conn()
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # 1. ดึง Items + Stats (Join กันเลย)
         query = """
             SELECT i.*, s.* FROM items i
             LEFT JOIN item_stats s ON i.item_id = s.item_id
@@ -69,29 +59,97 @@ class RoVRepository:
         for row in cursor.fetchall():
             item = dict(row)
             item_id = item['item_id']
-            
-            # Clean up: ลบ key ซ้ำ หรือ key ที่เป็น None
             item = {k: v for k, v in item.items() if v is not None}
-            
-            # เตรียมที่ว่างสำหรับเก็บ Passives/Restrictions
             item['passives'] = []
             item['restrictions'] = []
-            
             items[item_id] = item
             
-        # 2. ดึง Passives ใส่เข้าไป
+        # ดึง passives
         cursor.execute("SELECT * FROM item_passives")
         for row in cursor.fetchall():
-            iid = row['item_id']
-            if iid in items:
-                items[iid]['passives'].append(row['passive_group_name'])
+            if row['item_id'] in items:
+                items[row['item_id']]['passives'].append(row['passive_group_name'])
                 
-        # 3. ดึง Restrictions ใส่เข้าไป
+        # ดึง restrictions
         cursor.execute("SELECT * FROM item_restrictions")
         for row in cursor.fetchall():
-            iid = row['item_id']
-            if iid in items:
-                items[iid]['restrictions'].append(row['rule_type'])
+            if row['item_id'] in items:
+                items[row['item_id']]['restrictions'].append(row['rule_type'])
                 
         conn.close()
         return items
+    
+    def get_hero_list(self) -> List[str]:
+        """ดึงรายชื่อ hero ทั้งหมด"""
+        conn = self._get_conn()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT code_name FROM heroes ORDER BY code_name ASC")
+            return [row['code_name'] for row in cursor.fetchall()]
+        finally:
+            conn.close()
+    
+    def get_heroes_by_role(self, role: str) -> List[str]:
+        """ดึง heroes ตาม role"""
+        conn = self._get_conn()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                SELECT code_name FROM heroes 
+                WHERE TRIM(primary_role) = ? OR TRIM(secondary_role) = ?
+                ORDER BY code_name ASC
+            """, (role.strip(), role.strip()))
+            return [row['code_name'] for row in cursor.fetchall()]
+        finally:
+            conn.close()
+    
+    def get_heroes_by_lane(self, lane: str) -> List[str]:
+        """ดึง heroes ตาม lane"""
+        conn = self._get_conn()
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                SELECT code_name FROM heroes 
+                WHERE TRIM(primary_lane) = ? OR TRIM(secondary_lane) = ?
+                ORDER BY code_name ASC
+            """, (lane.strip(), lane.strip()))
+            return [row['code_name'] for row in cursor.fetchall()]
+        finally:
+            conn.close()
+    
+    def get_all_roles(self) -> List[str]:
+        """ดึง roles ทั้งหมดที่มี"""
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                SELECT DISTINCT TRIM(primary_role) as role FROM heroes 
+                WHERE primary_role IS NOT NULL
+                UNION
+                SELECT DISTINCT TRIM(secondary_role) as role FROM heroes 
+                WHERE secondary_role IS NOT NULL
+                ORDER BY role ASC
+            """)
+            return [row[0] for row in cursor.fetchall() if row[0]]
+        finally:
+            conn.close()
+    
+    def get_all_lanes(self) -> List[str]:
+        """ดึง lanes ทั้งหมดที่มี"""
+        conn = self._get_conn()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+                SELECT DISTINCT TRIM(primary_lane) as lane FROM heroes 
+                WHERE primary_lane IS NOT NULL
+                UNION
+                SELECT DISTINCT TRIM(secondary_lane) as lane FROM heroes 
+                WHERE secondary_lane IS NOT NULL
+                ORDER BY lane ASC
+            """)
+            return [row[0] for row in cursor.fetchall() if row[0]]
+        finally:
+            conn.close()

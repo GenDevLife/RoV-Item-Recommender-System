@@ -1,72 +1,88 @@
-# app/core/ga_engine.py
+# ga_engine.py - Genetic Algorithm สำหรับหาชุดไอเทมที่ดีที่สุด
 import random
 from typing import List, Dict, Tuple
 from app.core.evaluator import BuildEvaluator
 from app.config import GA_SETTINGS
 
 class GeneticEngine:
-    def __init__(self, evaluator: BuildEvaluator, valid_item_ids: List[int]):
+    """
+    Engine สำหรับรัน Genetic Algorithm
+    ใช้หลักการวิวัฒนาการเพื่อหา build ที่ดีที่สุดสำหรับ hero
+    """
+    
+    def __init__(self, evaluator: BuildEvaluator, valid_item_ids: List[int], ga_settings: Dict = None):
         self.evaluator = evaluator
         self.item_pool = valid_item_ids
-        self.pop_size = GA_SETTINGS['POP_SIZE']
-        self.mutation_rate = GA_SETTINGS['MUTATION_RATE']
-        self.max_gen = GA_SETTINGS['MAX_GEN']
+        
+        settings = ga_settings if ga_settings else GA_SETTINGS
+        self.pop_size = settings['POP_SIZE']
+        self.mutation_rate = settings['MUTATION_RATE']
+        self.max_gen = settings['MAX_GEN']
+        self.elitism_count = settings['ELITISM_COUNT']
 
     def create_chromosome(self) -> List[int]:
-        """สุ่มไอเทม 6 ชิ้นจาก Pool"""
-        return [random.choice(self.item_pool) for _ in range(6)]
+        """สุ่ม build ใหม่ (6 ไอเทมไม่ซ้ำ)"""
+        if len(self.item_pool) >= 6:
+            return random.sample(self.item_pool, 6)
+        return random.choices(self.item_pool, k=6)
+    
+    def ensure_unique_items(self, chromosome: List[int]) -> List[int]:
+        """แก้ไข build ที่มีไอเทมซ้ำ"""
+        seen = set()
+        result = []
+        for item_id in chromosome:
+            if item_id not in seen:
+                result.append(item_id)
+                seen.add(item_id)
+            else:
+                available = [i for i in self.item_pool if i not in seen]
+                if available:
+                    new_item = random.choice(available)
+                    result.append(new_item)
+                    seen.add(new_item)
+                else:
+                    result.append(item_id)
+        return result
 
     def crossover(self, parent1: List[int], parent2: List[int]) -> List[int]:
-        """ผสมพันธุ์แบบ Single Point Crossover"""
+        """ผสม build จาก 2 parents"""
         point = random.randint(1, 5)
         child = parent1[:point] + parent2[point:]
-        return child
+        return self.ensure_unique_items(child)
 
     def mutate(self, chromosome: List[int]) -> List[int]:
-        """กลายพันธุ์: เปลี่ยนของ 1 ชิ้นเป็นอย่างอื่น"""
+        """สุ่มเปลี่ยนไอเทม 1 ชิ้น"""
         if random.random() < self.mutation_rate:
             idx = random.randint(0, 5)
-            chromosome[idx] = random.choice(self.item_pool)
+            available = [i for i in self.item_pool if i not in chromosome]
+            if available:
+                chromosome[idx] = random.choice(available)
         return chromosome
 
     def run(self) -> Tuple[List[int], float]:
-        """รัน GA Loop"""
-        # 1. Init Population
+        """รัน GA และ return build ที่ดีที่สุด"""
         population = [self.create_chromosome() for _ in range(self.pop_size)]
         
         best_solution = []
         best_fitness = -999999.0
         
-        for generation in range(self.max_gen):
-            # 2. Evaluate Fitness
+        for gen in range(self.max_gen):
+            # ประเมิน fitness ของทุกตัว
             scores = [(chrom, self.evaluator.get_fitness(chrom)) for chrom in population]
-            
-            # Sort หาตัวเก่งสุดในรุ่น
             scores.sort(key=lambda x: x[1], reverse=True)
             
-            current_best_chrom, current_best_score = scores[0]
-            if current_best_score > best_fitness:
-                best_fitness = current_best_score
-                best_solution = current_best_chrom
-            
-            # (Optional: Print progress)
-            # if generation % 10 == 0:
-            #     print(f"Gen {generation}: Best Score {best_fitness:.2f}")
+            # เก็บตัวที่ดีที่สุด
+            if scores[0][1] > best_fitness:
+                best_fitness = scores[0][1]
+                best_solution = scores[0][0][:]
 
-            # 3. Selection (Elitism + Tournament)
-            next_gen = []
+            # สร้าง generation ถัดไป
+            next_gen = [s[0][:] for s in scores[:self.elitism_count]]  # elites
             
-            # เก็บตัวเทพไว้ (Elitism)
-            elites = [s[0] for s in scores[:GA_SETTINGS['ELITISM_COUNT']]]
-            next_gen.extend(elites)
-            
-            # สร้างลูกหลาน
             while len(next_gen) < self.pop_size:
-                # Tournament Selection แบบง่าย
-                parent1 = random.choice(scores[:10])[0] # เลือกจาก Top 10
+                parent1 = random.choice(scores[:10])[0]
                 parent2 = random.choice(scores[:10])[0]
-                
-                child = self.crossover(parent1, parent2)
+                child = self.crossover(parent1[:], parent2[:])
                 child = self.mutate(child)
                 next_gen.append(child)
                 
