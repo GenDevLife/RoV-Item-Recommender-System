@@ -1,0 +1,13 @@
+{
+    "p_atk": 0.15,
+    "m_power": 0.15,
+    "max_hp": 0.001,
+    "p_def": 0.01,
+    "m_def": 0.01,
+    "cdr": 0.20,
+    "aspd": 0.50,
+    "crit_rate": 0.80,
+    "p_pierce_percent": 1.20,
+    "m_pierce_percent": 1.20,
+    "move_speed": 0.10
+}

@@ -1,0 +1,481 @@
+skill_id,hero_id,skill_name,skill_type,effect_description,recommend_item_type
+S001,H001,"Borrowed Might	",Passive,"Gains a mark next skill usage is upgraded, and cooldowns are reset",Magic
+S002,H001,"Aqua Force	",Magic,Deals magic damage in a curved pattern,Magic
+S003,H001,"Mountain Crusher	",Magic,Deals magic damage in a curved pattern,Magic
+S004,H001,"Rising Wind	",Magic,Knocks back enemies in front while retreating,Magic
+S005,H002,"Squirrel Spirit	",Transform,"Becomes untargetable when HP is low	","Defense, Support"
+S006,H002,"Sound Breaker	",Magic,"Deals magic damage and slows enemies	",Magic
+S007,H002,"Idol Love	",Magic,"Jumps onto an ally and grants a shield	",Defense
+S008,H002,"Forest Song	",Magic,"Turns enemies into animals	",Magic
+S009,H003,Spellbound,True Damage,"Gains a sigil upon attacking heroes/monsters. At 4 sigils, enters Purge state, converting damage to true damage and gaining a shield.",Attack
+S010,H003,"Moon Pierce	",Physical,"Slashes forward, dealing damage and slowing enemies.","Attack, Movement"
+S011,H003,Browbeat,Physical,"Dashes to a target location, dealing area damage.",Attack
+S012,H003,"Cliff Breaker	",Physical,"Jumps into the air, slamming down and reducing enemy movement speed.","Attack, Defense"
+S013,H004,"Revelation of Light	",Passive,"Basic attacks apply Revelation of Light, increasing attack speed and damage.	",Attack
+S014,H004,"Light Flash - Second Degree	",Physical,"Shoots light dealing physical damage, stuns if hit twice.	",Attack
+S015,H004,"Sacred Light Verdict	",Physical,"Charges forward, deals physical damage, heals HP, reduces cooldown on kills.	",Attack
+S016,H004,"The Holy Soul Returns	","Transformation	","Transforms, becomes untargetable for 3 sec, deals true damage.	","Defense, Attack"
+S017,H005,Eternal ,Magic,Creates a burst of AoE damage,Magic
+S018,H005,"Here's What I Think	",Magic,"Moves the orb, dealing damage when passing through enemies	",Magic
+S019,H005,"Darkness Falls	",Magic,"Deals AoE damage to nearby enemies	",Magic
+S020,H005,"Starry Night	",Magic,"Orb explodes, dealing AoE damage and knocking up enemies	",Magic
+S021,H006,Gaze ,Magic,Regenerates energy over time and gains extra energy upon using abilities.,Magic
+S022,H006,Explosive Fireball,Magic,Shoots a fireball that explodes and deals AoE magic damage.,Magic
+S023,H006,Fire Shadow,Magic,"Enters Shadow Flame mode, gaining speed and shooting enhanced fireballs.",Magic
+S024,H006,Eye of Ember,Magic,Channels power and shoots a targeted explosion dealing AoE magic damage.,Magic
+S025,H007,"Howling Sword	",Hybrid Damage,"Gains stacks, increases armor penetration, and heals	","Attack, Lifesteal"
+S026,H007,"Meteor Strike	",Hybrid Damage,"Deals mixed damage and lifts enemies	","Attack, Defense"
+S027,H007,Moonflash,Physical ,"Dashes forward, dealing damage and becoming invulnerable	","Attack, Movement"
+S028,H007,"Death at Sunset	",True Damage,"Disappears, locks target, and deals true damage	",Attack
+S029,H008,Dragon Blessing,Physical,"Gains Dragon Marks when using skills, enhancing damage and attack speed.	","Attack, Jungle"
+S030,H008,"Dragon Slash	",Physical,"Dashes to a target location, dealing AoE damage and healing when hitting enemies.	",Attack
+S031,H008,"Dragon Claw	",Physical,"Throws a claw to a target location, allowing Aoi to dash again, knocking up enemies.	",Attack
+S032,H008,"Dragon Chant	",Physical,"Performs a powerful ground slam, dealing AoE damage while being immune to CC.	",Attack
+S033,H009,Blood Bramble,Physical,Gains Blood Bramble stacks from kills.,"Attack,Movement"
+S034,H009,"Blood Hide	",Physical,Dashes to a target location and enters stealth mode.,Attack
+S035,H009,"Blood Ghost	",Physical,Deals AoE damage or heals upon recall.,Attack
+S036,H009,"Blood Samsara	",Physical,Shares HP with a target.Gains movement speed,Attack
+S037,H010,Blood Curse,Physical,Attack Power Steal,"Attack, Defense"
+S038,H010,Saw Storm,Physical,Movement Speed,"Attack, Movement"
+S039,H010,Saw Cut,Physical,HP Recovery,Attack
+S040,H010,Demon's Gift,Heal,Converts Damage into Healing,Attack
+S041,H011,Ready ,Physical,Converts cooldown reduction effects into extra physical power,Attack
+S042,H011,"Magic Bullet	",Physical,Selects 3 bullets to enhance attacks,Attack
+S043,H011,Excite,Mobility,Dashes and enhances basic attack,Movement
+S044,H011,"Mass Annihilation	",Physical,AoE damage,Attack
+S045,H012,"Dark Tides	",Passive,"Grants magic lifesteal and physical bonus damage.	",Magic
+S046,H012,"Umbra Dream	",Magic,"Creates magic damage, slows enemies , locks targets.	",Magic
+S047,H012,"Triangle Maze	",Magic,"Summons two clones dealing magic damage, creates triangular zone with stun.	",Magic
+S048,H012,"Fading Phantom	",Magic,"Increases movement speed , allows phasing through obstacles","Movement, Magic"
+S049,H013,Arcane Body,Magic,"Uses mana to prevent lethal damage when HP runs out.	",Magic
+S050,H013,Astrolobe,Magic,"Releases energy that damages enemies in a line.	",Magic
+S051,H013,"Fallen Star	",Magic,"Creates an energy zone that knocks enemies back.	",Magic
+S052,H013,"Genesis Blast	",Magic,"Unleashes a powerful energy beam in a straight line.	",Magic
+S053,H014,Child of the Sea ,Physical,Stores lost HP and heals.,Defense
+S054,H014,Wavewalking,Physical,Knock Up,"Defense, Movement"
+S055,H014,Sea Anchor,Physical,Movement,Defense
+S056,H014,Ghost Ship,Physical,Summons ship dealing AoE damage.,Defense
+S057,H015,Floating Light,"Speed Boost	","Increases the movement speed of the farthest ally.	","Support, Movement Speed"
+S058,H015,Holy Wings,Magic,"Shoots wings at enemies, knocking them back and increasing ally movement speed.	","Magic, Defense"
+S059,H015,Void Portal,Heal,"Opens a portal that teleports allies back to base and heals them.	",Magic
+S060,H015,Sacred Ground,Magic,"Opens a portal that allows allies to warp to a chosen location.	",Magic
+S061,H016,"Sneak Attack	",Magic,Slow,"Magic, Support"
+S062,H016,"In Plain Sight	",Magic,"Gains stealth and bonus speed	",Movement
+S063,H016,"Gravitational Pull	",Magic,"Pulls enemies and grants shield to allies	",Magic
+S064,H016,"Concealment	",Stealth,"Grants allies invisibility and reveals enemies	",Magic
+S065,H017,Bloodlust,Physical,Heal,Defense
+S066,H017,Rend,Physical,Slow,Attack
+S067,H017,Undying Protector,Magic,Defense,Defense
+S068,H017,Cull,Physical,Stun,Attack
+S069,H018,Amazin Shield,True Damage,Decrease Movement,"Attack, Defense"
+S070,H018,Sword & Shield,Physical,Decrease Movement,"Attack, Defense"
+S071,H018,Lasso of Truth,Physical,Control,Attack
+S072,H018,Bracelets of Submission,Physical,Resistant,Defense
+S073,H019,"Drain Charge	",Physical,Attack and movement speed,Attack
+S074,H019,"Death Bloom	",Physical,Ranged physical damage,Attack
+S075,H019,"Eyes of Zealot	",Special,Speed boost,Movement
+S076,H019,"Fatal Gift	",Physical,Stun,Attack
+S077,H020,"Holy Brand	",Magic,"Empowers next attack to deal bonus damage	",Defense
+S078,H020,"Divine Protection	",Magic,"Creates a shield that explodes for damage	","Defense, Support"
+S079,H020,Malleus,Magic,"Leaps to an area, dealing damage and knocking up enemies	","Defense, Movement"
+S080,H020,"Angelic Splendor	",Magic,"Teleports to ally, healing and dealing damage	",Defense
+S081,H021,Sacred Flame,Magic,Increasing attack speed and movement speed,"Magic, Movement"
+S082,H021,Fire Crash,Magic,Deals magic damage and grants a shield,Magic
+S083,H021,Rain of Fire,Magic,Reduces enemy movement speed,Magic
+S084,H021,Holy Ember,Magic,Deals wide-area magic damage,Magic
+S085,H022,"Powerful Hymns	",Magic,Basic attacks pierce armor and deal additional magic damage,Magic
+S086,H022,"Soul Summoning	",Magic,Summons a spirit to deal magic damage and reduce enemy movement speed,Magic
+S087,H022,"Incorporeal	",Magic,Creates a shield that absorbs damage and increases movement speed,Magic
+S088,H022,"Ethereal Pulse	",Magic,Continuously unleashes magic attacks ,Magic
+S089,H023,Fighting Spirit,Bonus Damage,Damage scales with missing HP,Defense
+S090,H023,"Colossal Smash	",Physical,"Leaps to a target location, dealing damage and reducing enemy movement speed.	","Defense, Movement "
+S091,H023,"Whirlwind - Potential	",Physical,"Spins in place, dealing damage twice to nearby enemies.	",Defense
+S092,H023,"Steeled Focus	",Heal,"Increases movement speed and restores HP per second for a duration.	",Defense
+S093,H024,Voodoo ,Magic,"Normal attacks or skill hits apply Voodoo Mark, which increases magic damage per stack and reduces enemy armor and healing effectiveness.",Magic 
+S094,H024,Toxic,Magic,"Mganga throws a poison bomb at a target location, dealing magic damage and slowing enemies",Magic 
+S095,H024,Feeling Lucky,Magic,Mganga throws poison that deals magic damage and slows enemies. Each hit grants him a Healing Mark,Magic 
+S096,H024,"Gas Attack
+",Magic,Mganga releases an explosion dealing magic damage,Magic 
+S097,H025,Fleet-footed,Passive,Movement Speed Buff,"Support, Movement Speed"
+S098,H025,Chrono-burst,Magic ,Stun,Magic 
+S099,H025,Chrono Shield,Protection,"Shield, Movement Speed Buff",Magic 
+S100,H025,Chrono Flow,Blind,Movement Speed Reduction,Magic 
+S101,H026,Deterrence ,Magic,"All of Ormarr's attacks have a chance to stun enemies.	",Support
+S102,H026,Unstoppable,Physical,"Dashes to a target location; if it collides with an enemy, they are knocked up.	",Defense
+S103,H026,"Swagger	",Physical,"Slams the ground, dealing AoE damage and reducing enemy movement speed",Defense
+S104,H026,"Walking Tall	",Physical,Hitting nearby enemies and restoring his HP,Defense
+S105,H027,Faithful Herald,Movement,Increase Movement Speed,Movement
+S106,H027,Energy Surge,Magic,AoE Slow,Magic
+S107,H027,Shock Wave,Magic,Damage Reduction,"Magic, Defense"
+S108,H027,Chaos Protection,Cleansing,CC Immunity,Defense
+S109,H028,Flutter,Movement Speed,Increases Krixi's movement speed when her skill hits an enemy,Movement
+S110,H028,Mischief,Magic,"Releases an energy clone, dealing Magic Damage to enemies hit",Magic
+S111,H028,"Nature's Wrath	",Magic,"Calls upon nature's power, dealing Magic Damage and knocking up enemies",Magic
+S112,H028,Moonfall,Magic,Increases movement speed and summons falling stars that strike enemies,Magic
+S113,H029,Naginatajutsu,Physical,"Deals bonus AD damage, slows enemies , and increases damage against last enemy",Attack
+S114,H029,Pinwheel,Physical,Dashes forward and deals damage,Attack
+S115,H029,"Wailing Blade	",Physical,"Slashes forward, dealing  damage and stunning the last enemy hit",Attack
+S116,H029,"Wrath of Izanagi	",Physical,"Slashes 4 times, dealing damage each hit and healing",Attack
+S117,H030,Flight Form,Physical,Gains movement-based energy,Movement
+S118,H030,Kryptonian Strength,Physical,Deals directional damage and slows enemies,Attack
+S119,H030,The Man of Steel,Cleansing,Removes debuffs and increases movement speed,Defense
+S120,H030,Domination,Special,Enhances skill casting speed; airborne form increases damage and knockback effect,Attack
+S121,H031,Rift,Passive, Gains 1 energy point per normal attack,Attack
+S122,H031,"Thorn of Time	",Physical ,"Dashes to the target location, dealing physical damage and stunning the target",Attack
+S123,H031,"Time Surge	",Physical ,"Releases time energy, physical damage to surrounding enemies and damage to those who pass through its boundary",Attack
+S124,H031,"Dimension Slash	",Physical ,"Dashes continuously 5 times within a designated area, dealing physical damage per hit",Attack
+S125,H032,"The Fanatic	",Attack Speed,"Gains attack speed on each normal attack	",Attack
+S126,H032,"Sea Spear	",Physical,"Dashes forward, dealing damage and reducing movement speed	","Attack, Movement"
+S127,H032,"Enraged Spear	",Magic,"Enhances normal attacks for extra damage and healing	",Attack
+S128,H032,"Warlord of Gore	",Cleansing,"Becomes unstoppable, increasing attack speed and cleansing debuffs	",Attack
+S129,H033,Dustdevil ,Magic,"Marks enemies hit by skills 1 and 2, dealing bonus damage",Magic
+S130,H033,Wind Blade,Magic,Deals magic damage and slows enemy movement,Magic
+S131,H033,Wind Shift,Magic,"Dashes to a target location, dealing magic damage to nearby enemies",Magic
+S132,H033,Tornado,Magic,Strikes multiple times in an area while being untargetable,Magic
+S133,H034,Precision ,"Damage Reduction	",Every basic attack or skill hit increases Moren's armor and magic resist,"Defense, Attack Speed"
+S134,H034,"Tactical Maneuver	",Physical,"Gains bonus lifesteal, increased movement speed",Attack 
+S135,H034,"Impact Barrage	",Physical,"Fires a shockwave that knocks back enemies, dealing damage and stunning",Attack
+S136,H034,"Magnetic Storm	",Physical,"Fires an electromagnetic bomb, slowing enemies and enhancing basic attacks",Attack
+S137,H035,"Tread Softly	",Physical,Increases movement speed,"Attack,Jungle"
+S138,H035,"Piercing Gaze	",Physical,Reveals enemies and increases damage,Movement
+S139,H035,Entrapment,Physical,slows and reveals enemies,Attack
+S140,H035,"Lunar Champion	",Physical,Dashes and marks targets,Attack
+S141,H036,Scavenge ,Passive,"Provides bonus gold when near dying enemies	",Support
+S142,H036,"Pooty Poots	",Magic,"Creates an explosion that stuns enemies	",Defense
+S143,H036,"Chain Lance	",Magic,"Shoots a chain that pulls towards the target	",Defense
+S144,H036,"Being a Bro	",Magic,"Revives an ally after they die	",Defense
+S145,H037,"Doom Lord	",Physical,"Gains stacks that explode for bonus damage and shield	","Attack, Defense"
+S146,H037,"Death Sweep	",Physical,"Swings a scythe, stunning and dealing damage	","Attack, Movement"
+S147,H037,Execution,Physical,"Throws a spinning blade, slowing and dealing damage	","Attack, Defense"
+S148,H037,Ultima,Transformation,"Becomes an Overlord, gaining damage immunity and healing	",Attack
+S149,H038,Furball ,Special,Furball's power increases with Ishar's magic power.,"Support, Magic"
+S150,H038,"Somnial Fungus	",Magic,Ishar releases energy dealing AoE magic damage,Magic
+S151,H038,"Somnial Shield	",Shield,Ishar creates a shield and increases movement speed,Magic
+S152,H038,"Dreamy Circle	",Magic,Ishar creates an energy field that turns enemies passing through into sheep,Magic
+S153,H039,"Soul Seal	","Mixed Damage	",Bonus Magic Damage,Magic
+S154,H039,"Butterfly Wings	","Mobility	",Teleportation,Magic
+S155,H039,"Butterfly Dance	",Magic ,Mobility,Magic
+S156,H039,"Morph	",Magic ,Knock Back,Magic
+S157,H040,Blood of the Dragon,Passive,True Damage,Attack
+S158,H040,Shuriken Toss,Physical,Deals physical damage,"Attack, Movement"
+S159,H040,Shadowstep,Mobility,Increases movement speed,Attack
+S160,H040,Kunai Blitz,Physical,AoE Damage,Attack
+S161,H041,"Martial Soul	",Passive,Basic attacks reduce cooldown,"Jungle, Attack"
+S162,H041,Spin Slash,Physical,Deals physical damage to surrounding enemies,Attack
+S163,H041,Fearless Charge,Physical,"Dashes in a specified direction, dealing physical damage and slowing enemies.Gains a shield absorbing damage",Defense
+S164,H041,Dire Blow,True Damage,Becoming invulnerable before unleashing a strike dealing true damage,Defense
+S165,H042,The Morning Star,Physical,Increases attack damage,Attack
+S166,H042,Eagle Eye,Physical,Enhances basic attacks,Attack
+S167,H042,Piercing Shot,Physical,Slows enemies,Attack
+S168,H042,Arrow of Chaos,Physical,stuns enemies,Attack
+S169,H043,Pocket Glaive,Physical,Movement Speed,Attack
+S170,H043,"Bloody Hunt	",Physical,dealing AoE damage,Attack
+S171,H043,Curse of Death,Physical,Stunning the target,Attack
+S172,H043,Bullet Storm,Physical,AoE damage,Attack
+S173,H044,"Royal Power	",Heal,"Gains damage resistance and heals when HP is low	",Defense
+S174,H044,"Forward Charge	",Physical,"Dashes, knocking enemies back and dealing damage	","Defense, Movement"
+S175,H044,Avalon's Fury,Physical,"Slams the ground, knocking up and slowing enemies	",Defense
+S176,H044,King's Glory,True Damage,"Deals true damage and gains CC immunity	",Defense
+S177,H045,Come Hither,Buff,Gains movement speed boost when exiting combat,Movement 
+S178,H045,Hell Bat,Magic ,Launches a bat that deals magic damage,Magic 
+S179,H045,Kisses,Magic ,"Sends out enchanted kisses, dealing  magic damage and stunning the target",Magic 
+S180,H045,"Little Friends	",Magic ,Summons spirits that deal magic damage to enemies,Magic 
+S181,H046,"Sand Trap	",Magic,"Targets hit by Azzen'Ka's skills are marked for 5 seconds. If hit 3 times, they turn to stone",Magic
+S182,H046,"Sand Punch	",Magic,Summons a sand fist to attack enemies,Magic
+S183,H046,"Dust Devil	",Magic,Releases a spirit that bounces between enemies,Magic
+S184,H046,"Sand Wraith	",Magic,Summons a sandstorm at a target location,Magic
+S185,H047,"The Touch	",Magic, Knocks back the target,Magic
+S186,H047,Siege,Magic,Dashes forward,Magic
+S187,H047,Miser,Magic,Dealing damage and stunning enemies,Magic
+S188,H047,Debauchery,Magic,Dealing continuous magic damage and stunning enemies,Magic
+S189,H048,"Tough Hide	", CC Immunity,"Gains CC immunity while casting skills	",Defense
+S190,H048,"Bull Rush	",Physical,"Charges forward, dealing damage and knocking up enemies	","Defense, Movement"
+S191,H048,"Brazen Bellow	",Magic,"Gains damage reduction and deals AoE damage	",Defense
+S192,H048,"Earth Shatter	",Physical,"Slams the ground, knocking up enemies	",Defense
+S193,H049,Reload ,"Physical	",Reduces Tactical Fire cooldown,Attack
+S194,H049,"	Tactical Fire","Physical	",Enhance next basic attack with bonus damage,Attack
+S195,H049,"Fire in the Hole	","Physical	","Deal AoE damage, reduce enemy movement speed",Attack
+S196,H049,"Concussive Rounds	","Physical	",Deal high damage based on enemy lost HP,Attack
+S197,H050,"Ice Queen	",Special,"If not attacked or controlled, gains a shield and magic damage reduction",Defense
+S198,H050,"Chilling Frost	",Magic,"Freezes enemies in range, dealing magic damage and slowing movement speed",Magic
+S199,H050,"Diamond Dust	",Magic,"Freezes enemies in range, can be stored up to 2 times. Bonus damage to frozen enemies.",Magic
+S200,H050,Blizzard,Magic,"Summons a blizzard, dealing continuous magic damage and slowing enemies in range.	",Magic
+S201,H051,Deathless ,Damage Reduction,lost HP into damage reduction,Defense
+S202,H051,"Death Rift
+",Physical ,Dashes forward deal additional  physical damage and slow enemy movement,"Attack, Jungle"
+S203,H051,"Death's Flurry
+",Physical ,Deals  physical damage per hit and heals Zephys  HP,Attack
+S204,H051,"Death from Above
+",Physical ,Dealing  physical damage while knocking enemies up,Attack
+S205,H052,"Dread Judge	","Knock-up, Attack Speed Buff	",,"Attack, Attack Speed"
+S206,H052,"Jury Fury	",Physical,"Dashes forward and knocks the target up, dealing  physical damage","Attack, Critical"
+S207,H052,"Death Sentence	",Physical,Leaps backward and turns basic attacks into sweeping attacks,"Attack, Movement"
+S208,H052,"Judgment's Blade	",Physical,"Slashes enemies furiously, knocking them up and dealing  physical damage while reducing incoming damage",Attack
+S209,H053,Blood Ritual ,Magic,AoE Damage,"Defense, Magic"
+S210,H053,Earthquake ,Magic,"Stomps the ground, dealing Magic Damage and slowing enemies",Magic
+S211,H053,Devil's Chain,Magic,"Throws a chain hook, pulling enemies towards",Magic
+S212,H053,World Devourer,Magic,"Creates a void, pulling all enemies in front of",Defense
+S213,H054,"Sweet Revenge	",Physical,Movement Speed,Defense
+S214,H054,"Whirling Scythe	",Physical,AoE Damage,Attack
+S215,H054,"Death Scythe	",Physical,Control,Defense
+S216,H054,"Dark Dominion	",Physical,Taunt,Defense
+S217,H055,Hidden Weapons,Physical,Gains vision of enemies he has attacked,"Jungle, Attack"
+S218,H055,"Thief's Mark	",Physical,"When reaching 4 stacks, the mark explodes, dealing bonus area damage.",Attack
+S219,H055,Rolling Lightning,Physical,Rolls in a chosen direction (becomes untargetable while rolling).,Attack
+S220,H055,Chain Hammer Cyclone,Physical,Affected enemies suffer 40% movement speed reduction,Attack
+S221,H056,Dragoon ,Damage Boost,"Can use abilities to cleanse crowd control effects and gain additional attack power.	","Attack, Jungle"
+S222,H056,Blood Wyrm,Physical,Increases movement speed and enhances the next normal attack.,"Attack, Movement"
+S223,H056,Roar ,Physical,"Spins to attack nearby enemies, reducing their movement speed and healing himself.	",Attack
+S224,H056,Dragon's Wrath,True Damage,"Leaps to attack the target, knocking them up and reducing their movement speed. Then enhances his normal attacks to deal true damage.",Attack
+S225,H057,"Wicked Plot	",Magic ,All Aleister's skill damage applies a curse,Magic
+S226,H057,"Magic Barrier	",Magic ,Creates a lightning barrier that stuns and damages enemies,Magic
+S227,H057,"Matrix of Woe	",Magic ,Continuously damages enemies within the area,Magic
+S228,H057,"Magic Prison	",Magic ,Traps enemies in a magic prison,Magic
+S229,H058,Assassinate,Passive ,"Enhances skill execution upon enemy kill	",Attack
+S230,H058,"Whirlwind	",Physical,Increases attack speed,Attack
+S231,H058,"Sword Propel	",Physical,Dealing damage and slows enemy,Attack
+S232,H058,"Backstab	",Physical,High burst damage and heals upon elimination,Attack
+S233,H059,Protect,Physical,Grant Shield,Attack
+S234,H059,"Stone Shatter	",Physical,Knock-up,Defense
+S235,H059,Rampage,Physical,Damage Reduction,Defense
+S236,H059,"Earth Splitter	",Magic,Knock-up,Defense
+S237,H060,Blessed,Heal,"When Helen takes damage, gains movement speed",Support
+S238,H060,"Healing Light	",Heal,Helen increases her movement speed and heals herself,Magic
+S239,H060,"Forest Friend	",Magic,Helen releases a magical projectile and stuns,Magic
+S240,H060,"Nature's Rally	",Heal,Creates a protective field granting  shield absorption and healing allies,Magic
+S241,H061,Fierce Shot,Physical,AoE damage,Attack
+S242,H061,Explosive Arrow,Physical,Slows enemy movement speed,Attack
+S243,H061,"Precise Shot	",Physical,Knocks back,Attack
+S244,H061,"Heavenly Barrage	",Physical,AoE damage,Attack
+S245,H062,"Cursed Flame	",Magic,Using skills grants bonus magic damage and increases movement speed,Magic
+S246,H062,"Arcane Spirits	",Magic,Summons 5 spirit orbs that deal magic damage to enemies,Magic
+S247,H062,"Arcane Nova	",Magic,Fires an arcane ball that expands and stuns enemies,Magic
+S248,H062,"Lethal Rays	",Magic,"Fires a laser beam, dealing magic damage, Grants a shield and CC immunity",Defense
+S249,H063,Tyrant,Passive,Gains attack power and attack speed.,Attack
+S250,H063,"Red Stallion	",Physical,"Charges in a specified direction, dealing damage.Can be used up to 3 times, reducing cooldown per use.The third hit knocks up enemies.","Attack, Movement"
+S251,H063,Impale,Physical,"Slams his weapon to create a shockwave, dealing damage and slowing enemies.",Attack
+S252,H063,Conqueror,Status Cleanse,"Cleanses control effects, restores HP, boosts attack power, and grants control immunity.",Defense
+S253,H064,Tsunami ,Physical,Cresht's skills apply  slow for 2 sec,Defense
+S254,H064,Typhoon ,Physical,"Swings his giant trident, knocking enemies back and stunning",Defense
+S255,H064,Aquatic Shield,Defense,"Jumps to a target location, creating a shield for allies",Defense
+S256,H064,Metamorphosis ,Physical,Transforms into his empowered form,Defense
+S257,H065,Samsara,Magic,Releases an energy projectile dealing magic damage,Magic
+S258,H065,"Battering Beads	",Magic,Deals magic damage to up to 2 enemies and restores HP when hitting heroes,Magic
+S259,H065,"Sutra of Pain	",Magic,Deals magic damage to enemies and reduces their movement speed,Magic
+S260,H065,"Nirvana	",Magic,"Deals magic damage , reduces incoming damage, and increases movement speed",Magic
+S261,H066,Surviving Memory,Physical,Increase Damage,Defense
+S262,H066,"Vanguard Mode	",Mobility,Knock-up,"Defense, Movement"
+S263,H066,"Sacred Technology	",Physical,Stun,Defense
+S264,H066,"Sacred Field	",Physical ,Knockback,Defense
+S265,H067,Plunder,True Damage,"Maloch's normal attacks have increased range and deal true damage, also healing him.	","Attack, Defense"
+S266,H067,Cleave,True Damage," Dealing physical damage. If empowered, it deals true damage and heals Maloch.","Attack, Defense"
+S267,H067,"Souleater	",Physical,"Dealing slight physical damage, slowing enemies, and gaining a shield. If empowered, the shield is stronger.",Defense
+S268,H067,Shock,Physical,"Dealing physical damage and knocking up enemies. If empowered, it deals true damage and knocks enemies higher.","Attack, Defense"
+S269,H068,Soul Divide,Magic,Normal attacks become Soul Cuts,Magic
+S270,H068,Soul Tidings,Magic,Teleports and deals damage,"Magic, Movement"
+S271,H068,Elegy,Magic,Deals magic damage and recovers mana,Magic
+S272,H068,Acknowledge,Magic,Dashes forward causing damage,Magic
+S273,H069,Goddess,Magic ,Reducing cooldowns and enhancing next attack,Magic
+S274,H069,"Divine Light	",Magic ,Creates an explosion of sacred light dealing magic damage,Magic
+S275,H069,Banish,Magic ,"Knocks back enemies, reducing movement speed",Magic
+S276,H069,Cataclysm,Magic ,Dealing massive magic damage and stunning enemies,Magic
+S277,H070,"God of War	",Physical,Each attack enhances the next attack into a dash,"Attack, Critical"
+S278,H070,"Shadow Clone	",Stealth,Vanishes and increases movement speed by,Movement
+S279,H070,"Great Sage	",Mobility,Dashes and gains armor,Attack
+S280,H070,"Monkey Business	",Physical,Deal physical damage and stun,Attack
+S281,H071,Bite,Physical,Next normal attack after hitting an enemy with a skill deals Physical Damage,"Movement, Attack"
+S282,H071,"Terrifying Plague	",Physical,"Marks a target with a sigil. If the target is hit again, the sigil explodes, dealing Physical Damage",Attack
+S283,H071,"Evil Tentacles	",Physical,"Jumps to a target location, dealing Physical Damage","Attack, Critical"
+S284,H071,"Fury of Flying Locusts	",Physical,"Kriknak flies for 6 seconds, increasing movement speed while flying","Attack, Lifesteal"
+S285,H072,Paragon,Heal ,"Restores 2% HP every 2 seconds	","Defense, Support"
+S286,H072,"Righteous Fervor	",Physical,"Increases movement speed and silences enemies	","Attack, Movement"
+S287,H072,"Holy Guard	",Physical,"Deals AoE true damage and grants shield	","Defense, Magic"
+S288,H072,"Deep Impact	",Magic,"Deals AoE damage and knocks up enemies	","Attack, Magic"
+S289,H073,"Shrouded Wings	",Stealth,Vision Boost,Movement
+S290,H073,"Whirlwind of Blood	",Physical ,"AoE Physical Damage, Executes Low HP","Attack, Critical"
+S291,H073,"Bloodied Judgment	",Physical ,"Slow, Stun, Heal	",Attack
+S292,H073,"Sanguinary End	",Physical ,"Physical Damage, Untargetable Dash	",Attack
+S293,H074,Pierce,Physical,Increases attack damage,Attack
+S294,H074,Flying Spear,Physical,Stuns enemies,Attack
+S295,H074,Leap of Vitality,Mobility,Increases attack damage,"Movement, Attack"
+S296,H074,Savage Potion,Buff,Increases attack power and movement speed,Attack
+S297,H075,Infection,"Speed Boost	","Preyta moves faster than other heroes.	",Movement
+S298,H075,"Lethal Pathogen	",Magic,"The pathogen is released, dealing AoE magic damage.",Magic
+S299,H075,"Putrid Virus	",Magic,"Knocking back nearby enemies, dealing magic damage, and slowing them.",Magic
+S300,H075,Plague Tentacles,Magic," Gaining a shield and increased movement speed. While empowered, normal attacks deal AoE magic damage",Magic
+S301,H076,Dragon Blade,True Damage,Decrease Movement,Movement
+S302,H076,Dragon Shuriken,Physical,Knockup,Attack
+S303,H076,Swift Shadow,Movement,Special,Attack
+S304,H076,Ryu no Ikari,Physical,Reduce Damage,Defense
+S305,H077,"Blood Armor	",Magic ,Gains bonus magic resistance when attacking enemies,Defense
+S306,H077,"Fury Strikes	 ",Physical,"Charges forward, dealing damage. If it hits an enemy, increases attack speed and boosts bonus magic damage.","Attack, Movement"
+S307,H077,"Boiling Blood	",Magic,Increases movement speed and gradually enhances attack power,Magic
+S308,H077,"Wild Beast Fury	",Physical,Unleashes a powerful punch that knocks back enemies.,"Attack, Defense"
+S309,H078,"Fist Spirit	",Magic,"After using a skill, Raz can dash in a set direction, increasing movement speed",Magic
+S310,H078,"Rising Dragon Fist	",Magic,"Raz dashes forward, dealing  magic damage and knocking the target airborne",Magic
+S311,H078,"Power Surge	",Magic,"Raz releases a fireball, dealing magic damage to the first target hit, reducing their magic defense , and slowing them",Magic
+S312,H078,"Odin's Fist	",Magic,"Raz dashes towards enemies in a straight line, dealing magic damage and knocking them back",Magic
+S313,H079,"Divine Punishment	",True Damage,Deals true damage to enemies affected by Lauriel's skills and slows,Magic
+S314,H079,"Holy Light	",Magic,Deals magic damage to enemies in front,Magic
+S315,H079,Blink,Magic,"Dashes to the target direction, dealing magic damage and reducing cooldown",Magic
+S316,H079,Smite,Magic,Creates a large magic zone that deals magic damage to enemies in the area and reduces the cooldown,Magic
+S317,H080,"The Chi	",Passive,"Restores HP after combat	",Attack 
+S318,H080,"Pain on a Stick	",Physical,"Leaps and deals AoE damage	",Attack 
+S319,H080,"Panda Chariot	",Physical,"Rolls forward, dealing damage and gaining shield	",Attack 
+S320,H080,Skyfall,Physical,"Jumps and stuns enemies upon landing	",Attack 
+S321,H081,Thunderclap,Magic,"Every 5th auto-attack or skill cast triggers Lightning Orbs, dealing magic damage",Magic
+S322,H081,"Ion Prisms	",Magic,"Releases three lightning bolts in a cone, dealing magic damage",Magic
+S323,H081,"Lightning Strike	",Magic,"Teleports to a chosen location, dealing magic damage",Magic
+S324,H081,"Thunderbird	",Magic, fires a lightning projectile that deals magic damage,Magic
+S325,H082,Thirst ,"Attack Speed Boost	","Each normal attack builds up energy; when full, it increases attack speed and movement speed.	",Attack 
+S326,H082,Death's Beckon,Physical,"Pulls enemies toward Omen, dealing physical damage.	",Attack 
+S327,H082,"Untouchable	",Physical,"Reduces incoming damage and reflects a portion of it back at attackers.	",Defense 
+S328,H082,Death's Embrace,Physical,Locks an enemy in place,Attack 
+S329,H083,Hulking ,Buff,Increases damage,"Support, Defense"
+S330,H083,Wild Charge,Physical,Knock Up,Defense
+S331,H083,Wild Stomp,Magic,Reduce Damage,Defense
+S332,H083,Wild Prison,Physical,Trap enemies,Defense
+S333,H084,"Static Shock	",True Damage,"Deals true damage on attack	",Attack
+S334,H084,"Bionic Blender	",Physical,"Spins arms, dealing AoE damage	",Attack
+S335,H084,"Smooth Moves	",Physical,"Jumps behind enemies, gaining a shield	","Attack, Movement"
+S336,H084,"Liftoff	",Physical,"Locks onto enemies and jumps to them	","Attack, Defense"
+S337,H085,"Fox Form	",Magic,"Increases range, armor penetration, and movement speed in fox form",Magic
+S338,H085,"Shining Light	",Magic,Dealing area damage,Magic
+S339,H085,"Blinding Light	",Magic,Stun,Magic
+S340,H085,Unpredictable,Magic,Dealing AoE damage and slowing enemies while transforming,"Magic, Movement"
+S341,H086,Natural Affinity,Passive,"Regenerates HP when inside bushes.	",Support
+S342,H086,"Wicked Thorns	",Physical,"Extends vines to deal AoE damage and slow enemies.	",Defense
+S343,H086,"Branching Out	",Physical,"Grabs and pulls enemies towards the center while stunning them.	",Attack
+S344,H086,"Nature's Realm	",Physical,"Enters guardian mode, reduces enemy speed, deals damage, and restores HP.	",Defense
+S345,H087,Ignite,"Mixed Damage	","Bonus magic damage on attacks, increased attack speed	",Attack
+S346,H087,"Loose Cannon	",Physical,"Deals AoE physical damage, slows enemies, grants vision reveal	","Attack, Movement"
+S347,H087,"Barrel Bomb	",Physical,"Stuns enemies and deals AoE physical damage	",Attack
+S348,H087,"Shock and Awe	",Physical,"Large AoE physical damage, knockback effect	",Attack
+S349,H088,"Abyssal Might	",Magic,"When Marja uses a skill, she summons Soul Devourer","Magic, Movement"
+S350,H088,"Dark Pulse	",Magic,"Marja releases Shadow Energy, dealing  magic damage",Magic
+S351,H088,"Soul Devourer	",Magic,Releases Shadow Chain dealing magic damage while restoring HP,"Magic, Defense"
+S352,H088,"Ghostwalk	",Magic,"Releases dark energy waves, increasing her movement speed by and becoming immune to all crowd control",Magic
+S353,H089,Ignite,Physical,"Mixed Damage	","Attack, Movement"
+S354,H089,"Loose Cannon	",Physical,Mobility,Attack
+S355,H089,"Barrel Bomb	",Physical,Stun,Attack
+S356,H089,"Shock and Awe	",Physical,AoE,Attack
+S357,H090,Ravenous Beasts ,Magic,Heal,Magic
+S358,H090,Lion Tamer ,Magic,AoE Magic Damage,Support
+S359,H090,Uncaged,Magic,Slow Enemies,Defense
+S360,H090,Snare ,Magic,Lock Enemy (Control),Defense
+S361,H091,Scattershot,Passive,"Enhances basic attacks to deal AoE damage and reduce enemy armor	",Attack 
+S362,H091,"Charged Shot	",Physical,"Increases movement speed and enhances next attacks	",Attack 
+S363,H091,Bolt,Physical,"Dashes to a target, stunning and knocking back enemies	",Attack 
+S364,H091,Determination,Buff,"Enhances basic attacks to deal AoE damage and reduce enemy armor	",Attack 
+S365,H092,"Battle Instinct	",Passive,"Adapts to terrain, gaining buffs accordingly (HP regen, movement speed, armor boost)	","Defense, Movement"
+S366,H092,"Jungle Strike	",Physical,"Dashes forward, dealing physical damage; follow-up strikes deal additional damage based on terrain effect.",Attack
+S367,H092,Retaliate,Physical,"Becomes invulnerable briefly, then deals AOE damage with additional terrain-based effects","Attack, Defense"
+S368,H092,"Mark of the Hunter	",Physical,"Deals true damage in an area, reduces enemy movement speed, and applies silence	",Attack
+S369,H093,Fire Spirit,"Magic	","Increase Damage	",Magic 
+S370,H093,Wild Fire,"Magic	",Heal,Defense 
+S371,H093,Blazing Shield,"Magic	",Defense,Defense
+S372,H093,Agnie's Grasp,"Magic	","Lock on Target	",Magic 
+S373,H094,Whisperwind,Passive,Grants bonus movement speed,"Movement, Support"
+S374,H094,"Gust Force	",Magic,Summons a wind vortex that slows enemies,Magic
+S375,H094,"Wind Cuffs	",Magic,"Shields allies, stuns enemies",Magic
+S376,H094,"Hurricane Wall	",Magic,Creates a wind barrier that repels enemies,Magic
+S377,H095,Ambush,Passive ,Guaranteed crit from behind,Attack
+S378,H095,"Mutilate	",Physical,"Slashes twice dealing  damage each	",Attack
+S379,H095,Decimate,Physical,"Dashes and strikes, applying a debuff reducing enemy dodge rate	",Attack
+S380,H095,Assassinate,Stealth ,"Turns invisible, moves faster, gains attack boost upon exiting stealth","Attack, Movement"
+S381,H096,"Living Water	",Magic,"Heals herself and allies when using skills	","Magic, Support"
+S382,H096,"Water Spirits	",Magic,"Releases water spirits that slow enemies	",Magic
+S383,H096,"Wall of Water	",Magic,"Creates a water barrier that stuns enemies	",Magic
+S384,H096,"Tide of Life	",Magic,"Restores HP and makes Sephera untargetable	",Magic
+S385,H097,Zip Bloat!,Magic,Increases magic damage,Magic
+S386,H097,Zip Hex!,Magic,Deals magic damage and stuns the target.,"Magic, Support"
+S387,H097,Zip Angry!,Magic,"Reduces enemy movement speed, pulls allies and minions into the mouth, providing a shield and healing.",Defense
+S388,H097,Zip Roll!,Magic,Grants crowd control immunity while rolling,Defense 
+S389,H098,"Dimensional Force	",Magic,"Boosts skill effects, and increases movement speed",Magic
+S390,H098,"Dimensional Walk	",Magic,"Increases movement speed, reduces incoming damage, and enhances attacks","Movement, Magic"
+S391,H098,"Dimensional Cube	",Magic,Creates an energy field that explodes,Magic
+S392,H098,"Dimensional Portal	",Magic,"Slows enemies , deals magic damage, and stuns",Magic
+S393,H099,Blood Drinker,Physical,"Accumulates Berserk stacks. Each stack increases his movement speed, attack speed, and lifesteal but reduces his armor.",Attack
+S394,H099,Ghostscythe,Physical,"Dashes to the target direction. If hits a non-hero unit, deals physical damage. If hits an enemy hero, causes the target to be knocked back",Attack
+S395,H099,Boneshaver,Physical,"Transforms demonic arm into a blade and slashes in a straight line, dealing physical damage and reducing enemy movement speed",Attack
+S396,H099,Demon Claw,Physical,"Leaps into the air, becoming untargetable, and selects a landing point. Upon landing, deals physical damage, reducing enemy armor and movement speed",Attack
+S397,H100,Shuffle,Physical ,"After exiting combat, normal attacks turn into stabs that deal extra physical damage.",Attack 
+S398,H100,Blossom,Physical ,"Throws a flower at the enemy, dealing physical damage and stunning",Attack 
+S399,H100,"Triple Threat	",Physical ,"Attacks three times: First attack slows the enemy, second deals physical damage, third strikes twice, each dealing physical damage.",Attack 
+S400,H100,"Gentlemen's Duel	",Immunity,"Dashes toward an enemy, marking them with a duel. Gains control immunity, increased damage","Defense, Attack"
+S401,H101,"Bloody Kiss	",Physical,"Gains stacks, dealing bonus damage and healing while reducing cooldowns.",Defense
+S402,H101,"Bloody Fangs	",Physical,"Attacks twice with snakes, dealing damage and stunning if both hit.	",Attack
+S403,H101,"Serpent�s Embrace	",Physical,"Flings enemies in front, dealing damage and slowing them.	",Attack
+S404,H101,Venom,True Damage,"Dashes, dealing true damage, and enters Enrage mode to enhance attacks.	","Attack, Movement"
+S405,H102,Duel,Physical,Attack Damage,Attack
+S406,H102,Kickblade,Physical,Slow,"Attack, Movement"
+S407,H102,Combo,Physical,Knockup,Attack
+S408,H102,Enrage,Magic,Reduce Damage,"Magic, Defense"
+S409,H103,Stalk,Physical,Invisible,Movement
+S410,H103,Sentinel,Physical,"Vision Grant, Bonus Damage",Attack
+S411,H103,Snipe,Physical,Movement Slow,Attack
+S412,H103,Disengage,Physical,Knockback,Attack
+S413,H104,"212 Pinnacle	",Passive,"Revives with a shield and enhanced attacks upon taking fatal damage	","Attack, Defense"
+S414,H104,"212 Pummel	",Physical,"Empowers three consecutive attacks, knocking up on the third hit	","Attack, Movement"
+S415,H104,"212 Maelstrom	",Physical,"Charges forward, dealing damage and knocking back enemies	","Attack, Defense"
+S416,H104,"212 Landslide	",Physical,"Slams the ground, stunning enemies and dealing massive damage	",Attack
+S417,H105,Aquamarine,Passive,Switches between machine gun and laser gun mode,Attack 
+S418,H105,Pulse Shot,Physical ,Changes attack mode and fires lasers,"Attack,Movement"
+S419,H105,Piercing Shot,Movement Speed,Removes movement impairments and increases speed,Attack 
+S420,H105,Fusillade,Physical,Fires a spread barrage reducing enemy armor,Attack 
+S421,H106,"Protection Aura	",Physical,"Gains armor and lifesteal when using skills, healing when hitting enemies.	",Attack
+S422,H106,Starchaser,Physical,"Dashes forward, dealing damage and knocking enemies up.	","Attack, Movement"
+S423,H106,"Mountain Shaker	",Physical,"Releases a shockwave, dealing damage and reducing enemy armor.	",Attack
+S424,H106,"The Brawler	",Physical,"Knocks back all enemies in front, dealing damage and stunning if they hit walls.	","Attack, Defense"
+S425,H107,"Lunar Phase	",Physical,"Increases speed, marks enemies, deals damage when fully stacked","Attack, Movement"
+S426,H107,"Crescent Strike	",Physical,Deals area damage,Magic
+S427,H107,"Spinning Sickle	",Physical,"Dealing damage in a straight path, slowing enemies",Magic
+S428,H107,"Full Moon	",Physical,"Changes weapon form, increasing damage and attack speed.",Magic
+S429,H108,Crusade,Physical,Increases damage output on distant enemies and boosts movement speed upon hit.,Attack
+S430,H108,Amputate,Mobility,"Dashes to a target location, enhances attack power when Skill 2 hits an enemy.",Attack
+S431,H108,Judgment,Physical,"Immobilizing the first enemy hit, increasing movement speed and reducing cooldown",Attack
+S432,H108,Decapitate,Physical,"Dealing damage along the path, or to the nearest enemy if no mark is available.",Attack
+S433,H109,Lucky Star,Physical,Attack Speed Buff,Attack
+S434,H109,"Light Chaser	",Physical,Enhances basic attacks,Movement
+S435,H109,"Mighty Shield	",Physical,Creates a shield,Attack
+S436,H109,"Double Trouble	",Physical,Stun,Attack
+S437,H110,Ballistics,Physical,Increases attack power,Attack
+S438,H110,Redeploy,Physical,increases movement speed,Movement
+S439,H110,Sentry,Physical,Slowing movement,Attack
+S440,H110,Entrench,Physical,Set up a stationary turret,"Attack, Defense"
+S441,H111,"Flash of Inspiration	",Passive,"Gains energy when using skills, increasing attack speed and healing HP.",Attack
+S442,H111,"Splash Ink	",Physical,"Strikes forward, dealing damage and knocking up enemies.	",Attack
+S443,H111,"Coiling Dragon	",Physical,"Dashes in a curve while immune to CC, dealing damage.	","Attack, Movement"
+S444,H111,"Crushing Mountain	",Physical,"Enters an enhanced state, dealing bonus true damage.	",Attack
+S445,H112,Windstorm,Magic ," Third basic attack deals magic damage. If his abilities hit, it triggers Windstorm",Magic
+S446,H112,"Eagle Screech	",Magic ,"Shoots a magic projectile at a target location, dealing magic damage",Magic
+S447,H112,Twister,Magic ,Dealing  magic damage and slowing enemies,Magic
+S448,H112,"Ascend	",Magic ,"Transforms movement into dashes, dealing  magic damage",Magic
+S449,H113,"Fos' Ring	",Physical,"Upgrades normal attacks and skills based on marks	",Attack 
+S450,H113,"Comet Strike	",Physical,Increasing speed and damage,Attack
+S451,H113,"Piercing Heart	",Mobility,Dealing multiple hits and lifesteal,Attack 
+S452,H113,"Sky-Breaking Saber	",Physical, Reducing enemy speed and damage received,Attack
+S453,H114,Good Luck,Heal,Normal attack grants bonus damage and absorbs energy from the enemy to heal HP,Support
+S454,H114,Worry-free,Magic,"Links to target, increasing magic power, attack speed, and movement speed",Magic
+S455,H114,Flying Wings,Buff,Increase armor and resistance,Magic
+S456,H114,Longevity,Heal,Uses his HP to heal allies and deals damage,Magic
+S457,H115,"Fairy Dance	",Physical,"Deals AoE damage, boosts energy, and enables short-range dashes.",Attack 
+S458,H115,"Greeting of Leaves	",Magic,Fires leaves that deal magic damage and slow enemies.,Magic 
+S459,H115,"Spinning Song	",Buff,"Boosts energy, provides a shield, and increases movement speed.",Defense
+S460,H115,"Laurel Bloom	",Magic,Unleash consecutive attacks with magic damage and movement speed boost.,Magic 
+S461,H116,Sand's Gift,Buff,"Enhances normal attacks to deal area damage. Gains armor when hit or using abilities.	",Attack
+S462,H116,"Sand Strike	",Physical,"Charges forward, dealing damage and knocking up enemies.	","Attack, Movement"
+S463,H116,"Sands of Time	",Physical,"Dashes forward 3 times, dealing damage and slowing enemies.	",Attack
+S464,H116,"Sands of Victory	",Physical,"Summons a sand beast, lunging forward and dealing damage while knocking enemies airborne. Gains invulnerability.	","Attack, Defense"
+S465,H117,Don't Test Me,Buff,Increases movement speed,Movement
+S466,H117,Bonnie Smack!,Magic, Deals AoE magic damage and marks the target area with energy,Magic
+S467,H117,Gina Thwack!,Magic,Deals AoE magic damage and stuns enemies,Magic
+S468,H117,Allan Kaboom!,Magic,"Pulls enemies into a targeted area, dealing magic damage and stunning",Magic
+S469,H118,Seven-Star Sword,Physical,Enhances normal attacks after using skill,Attack
+S470,H118,Triangle Sword,Physical,Dealing physical damage and increasing movement speed,"Attack, Movement"
+S471,H118,Pierce Fountain,Physical,Dealing multiple instances of physical damage and healing,Attack
+S472,H118,Sky-Breaking Saber,Physical,"Dealing physical damage, reducing enemy movement speed, and gaining status resistance","Attack, Defense"
+S473,H119,"Gift of the Merfolk	",Physical,"Reduces CC duration, regenerates HP, increases AoE damage",Defense
+S474,H119,"Echo of Glee	",Magic,"Deals damage, slows, if the last wave hits, it knocks back enemies",Magic
+S475,H119,Dive,Magic,"heals allies, reduces cooldown if in Water Terrain",Magic
+S476,H119,"Oceanic Gift	",Special,"Resets longest ally skill cooldown, reduces own cooldown",Support
