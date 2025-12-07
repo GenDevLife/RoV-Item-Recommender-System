@@ -12,13 +12,13 @@ sys.path.append(PROJECT_ROOT)
 from app.data.repository import RoVRepository
 from app.core.evaluator import BuildEvaluator
 from app.core.ga_engine import GeneticEngine
-from app.config import DB_PATH, GA_SETTINGS_FAST, GA_SETTINGS, GA_SETTINGS_QUALITY
+from app.config import DB_PATH, GA_SETTINGS_FAST, GA_SETTINGS, GA_SETTINGS_EXPERT
 
 # Test configurations
 PROFILES = {
     "Default (Balanced)": GA_SETTINGS,
     "Fast (Production)": GA_SETTINGS_FAST,
-    "Quality (Research)": GA_SETTINGS_QUALITY
+    "Expert (Research)": GA_SETTINGS_EXPERT
 }
 
 TEST_HEROES = ["valhein", "tachi", "yue"]
