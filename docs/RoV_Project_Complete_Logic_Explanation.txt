@@ -1,0 +1,1277 @@
+================================================================================
+          RoV Item Recommender System - Complete Logic Explanation
+          คำอธิบาย Logic การทำงานของระบบตั้งแต่ต้นจนจบอย่างละเอียด
+================================================================================
+
+สร้างเมื่อ: 11 ธันวาคม 2025
+เวอร์ชัน: 1.0
+ผู้พัฒนา: [Your Name]
+
+================================================================================
+                    ส่วนที่ 1: OVERVIEW - ภาพรวมการทำงาน
+================================================================================
+
+ระบบนี้ทำหน้าที่: รับข้อมูลฮีโร่ที่ผู้ใช้เลือก → ค้นหาชุดไอเทม 6 ชิ้นที่ดีที่สุด
+ด้วย Genetic Algorithm → แสดงผลลัพธ์
+
+Flow หลัก:
+┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│   User      │───→│   main.py   │───→│ GA Engine   │───→│   Output    │
+│   Input     │    │   (CLI)     │    │ (Optimize)  │    │   (Build)   │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘
+                         │                   ↓
+                         ↓            ┌─────────────┐
+                   ┌─────────────┐    │  Evaluator  │
+                   │ Repository  │    │  (Fitness)  │
+                   │ (Database)  │    └─────────────┘
+                   └─────────────┘
+
+================================================================================
+                 ส่วนที่ 2: DATABASE SETUP - การเตรียมฐานข้อมูล
+================================================================================
+
+ไฟล์: scripts/setup_database.py
+
+ก่อนใช้งานระบบ ต้องมีฐานข้อมูลก่อน โดยรันคำสั่ง:
+>>> python scripts/setup_database.py
+
+2.1 ขั้นตอนการสร้าง Database
+────────────────────────────
+
+STEP 1: ลบ Database เก่า (Clean Start)
+```python
+if os.path.exists(DB_NAME):
+    os.remove(DB_NAME)
+```
+- ลบไฟล์ rov_data.db เดิมออกก่อน
+- เพื่อให้แน่ใจว่าได้ข้อมูลล่าสุดทุกครั้ง
+
+STEP 2: สร้าง Tables ใหม่
+```python
+def create_schema(cursor):
+    cursor.executescript("""
+        CREATE TABLE heroes (...)      # ข้อมูลฮีโร่
+        CREATE TABLE hero_scaling (...) # Stats ตาม Level
+        CREATE TABLE items (...)        # ข้อมูลไอเทม
+        CREATE TABLE item_stats (...)   # ค่า Stats ของไอเทม
+        CREATE TABLE item_passives (...) # Unique Passive
+        CREATE TABLE item_restrictions (...) # กฎพิเศษ
+    """)
+```
+
+STEP 3: Import ข้อมูลจาก CSV
+
+3.1 อ่านไฟล์ heroes.csv:
+```python
+df_heroes = pd.read_csv('data/raw/heroes.csv')
+```
+- มีข้อมูล: hero_name, primary_class, secondary_class, primary_lane, secondary_lane
+
+3.2 คำนวณ damage_type อัตโนมัติ:
+```python
+def calculate_damage_type(p_role, s_role):
+    if 'Mage' in roles: return 'Magic'
+    if 'Support' in roles and not ({'Tank', 'Fighter'} & roles): return 'Magic'
+    return 'Physical'
+```
+Logic:
+- ถ้าเป็น Mage → Magic
+- ถ้าเป็น Support แต่ไม่ใช่ Tank/Fighter → Magic
+- นอกนั้นทั้งหมด → Physical
+
+3.3 สร้าง code_name:
+```python
+def clean_name(name):
+    return re.sub(r'[^a-zA-Z0-9]', '_', str(name).lower().strip())
+    # 'Valhein' → 'valhein'
+    # 'Yorn (Rework)' → 'yorn__rework_'
+```
+
+3.4 Import Items + คำนวณ Tier:
+```python
+def calculate_tier(price):
+    if price < 600: return 1    # ไอเทมระดับต้น
+    if price < 1600: return 2   # ไอเทมระดับกลาง
+    return 3                     # ไอเทมขั้นสุดท้าย (ใช้จริง)
+```
+
+3.5 ใส่กฎพิเศษอัตโนมัติ:
+```python
+# กฎรองเท้า: ใส่ได้แค่ 1 คู่
+if 'Boots' in name:
+    INSERT INTO item_restrictions (rule_type) VALUES ('limit_one_boots')
+    INSERT INTO item_passives (passive_group_name) VALUES ('unique_movement')
+
+# กฎไอเทมป่า: ต้องมี spell ป่า
+if item_class == 'Jungle':
+    INSERT INTO item_restrictions (rule_type) VALUES ('must_have_punish')
+
+# กฎ Passive ซ้ำ: Omni Arms กับ Frost Cape ใช้พร้อมกันไม่ได้
+if 'Omni' in name or 'Frost Cape' in name:
+    INSERT INTO item_passives (passive_group_name) VALUES ('elemental_power')
+```
+
+ผลลัพธ์: rov_data.db พร้อมใช้งาน (102 KB)
+
+================================================================================
+               ส่วนที่ 3: APPLICATION START - เริ่มต้นโปรแกรม
+================================================================================
+
+ไฟล์: app/main.py
+
+เมื่อผู้ใช้รัน:
+>>> python app/main.py
+
+3.1 การ Initialize ระบบ
+────────────────────────
+
+```python
+def main():
+    # แสดง Banner
+    print("RoV Item Recommender System")
+    print("Powered by Genetic Algorithm")
+    
+    # สร้าง Instance ของ RoVRecommender
+    app = RoVRecommender()
+```
+
+3.2 RoVRecommender.__init__() ทำอะไรบ้าง
+────────────────────────────────────────
+
+```python
+def __init__(self):
+    # 1. Log ว่ากำลังเริ่มระบบ
+    logger.info("Initializing RoV Item Recommender...")
+    
+    # 2. เชื่อมต่อ Database
+    self.repo = RoVRepository(DB_PATH)
+    # DB_PATH = 'data/rov_data.db'
+    
+    # 3. โหลดไอเทมทั้งหมดเข้า Memory
+    self.all_items = self.repo.get_all_items()
+    # Return: Dict[int, Dict] เช่น {1: {'name_en': 'Claves Sancti', 'p_atk': 90, ...}}
+    
+    # 4. กรองเอาเฉพาะ Tier 3 (ไอเทมขั้นสุดท้าย)
+    self.valid_items = [k for k, v in self.all_items.items() if v.get('tier') == 3]
+    # valid_items = [1, 2, 5, 8, ...] (ID ของไอเทม Tier 3)
+```
+
+Logic การโหลดไอเทม (repository.py):
+```python
+def get_all_items(self):
+    query = """
+        SELECT i.*, s.* FROM items i
+        LEFT JOIN item_stats s ON i.item_id = s.item_id
+        WHERE i.is_active = 1  # เฉพาะไอเทมที่ยังใช้งาน
+    """
+    
+    # เพิ่ม passives และ restrictions
+    for row in cursor.execute("SELECT * FROM item_passives"):
+        items[row['item_id']]['passives'].append(row['passive_group_name'])
+    
+    for row in cursor.execute("SELECT * FROM item_restrictions"):
+        items[row['item_id']]['restrictions'].append(row['rule_type'])
+    
+    return items
+```
+
+3.3 แสดง Menu เลือกโหมด
+───────────────────────
+
+```python
+mode = questionary.select("Choose mode:", choices=[
+    "All Heroes (batch analysis)",
+    "Select Hero (single hero)",
+    "Exit"
+]).ask()
+```
+
+ผลลัพธ์: ผู้ใช้เห็น menu 3 ตัวเลือก
+
+================================================================================
+              ส่วนที่ 4: SELECT HERO MODE - โหมดเลือกฮีโร่เดี่ยว
+================================================================================
+
+ไฟล์: app/main.py → select_hero_mode()
+
+Flow การทำงาน:
+User เลือก Hero → เลือก Role → เลือก Lane → เลือก AI Mode → คำนวณ → แสดงผล
+
+4.1 ดึงรายชื่อฮีโร่
+──────────────────
+
+```python
+hero_list = self.repo.get_hero_list()
+# SQL: SELECT code_name FROM heroes ORDER BY code_name ASC
+# Return: ['airi', 'alice', 'allain', 'amily', ..., 'zata', 'zephys', 'zill']
+
+hero_code = questionary.select("Select hero:", choices=sorted(hero_list)).ask()
+# ผู้ใช้เลือก: 'valhein'
+```
+
+4.2 ดึงข้อมูลฮีโร่
+─────────────────
+
+```python
+hero_data = self.repo.get_hero_data(hero_code)
+# SQL: SELECT * FROM heroes WHERE code_name = 'valhein'
+#      JOIN hero_scaling WHERE level = 15
+```
+
+hero_data ที่ได้:
+```python
+{
+    'hero_id': 42,
+    'code_name': 'valhein',
+    'name_en': 'Valhein',
+    'primary_role': 'Carry',
+    'secondary_role': 'Mage',
+    'damage_type': 'Physical',
+    'primary_lane': 'Dragon Slayer',
+    'secondary_lane': 'Mid',
+    'base_atk': 168,      # Physical Attack ที่ Level 15
+    'base_def': 89,       # Defense ที่ Level 15
+    'base_hp': 3420       # HP ที่ Level 15
+}
+```
+
+4.3 สร้างตัวเลือก Role และ Lane
+────────────────────────────────
+
+```python
+# ดึง Roles ที่มี
+roles = []
+if hero_data.get('primary_role'):
+    roles.append(hero_data['primary_role'].strip())  # 'Carry'
+if hero_data.get('secondary_role'):
+    roles.append(hero_data['secondary_role'].strip())  # 'Mage'
+# roles = ['Carry', 'Mage']
+
+selected_role = questionary.select("Select Role:", choices=roles).ask()
+# ผู้ใช้เลือก: 'Carry'
+
+# ดึง Lanes ที่มี
+lanes = ['Dragon Slayer', 'Mid']
+selected_lane = questionary.select("Select Lane:", choices=lanes).ask()
+# ผู้ใช้เลือก: 'Dragon Slayer'
+```
+
+4.4 เลือก AI Mode
+─────────────────
+
+```python
+ga_choice = questionary.select("Select AI Mode:", choices=[
+    "Fast (50 gen)",
+    "Medium (100 gen) *DEFAULT*",
+    "Expert (150 gen)"
+]).ask()
+
+profile_map = {
+    "Fast (50 gen)": "fast",
+    "Medium (100 gen) *DEFAULT*": "medium",
+    "Expert (150 gen)": "expert"
+}
+selected_profile = profile_map[ga_choice]
+# ผู้ใช้เลือก: 'fast'
+```
+
+4.5 เรียก Recommendation Engine
+────────────────────────────────
+
+```python
+build, score, hero_data = self.get_recommendation(
+    hero_code='valhein',
+    role='Carry',
+    lane='Dragon Slayer',
+    ga_profile='fast'
+)
+```
+
+================================================================================
+            ส่วนที่ 5: RECOMMENDATION ENGINE - หัวใจของระบบ
+================================================================================
+
+ไฟล์: app/main.py → get_recommendation()
+
+```python
+def get_recommendation(self, hero_code, role, lane, ga_profile):
+    # 1. ดึงข้อมูล Hero
+    hero_data = self.repo.get_hero_data(hero_code)
+    
+    # 2. ใส่ role/lane ที่เลือก
+    hero_data['selected_role'] = role
+    hero_data['selected_lane'] = lane
+    
+    # 3. ดึง GA Settings ตาม Profile
+    ga_settings = get_ga_settings(ga_profile)
+    # Fast: {POP_SIZE: 30, MAX_GEN: 50, MUTATION_RATE: 0.3, ELITISM_COUNT: 3}
+    
+    # 4. สร้าง Evaluator
+    evaluator = BuildEvaluator(hero_data, self.all_items)
+    
+    # 5. สร้าง GA Engine
+    engine = GeneticEngine(evaluator, self.valid_items, ga_settings)
+    
+    # 6. รัน GA และรับผลลัพธ์
+    build, score = engine.run()
+    
+    return build, score, hero_data
+```
+
+================================================================================
+         ส่วนที่ 6: BUILD EVALUATOR - ระบบประเมินความดีของ Build
+================================================================================
+
+ไฟล์: app/core/evaluator.py
+
+Evaluator ทำหน้าที่: ให้คะแนนชุดไอเทม (Build) ว่าดีแค่ไหน
+
+6.1 การ Initialize Evaluator
+─────────────────────────────
+
+```python
+def __init__(self, hero_data, all_items):
+    self.hero = hero_data
+    self.all_items = all_items
+    self.passive_manager = PassiveManager()
+    
+    # โหลด Weights ที่ Calibrate มาแล้ว
+    self.weights = self._load_weights(hero_data.get('damage_type', 'Physical'))
+```
+
+6.2 การโหลด Weights
+───────────────────
+
+```python
+def _load_weights(self, damage_type):
+    # พยายามอ่านจากไฟล์ที่ calibrate ไว้
+    weights_path = 'app/core/learned_weights.json'
+    
+    if os.path.exists(weights_path):
+        with open(weights_path, 'r') as f:
+            learned = json.load(f)
+            return {
+                'p_atk': learned.get('p_atk', 0),      # 0.15
+                'ap': learned.get('m_power', 0),       # 0.15
+                'hp': learned.get('max_hp', 0),        # 0.001
+                'p_def': learned.get('p_def', 0),      # 0.01
+                'cdr': learned.get('cdr', 0),          # 0.20
+                'aspd': learned.get('aspd', 0),        # 0.50
+                'crit': learned.get('crit_rate', 0),   # 0.80
+                'p_pierce': learned.get('p_pierce_percent', 0),  # 1.20
+                'm_pierce': learned.get('m_pierce_percent', 0),  # 1.20
+                'move_speed': learned.get('move_speed', 0)       # 0.10
+            }
+```
+
+learned_weights.json มีค่า:
+```json
+{
+    "p_atk": 0.15,
+    "m_power": 0.15,
+    "max_hp": 0.001,
+    "p_def": 0.01,
+    "m_def": 0.01,
+    "cdr": 0.20,
+    "aspd": 0.50,
+    "crit_rate": 0.80,
+    "p_pierce_percent": 1.20,
+    "m_pierce_percent": 1.20,
+    "move_speed": 0.10
+}
+```
+
+ความหมาย:
+- p_pierce_percent มี weight 1.20 (สำคัญที่สุด)
+- crit_rate มี weight 0.80 (สำคัญมาก)
+- max_hp มี weight 0.001 (สำคัญน้อยสุด)
+
+6.3 calculate_stats() - คำนวณ Stats รวม
+─────────────────────────────────────────
+
+```python
+def calculate_stats(self, chromosome):
+    # เริ่มจาก Base Stats ของ Hero
+    stats = {
+        "p_atk": self.hero.get('base_atk') or 100,   # 168 (Valhein)
+        "p_def": self.hero.get('base_def') or 50,    # 89
+        "max_hp": self.hero.get('base_hp') or 3000,  # 3420
+        "m_power": 0.0,
+        "cdr": 0.0,
+        "aspd": 0.0,
+        "crit_rate": 0.0,
+        "move_speed": 350.0,  # Base move speed
+        "p_pierce_percent": 0.0,
+        "m_pierce_percent": 0.0
+    }
+    
+    # บวก Stats จากไอเทมแต่ละชิ้น
+    for item_id in chromosome:
+        item = self.all_items.get(item_id)
+        
+        stats["p_atk"] += item.get("p_atk", 0)
+        stats["m_power"] += item.get("m_power", 0)
+        stats["p_def"] += item.get("p_def", 0)
+        stats["max_hp"] += item.get("max_hp", 0)
+        stats["cdr"] += item.get("cdr", 0)
+        stats["aspd"] += item.get("aspd", 0)
+        stats["crit_rate"] += item.get("crit_rate", 0)
+        stats["move_speed"] += item.get("move_speed", 0)
+        
+        # Pierce เอาค่าสูงสุด (ไม่รวมกัน)
+        stats["p_pierce_percent"] = max(stats["p_pierce_percent"], 
+                                        item.get("p_pierce_percent", 0))
+    
+    return stats
+```
+
+ตัวอย่างการคำนวณ:
+```
+chromosome = [1, 5, 12, 23, 45, 67]
+
+Item 1 (Claves Sancti):  p_atk=90, crit=25%
+Item 5 (War Boots):      move_speed=60
+Item 12 (Slikk's Sting): p_atk=35, crit=25%, aspd=35%
+Item 23 (The Beast):     p_atk=100, life_steal=25%
+Item 45 (Muramasa):      p_atk=80, p_pierce=40%
+Item 67 (Fenrir's Tooth): p_atk=200
+
+Final Stats:
+- p_atk = 168 + 90 + 35 + 100 + 80 + 200 = 673
+- crit_rate = 0 + 25 + 25 = 50%
+- p_pierce_percent = max(0, 40) = 40%
+```
+
+6.4 get_fitness() - คำนวณคะแนน Fitness
+────────────────────────────────────────
+
+```python
+def get_fitness(self, chromosome):
+    score = 0.0
+    
+    # ───────────────────────────────────────
+    # STEP 1: ตรวจสอบ Penalty จาก Passive ซ้ำ
+    # ───────────────────────────────────────
+    item_objects = [self.all_items[i] for i in chromosome if i in self.all_items]
+    passive_penalty, conflicts = self.passive_manager.check_passive_conflicts(item_objects)
+    score += passive_penalty  # -50 ต่อความขัดแย้ง 1 คู่
+    
+    # ───────────────────────────────────────
+    # STEP 2: เช็ครองเท้าซ้ำ
+    # ───────────────────────────────────────
+    boots_count = sum(1 for item in item_objects 
+                      if 'limit_one_boots' in item.get('restrictions', []))
+    if boots_count > 1:
+        score += PENALTIES['boots_limit'] * (boots_count - 1)
+        # ถ้ามี 2 คู่รองเท้า: score += -100 * 1 = -100
+    
+    # ───────────────────────────────────────
+    # STEP 3: คำนวณ Stats รวม
+    # ───────────────────────────────────────
+    stats = self.calculate_stats(chromosome)
+    
+    # ───────────────────────────────────────
+    # STEP 4: บังคับ Stat Caps (ตามกฎเกม)
+    # ───────────────────────────────────────
+    effective_cdr = min(stats['cdr'], 0.40)      # CDR สูงสุด 40%
+    effective_crit = min(stats['crit_rate'], 1.00)  # Crit สูงสุด 100%
+    effective_aspd = min(stats['aspd'], 2.00)    # ASPD สูงสุด 200%
+    
+    # ───────────────────────────────────────
+    # STEP 5: คำนวณคะแนนตาม Weights
+    # ───────────────────────────────────────
+    score += stats['p_atk'] * self.weights.get('p_atk', 0)
+    # 673 × 0.15 = 100.95
+    
+    score += stats['m_power'] * self.weights.get('ap', 0)
+    # 0 × 0.15 = 0
+    
+    score += stats['max_hp'] * self.weights.get('hp', 0)
+    # 3420 × 0.001 = 3.42
+    
+    score += effective_cdr * self.weights.get('cdr', 0)
+    # 0.10 × 0.20 = 0.02 (ถ้ามี 10% CDR)
+    
+    score += effective_aspd * self.weights.get('aspd', 0)
+    # 0.35 × 0.50 = 0.175
+    
+    score += effective_crit * self.weights.get('crit', 0)
+    # 0.50 × 0.80 = 0.40
+    
+    score += stats['p_pierce_percent'] * 100 * self.weights.get('p_pierce', 0)
+    # 0.40 × 100 × 1.20 = 48.0
+    
+    return score
+```
+
+ตัวอย่างคะแนนรวม:
+```
+Fitness Score = 0 (เริ่มต้น)
+              + 0 (ไม่มี passive ซ้ำ)
+              + 0 (ไม่มีรองเท้าซ้ำ)
+              + 100.95 (p_atk)
+              + 0 (m_power)
+              + 3.42 (HP)
+              + 0.02 (CDR)
+              + 0.175 (ASPD)
+              + 0.40 (Crit)
+              + 48.0 (Armor Pierce)
+              = 152.97 คะแนน
+```
+
+================================================================================
+          ส่วนที่ 7: PASSIVE MANAGER - ตรวจสอบ Passive ซ้ำ
+================================================================================
+
+ไฟล์: app/core/passive_manager.py
+
+```python
+def check_passive_conflicts(self, build_items):
+    seen_groups = set()  # เก็บ passive group ที่เจอแล้ว
+    conflicts = []
+    total_penalty = 0.0
+    
+    for item in build_items:
+        passives = item.get('passives', [])
+        # เช่น passives = ['elemental_power'] สำหรับ Omni Arms
+        
+        for group in passives:
+            if group in seen_groups:
+                # พบ passive ซ้ำ!
+                conflicts.append(f"Passive '{group}' ซ้ำ")
+                total_penalty += -50.0  # หัก 50 คะแนน
+            else:
+                seen_groups.add(group)
+    
+    return total_penalty, conflicts
+```
+
+ตัวอย่าง:
+```
+Build มี: [Omni Arms, Frost Cape, War Boots]
+- Omni Arms มี passive: ['elemental_power']
+- Frost Cape มี passive: ['elemental_power']  ← ซ้ำ!
+- War Boots มี passive: ['unique_movement']
+
+ผลลัพธ์: penalty = -50, conflicts = ["Passive 'elemental_power' ซ้ำ"]
+```
+
+================================================================================
+          ส่วนที่ 8: GENETIC ALGORITHM ENGINE - หัวใจของ AI
+================================================================================
+
+ไฟล์: app/core/ga_engine.py
+
+8.1 การ Initialize GA Engine
+─────────────────────────────
+
+```python
+def __init__(self, evaluator, valid_item_ids, ga_settings):
+    self.evaluator = evaluator      # ตัวประเมิน fitness
+    self.item_pool = valid_item_ids  # รายการ ID ไอเทม Tier 3
+    
+    # ค่า settings จาก profile
+    self.pop_size = settings['POP_SIZE']        # 30 (Fast)
+    self.mutation_rate = settings['MUTATION_RATE']  # 0.30
+    self.max_gen = settings['MAX_GEN']          # 50
+    self.elitism_count = settings['ELITISM_COUNT']  # 3
+```
+
+8.2 create_chromosome() - สร้าง Build สุ่ม
+──────────────────────────────────────────
+
+```python
+def create_chromosome(self):
+    if len(self.item_pool) >= 6:
+        return random.sample(self.item_pool, 6)
+    return random.choices(self.item_pool, k=6)
+```
+
+ตัวอย่าง:
+```python
+item_pool = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...]
+chromosome = random.sample(item_pool, 6)
+# chromosome = [23, 1, 45, 12, 8, 67]  # สุ่มมา 6 ตัว ไม่ซ้ำ
+```
+
+8.3 crossover() - ผสมพันธุ์ระหว่าง 2 Parents
+────────────────────────────────────────────
+
+```python
+def crossover(self, parent1, parent2):
+    # สุ่มจุดตัด (1 ถึง 5)
+    point = random.randint(1, 5)  # สมมติได้ 3
+    
+    # ตัดแบ่ง
+    child = parent1[:point] + parent2[point:]
+    # parent1 = [A, B, C, D, E, F]
+    # parent2 = [G, H, I, J, K, L]
+    # point = 3
+    # child = [A, B, C] + [J, K, L] = [A, B, C, J, K, L]
+    
+    # แก้ไอเทมซ้ำ
+    return self.ensure_unique_items(child)
+```
+
+8.4 ensure_unique_items() - แก้ไอเทมซ้ำ
+────────────────────────────────────────
+
+```python
+def ensure_unique_items(self, chromosome):
+    seen = set()
+    result = []
+    
+    for item_id in chromosome:
+        if item_id not in seen:
+            result.append(item_id)
+            seen.add(item_id)
+        else:
+            # มีไอเทมซ้ำ → หาไอเทมใหม่
+            available = [i for i in self.item_pool if i not in seen]
+            if available:
+                new_item = random.choice(available)
+                result.append(new_item)
+                seen.add(new_item)
+    
+    return result
+```
+
+ตัวอย่าง:
+```
+Input:  [1, 5, 5, 8, 12, 1]  # มี 5 และ 1 ซ้ำ
+Output: [1, 5, 23, 8, 12, 45]  # แทนที่ด้วยไอเทมอื่น
+```
+
+8.5 mutate() - กลายพันธุ์
+─────────────────────────
+
+```python
+def mutate(self, chromosome):
+    if random.random() < self.mutation_rate:  # 30% โอกาส
+        idx = random.randint(0, 5)  # สุ่มตำแหน่ง (0-5)
+        available = [i for i in self.item_pool if i not in chromosome]
+        if available:
+            chromosome[idx] = random.choice(available)
+    
+    return chromosome
+```
+
+ตัวอย่าง:
+```
+Before: [1, 5, 12, 23, 45, 67]
+↓ mutate ที่ตำแหน่ง 2
+After:  [1, 5, 88, 23, 45, 67]  # แทน 12 ด้วย 88
+```
+
+8.6 run() - รัน Genetic Algorithm
+──────────────────────────────────
+
+```python
+def run(self):
+    # ══════════════════════════════════════════════
+    # STEP 1: สร้างประชากรเริ่มต้น
+    # ══════════════════════════════════════════════
+    population = [self.create_chromosome() for _ in range(self.pop_size)]
+    # population = [ [..build1..], [..build2..], ..., [..build30..] ]
+    
+    best_solution = []
+    best_fitness = -999999.0
+    
+    # ══════════════════════════════════════════════
+    # STEP 2: วนลูป Generations
+    # ══════════════════════════════════════════════
+    for gen in range(self.max_gen):  # 0 to 49 (50 รอบ)
+        
+        # ─────────────────────────────────────────
+        # 2.1 ประเมิน Fitness ของทุกตัว
+        # ─────────────────────────────────────────
+        scores = [(chrom, self.evaluator.get_fitness(chrom)) for chrom in population]
+        # scores = [
+        #     ([1,5,12,23,45,67], 152.97),
+        #     ([2,8,15,30,42,55], 140.23),
+        #     ...
+        # ]
+        
+        # เรียงจากคะแนนสูงสุดไปต่ำสุด
+        scores.sort(key=lambda x: x[1], reverse=True)
+        
+        # ─────────────────────────────────────────
+        # 2.2 เก็บตัวที่ดีที่สุด (ตลอดทุก Generation)
+        # ─────────────────────────────────────────
+        if scores[0][1] > best_fitness:
+            best_fitness = scores[0][1]
+            best_solution = scores[0][0][:]  # Copy build
+        
+        # ─────────────────────────────────────────
+        # 2.3 สร้าง Generation ถัดไป
+        # ─────────────────────────────────────────
+        
+        # Elitism: เก็บ top 3 ไว้ก่อน (ไม่ผ่าน crossover/mutation)
+        next_gen = [s[0][:] for s in scores[:self.elitism_count]]
+        # next_gen = [top1_build, top2_build, top3_build]
+        
+        # สร้าง builds ใหม่จนครบ pop_size
+        while len(next_gen) < self.pop_size:
+            # เลือก parents จาก top 10
+            parent1 = random.choice(scores[:10])[0]
+            parent2 = random.choice(scores[:10])[0]
+            
+            # Crossover
+            child = self.crossover(parent1[:], parent2[:])
+            
+            # Mutation
+            child = self.mutate(child)
+            
+            next_gen.append(child)
+        
+        # อัพเดท population สำหรับรอบถัดไป
+        population = next_gen
+    
+    # ══════════════════════════════════════════════
+    # STEP 3: Return ผลลัพธ์ที่ดีที่สุด
+    # ══════════════════════════════════════════════
+    return best_solution, best_fitness
+    # ([1, 5, 12, 23, 45, 67], 361.46)
+```
+
+แผนภาพการทำงาน GA:
+```
+Generation 0:
+┌──────────────────────────────────────────┐
+│ สร้าง 30 builds สุ่ม                     │
+│ [build1], [build2], ... [build30]        │
+└──────────────────────────────────────────┘
+              ↓ ประเมิน fitness
+┌──────────────────────────────────────────┐
+│ เรียงลำดับตามคะแนน                       │
+│ Top 1: build23 (152.97)                  │
+│ Top 2: build8  (148.23)                  │
+│ Top 3: build15 (145.67)                  │
+│ ...                                       │
+│ Worst: build2 (89.45)                    │
+└──────────────────────────────────────────┘
+              ↓ สร้าง Gen ใหม่
+┌──────────────────────────────────────────┐
+│ Elites: top3 ไปต่อเลย                    │
+│ Children: crossover + mutation           │
+│ รวมได้ 30 builds ใหม่                    │
+└──────────────────────────────────────────┘
+              ↓ ทำซ้ำ 50 รอบ
+Generation 49:
+┌──────────────────────────────────────────┐
+│ Best Solution: [1, 5, 12, 23, 45, 67]    │
+│ Best Fitness: 361.46                     │
+└──────────────────────────────────────────┘
+```
+
+================================================================================
+            ส่วนที่ 9: OUTPUT FORMAT - การแสดงผลลัพธ์
+================================================================================
+
+ไฟล์: app/main.py → format_build_output()
+
+```python
+def format_build_output(self, build, hero_data, score, role, lane, ga_profile):
+    # สร้าง Header
+    lines = []
+    lines.append("=" * 70)
+    lines.append(f"Recommended Build for {hero_data.get('name_en')}")
+    lines.append(f"Score: {score:.2f}")
+    lines.append(f"Role: {role}")
+    lines.append(f"Lane: {lane}")
+    lines.append(f"Damage Type: {hero_data.get('damage_type')}")
+    lines.append("=" * 70)
+    
+    # แสดงไอเทมแต่ละชิ้น
+    total_cost = 0
+    for i, item_id in enumerate(build, 1):
+        item = self.all_items[item_id]
+        lines.append(f"[{i}] {item['name_en']:<30} ({item['price']:>5}g)")
+        total_cost += item['price']
+    
+    # สรุป Stats
+    lines.append("-" * 70)
+    lines.append(f"Total Cost: {total_cost}g")
+    
+    evaluator = BuildEvaluator(hero_data, self.all_items)
+    stats = evaluator.calculate_stats(build)
+    lines.append(f"Stats: AD={stats['p_atk']:.0f}, AP={stats['m_power']:.0f}, "
+                 f"HP={stats['max_hp']:.0f}, CDR={stats['cdr']*100:.0f}%")
+    
+    if ga_profile:
+        lines.append(f"Mode: {ga_profile.upper()}")
+    lines.append("=" * 70)
+    
+    return "\n".join(lines)
+```
+
+ผลลัพธ์ที่แสดง:
+```
+======================================================================
+Recommended Build for Valhein
+Score: 361.46
+Role: Carry
+Lane: Dragon Slayer
+Damage Type: Physical
+======================================================================
+[1] Claves Sancti                   ( 2150g)
+[2] War Boots                       (  660g)
+[3] Slikk's Sting                   ( 2050g)
+[4] The Beast                       ( 1870g)
+[5] Muramasa                        ( 2020g)
+[6] Fenrir's Tooth                  ( 2950g)
+----------------------------------------------------------------------
+Total Cost: 11700g
+Stats: AD=673, AP=0, HP=3420, CDR=0%
+Mode: FAST
+======================================================================
+
+Time: 82.45ms
+```
+
+================================================================================
+            ส่วนที่ 10: ALL HEROES MODE - โหมดวิเคราะห์ทุกฮีโร่
+================================================================================
+
+ไฟล์: app/main.py → analyze_all_heroes()
+
+10.1 เตรียมข้อมูล
+─────────────────
+
+```python
+def analyze_all_heroes(self, ga_profile="expert", output_file="all_heroes_analysis.csv"):
+    # ดึงรายชื่อฮีโร่ทั้งหมด
+    hero_list = self.repo.get_hero_list()
+    # ['airi', 'alice', 'allain', ..., 'zata', 'zephys', 'zill']
+    
+    # นับจำนวน Role x Lane combinations
+    total_combinations = 0
+    hero_combinations = {}
+    
+    for hero_code in hero_list:
+        combos = self.get_hero_role_lane_combinations(hero_code)
+        # 'valhein' → [('Carry', 'Dragon Slayer'), ('Carry', 'Mid'), 
+        #              ('Mage', 'Dragon Slayer'), ('Mage', 'Mid')]
+        hero_combinations[hero_code] = combos
+        total_combinations += len(combos)
+    
+    print(f"Total combinations: {total_combinations}")
+    # เช่น "Total combinations: 312"
+```
+
+10.2 วนลูปวิเคราะห์
+───────────────────
+
+```python
+    results = []
+    
+    # สร้าง Progress Bar
+    pbar = tqdm(total=total_combinations, desc="Analyzing")
+    
+    for hero_code, combinations in hero_combinations.items():
+        for role, lane in combinations:
+            start_time = time.time()
+            
+            # เรียก GA (ใช้ Expert mode)
+            build, score, hero_data = self.get_recommendation(
+                hero_code, role, lane, ga_profile="expert"
+            )
+            
+            elapsed = time.time() - start_time
+            
+            # คำนวณ Stats
+            evaluator = BuildEvaluator(hero_data, self.all_items)
+            stats = evaluator.calculate_stats(build)
+            
+            # แปลง item IDs เป็นชื่อ
+            items_list = [self.all_items[iid]['name_en'] for iid in build]
+            total_cost = sum(self.all_items[iid]['price'] for iid in build)
+            
+            # เก็บผลลัพธ์
+            result = {
+                'hero_code': hero_code,
+                'hero_name': hero_data.get('name_en'),
+                'role': role,
+                'lane': lane,
+                'damage_type': hero_data.get('damage_type'),
+                'fitness_score': round(score, 2),
+                'ga_profile': ga_profile,
+                'item_1': items_list[0],
+                'item_2': items_list[1],
+                'item_3': items_list[2],
+                'item_4': items_list[3],
+                'item_5': items_list[4],
+                'item_6': items_list[5],
+                'total_cost': total_cost,
+                'final_p_atk': round(stats['p_atk'], 0),
+                'final_m_power': round(stats['m_power'], 0),
+                'final_hp': round(stats['max_hp'], 0),
+                'final_cdr': round(stats['cdr'] * 100, 1),
+                'time_ms': round(elapsed * 1000, 2)
+            }
+            results.append(result)
+            
+            pbar.update(1)
+    
+    pbar.close()
+```
+
+10.3 บันทึกผล CSV
+─────────────────
+
+```python
+    df = pd.DataFrame(results)
+    output_path = os.path.join(PROJECT_ROOT, output_file)
+    df.to_csv(output_path, index=False, encoding='utf-8-sig')
+    
+    print(f"Done! Saved to: {output_path}")
+```
+
+================================================================================
+            ส่วนที่ 11: WEIGHT CALIBRATION - การเรียนรู้ Weights
+================================================================================
+
+ไฟล์: scripts/calibrate.py
+
+11.1 วัตถุประสงค์
+─────────────────
+หา Weights ที่ดีที่สุดสำหรับแต่ละ Stat โดยเรียนรู้จากข้อมูล Training
+
+11.2 ขั้นตอน
+────────────
+
+STEP 1: โหลดข้อมูล Training
+```python
+df = pd.read_csv('data/raw/test_fitness.csv')
+# มี columns: Item1, Item2, ..., Item6, CombatPower
+```
+
+STEP 2: Extract Features
+```python
+def extract_features(row, evaluator, all_items):
+    # หา item IDs จากชื่อ/รหัส
+    build_ids = []
+    for i in range(1, 7):
+        item_code = row[f'Item{i}']
+        for iid, data in all_items.items():
+            if data.get('item_code') == item_code:
+                build_ids.append(iid)
+                break
+    
+    # คำนวณ Stats รวม
+    stats = evaluator.calculate_stats(build_ids)
+    
+    # Return เป็น feature array
+    return [stats.get(k, 0.0) for k in FEATURE_NAMES]
+    # [p_atk, m_power, max_hp, p_def, m_def, cdr, aspd, crit_rate, 
+    #  p_pierce_percent, m_pierce_percent, move_speed]
+```
+
+STEP 3: Standardization
+```python
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_raw)
+# ทำให้ทุก feature มี mean=0, std=1
+```
+
+STEP 4: Train Ridge Regression
+```python
+from sklearn.linear_model import Ridge
+
+ridge_model = Ridge(alpha=1.0)
+ridge_model.fit(X_scaled, y)
+# y = CombatPower (target)
+```
+
+Ridge Regression หาสมการ:
+```
+CombatPower = w1×p_atk + w2×m_power + w3×max_hp + ... + w11×move_speed + bias
+```
+
+STEP 5: Un-normalize Coefficients
+```python
+# เนื่องจาก train บน scaled data แต่ Evaluator ใช้ raw data
+# ต้องแปลง coefficient กลับ
+for i, name in enumerate(FEATURE_NAMES):
+    coef_scaled = ridge_model.coef_[i]
+    w_raw = coef_scaled / scaler.scale_[i]  # หารด้วย std
+    final_weights[name] = float(w_raw)
+```
+
+STEP 6: บันทึก Weights
+```python
+with open('app/core/learned_weights.json', 'w') as f:
+    json.dump(final_weights, f, indent=4)
+```
+
+ผลลัพธ์ learned_weights.json:
+```json
+{
+    "p_atk": 0.15,
+    "m_power": 0.15,
+    "max_hp": 0.001,
+    "cdr": 0.20,
+    "aspd": 0.50,
+    "crit_rate": 0.80,
+    "p_pierce_percent": 1.20,
+    "m_pierce_percent": 1.20,
+    "move_speed": 0.10
+}
+```
+
+================================================================================
+            ส่วนที่ 12: GA PARAMETER TUNING - ปรับแต่งพารามิเตอร์ GA
+================================================================================
+
+ไฟล์: scripts/tune_ga.py
+
+12.1 Test Configurations
+────────────────────────
+
+```python
+TEST_CONFIGS = [
+    {"name": "Baseline", "POP_SIZE": 50, "MAX_GEN": 100, "MUTATION_RATE": 0.2, "ELITISM_COUNT": 2},
+    {"name": "Small Pop", "POP_SIZE": 20, "MAX_GEN": 100, ...},
+    {"name": "Large Pop", "POP_SIZE": 100, "MAX_GEN": 100, ...},
+    {"name": "Quick", "POP_SIZE": 50, "MAX_GEN": 50, ...},
+    {"name": "Deep", "POP_SIZE": 50, "MAX_GEN": 200, ...},
+    {"name": "Low Mutation", "MUTATION_RATE": 0.1, ...},
+    {"name": "High Mutation", "MUTATION_RATE": 0.3, ...},
+    {"name": "Fast & Furious", "POP_SIZE": 30, "MAX_GEN": 50, "MUTATION_RATE": 0.3, "ELITISM_COUNT": 3},
+    {"name": "Slow & Steady", "POP_SIZE": 80, "MAX_GEN": 150, "MUTATION_RATE": 0.15, "ELITISM_COUNT": 4},
+]
+```
+
+12.2 ขั้นตอนการ Tune
+────────────────────
+
+```python
+for config in TEST_CONFIGS:
+    for hero_name in ['valhein', 'tachi', 'yue']:
+        for run in range(3):  # รัน 3 ครั้งเพื่อหาค่าเฉลี่ย
+            fitness, exec_time, build = run_ga_with_config(hero_data, config)
+            # เก็บผลลัพธ์
+```
+
+12.3 วิเคราะห์ผล
+────────────────
+
+```python
+# Top 5 by Fitness
+df_sorted = df.sort_values('Avg Fitness', ascending=False)
+print(df_sorted.head(5))
+
+# Top 5 by Speed
+df_fastest = df.sort_values('Avg Time')
+print(df_fastest.head(5))
+
+# Best Efficiency (Fitness / Time)
+df['Efficiency'] = df['Avg Fitness'] / df['Avg Time']
+```
+
+================================================================================
+            ส่วนที่ 13: LOGGING SYSTEM - ระบบบันทึก Log
+================================================================================
+
+ไฟล์: app/utils/logger.py
+
+```python
+def setup_logger(name="RoV-AI", log_file="rov_recommender.log"):
+    logger = logging.getLogger(name)
+    
+    # Console Handler (แสดงบน Terminal พร้อมสี)
+    console_handler = colorlog.StreamHandler()
+    console_format = colorlog.ColoredFormatter(
+        '%(log_color)s%(levelname)-8s%(reset)s %(blue)s[%(name)s]%(reset)s %(message)s',
+        log_colors={
+            'INFO': 'green',
+            'WARNING': 'yellow',
+            'ERROR': 'red',
+        }
+    )
+    console_handler.setFormatter(console_format)
+    logger.addHandler(console_handler)
+    
+    # File Handler (บันทึกลงไฟล์ logs/rov_recommender.log)
+    file_handler = RotatingFileHandler(
+        'logs/rov_recommender.log',
+        maxBytes=10 * 1024 * 1024,  # 10 MB
+        backupCount=5               # เก็บ backup 5 ไฟล์
+    )
+    logger.addHandler(file_handler)
+    
+    return logger
+
+logger = setup_logger()
+```
+
+การใช้งาน:
+```python
+logger.info("Initializing RoV Item Recommender...")
+logger.error(f"Failed: {e}")
+logger.warning("No stats found for hero")
+```
+
+================================================================================
+                     ส่วนที่ 14: COMPLETE FLOW DIAGRAM
+================================================================================
+
+```
+User รัน: python app/main.py
+                │
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 1: INITIALIZATION                                              │
+│ ─────────────────────                                              │
+│ 1. สร้าง RoVRecommender instance                                   │
+│ 2. เชื่อมต่อ SQLite database (rov_data.db)                          │
+│ 3. โหลด items ทั้งหมดเข้า memory                                    │
+│ 4. กรองเอาเฉพาะ Tier 3 items                                       │
+└────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 2: MENU SELECTION                                              │
+│ ─────────────────────                                              │
+│ User เลือก: All Heroes / Select Hero / Exit                        │
+└────────────────────────────────────────────────────────────────────┘
+                │
+        ┌───────┴───────┐
+        ▼               ▼
+┌───────────────┐ ┌──────────────────────────────────────────────────┐
+│  All Heroes   │ │              Select Hero                          │
+│    Mode       │ │ ──────────────────────                            │
+│               │ │ 1. User เลือก Hero (valhein)                      │
+│ ใช้ Expert    │ │ 2. User เลือก Role (Carry)                        │
+│ mode กับ     │ │ 3. User เลือก Lane (Dragon Slayer)                │
+│ ทุก Hero     │ │ 4. User เลือก AI Mode (Fast)                      │
+└───────────────┘ └──────────────────────────────────────────────────┘
+        │               │
+        └───────┬───────┘
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 3: GET RECOMMENDATION                                          │
+│ ─────────────────────────                                          │
+│ 1. ดึงข้อมูล Hero จาก DB (base stats, damage_type, etc.)           │
+│ 2. ดึง GA Settings ตาม profile ที่เลือก                            │
+│ 3. สร้าง BuildEvaluator                                            │
+│ 4. สร้าง GeneticEngine                                             │
+│ 5. รัน GA                                                          │
+└────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 4: GENETIC ALGORITHM                                           │
+│ ────────────────────────                                           │
+│                                                                     │
+│ ┌─────────────────────────────────────────────────────────────┐   │
+│ │ Generation 0                                                  │   │
+│ │ ─ สร้าง 30 builds สุ่ม                                       │   │
+│ │ ─ ประเมิน fitness ของแต่ละ build                             │   │
+│ │ ─ เรียงลำดับ (สูง → ต่ำ)                                      │   │
+│ └─────────────────────────────────────────────────────────────┘   │
+│                    │                                                │
+│                    ▼                                                │
+│ ┌─────────────────────────────────────────────────────────────┐   │
+│ │ สร้าง Generation ใหม่                                        │   │
+│ │ ─ Elitism: เก็บ top 3 ไว้                                    │   │
+│ │ ─ Selection: เลือก parents จาก top 10                        │   │
+│ │ ─ Crossover: ผสม 2 parents → child                          │   │
+│ │ ─ Mutation: 30% โอกาสเปลี่ยน 1 item                          │   │
+│ └─────────────────────────────────────────────────────────────┘   │
+│                    │                                                │
+│                    ▼                                                │
+│            ทำซ้ำ 50 รอบ                                            │
+│                    │                                                │
+│                    ▼                                                │
+│ ┌─────────────────────────────────────────────────────────────┐   │
+│ │ Return: best_build, best_fitness                             │   │
+│ └─────────────────────────────────────────────────────────────┘   │
+└────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 5: FITNESS EVALUATION (ในแต่ละ generation)                    │
+│ ──────────────────────────────────────────────                     │
+│                                                                     │
+│ Input: chromosome = [1, 5, 12, 23, 45, 67]                         │
+│                                                                     │
+│ 1. ตรวจ Passive Conflicts:                                         │
+│    - ถ้า Omni + Frost Cape → penalty -50                           │
+│                                                                     │
+│ 2. ตรวจ Boots Limit:                                               │
+│    - ถ้ามีรองเท้า 2+ คู่ → penalty -100                            │
+│                                                                     │
+│ 3. คำนวณ Stats รวม:                                                │
+│    - p_atk = hero_base + Σ(item.p_atk)                             │
+│    - m_power = Σ(item.m_power)                                     │
+│    - etc.                                                          │
+│                                                                     │
+│ 4. Apply Stat Caps:                                                │
+│    - CDR = min(cdr, 0.40)                                          │
+│    - Crit = min(crit, 1.00)                                        │
+│                                                                     │
+│ 5. คำนวณ Weighted Score:                                           │
+│    score = Σ(stat_i × weight_i)                                    │
+│    = p_atk×0.15 + m_power×0.15 + hp×0.001 + cdr×0.20              │
+│      + aspd×0.50 + crit×0.80 + pierce×1.20                         │
+│                                                                     │
+│ Output: fitness_score = 361.46                                      │
+└────────────────────────────────────────────────────────────────────┘
+                │
+                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│ STEP 6: OUTPUT                                                      │
+│ ────────────                                                       │
+│                                                                     │
+│ Select Hero Mode → แสดงบน Console                                  │
+│ ======================================================================
+│ Recommended Build for Valhein                                       │
+│ Score: 361.46                                                       │
+│ Role: Carry | Lane: Dragon Slayer | Damage Type: Physical          │
+│ ======================================================================
+│ [1] Claves Sancti    (2150g)                                        │
+│ [2] War Boots        ( 660g)                                        │
+│ ...                                                                 │
+│ ======================================================================
+│                                                                     │
+│ All Heroes Mode → บันทึก CSV                                       │
+│ all_heroes_analysis.csv                                             │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+================================================================================
+                          ส่วนที่ 15: สรุป (SUMMARY)
+================================================================================
+
+Logic หลักของระบบ:
+
+1. DATABASE LAYER (repository.py)
+   - เก็บข้อมูล heroes, items, passives, restrictions
+   - ใช้ SQLite สำหรับ query ข้อมูล
+
+2. EVALUATION LAYER (evaluator.py)
+   - calculate_stats(): รวม stats ของ hero + items
+   - get_fitness(): ให้คะแนน build (Weighted Sum - Penalties)
+   - Weights มาจาก calibration ด้วย Ridge Regression
+
+3. OPTIMIZATION LAYER (ga_engine.py)
+   - Genetic Algorithm หา build ที่ดีที่สุด
+   - Operators: Selection, Crossover, Mutation, Elitism
+   - 3 Profiles: Fast (50 gen), Medium (100 gen), Expert (150 gen)
+
+4. APPLICATION LAYER (main.py)
+   - CLI interface สำหรับ user interaction
+   - 2 modes: Single Hero, All Heroes (batch)
+   - Output: Console หรือ CSV file
+
+5. CALIBRATION LAYER (calibrate.py)
+   - เรียนรู้ weights จาก training data
+   - ใช้ Ridge Regression + StandardScaler
+   - Output: learned_weights.json
+
+================================================================================
+                               END OF DOCUMENT
+================================================================================
